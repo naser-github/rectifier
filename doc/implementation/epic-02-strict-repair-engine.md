@@ -1,0 +1,176 @@
+# Epic 02: Strict Repair Engine Execution Plan
+
+> **Required workflow:** Repair-sensitive workflow from
+> `doc/agent-workflow.md`, including a Repair Safety Reviewer.
+
+**Goal:** Build and prove a pure repair engine that fixes only supported JSON
+syntax and never changes user data or guesses intended meaning.
+
+**Exit milestone:** Repair Safety Approved
+
+## Why This Epic Exists
+
+Repair is the highest-risk product feature. A normal parser can identify broken
+JSON, but automatic repair can silently change meaning. Rectifier must prove
+that each proposed repair preserves every data token before any UI or worker
+integration may trust it.
+
+The product interface must not be completed until this epic is accepted.
+
+## Scope
+
+- Tolerant tokenization for supported invalid JSON.
+- Data-token fingerprints.
+- Explicit syntax edit rules.
+- Candidate generation, application, and verification.
+- Safe, ambiguous, and manual classification.
+- Strong accepted and refused repair fixtures.
+
+## Out of Scope
+
+- Web Worker handlers.
+- Repair dialogs and action buttons.
+- AI, free-text repair instructions, or broad best-effort repair.
+- Repairing unsupported invalid strings, escapes, Unicode, or unknown values.
+
+## Dependencies and References
+
+- Requires Foundation Ready.
+- Read: BRD sections 7.6 and 9, PRD sections 4.1-4.4 and 8, and the global
+  repair safety rules in `doc/implementation.md`.
+
+## Owned Files
+
+```text
+src/engine/repair/analyzeJson.ts
+src/engine/repair/applyCandidate.ts
+src/engine/repair/candidates.ts
+src/engine/repair/fingerprint.ts
+src/engine/repair/rules.ts
+src/engine/repair/tokenizer.ts
+src/engine/repair/verifyCandidate.ts
+tests/engine/repair.test.ts
+tests/fixtures/repair-cases.ts
+```
+
+Changes to `src/domain/diagnostics.ts` or `src/domain/repair.ts` require explicit
+Project Orchestrator approval.
+
+## Execution Policy
+
+### Entry Gate
+
+- Epic 01 contracts and import-boundary tests pass.
+- The Orchestrator assigns exclusive ownership of all repair-engine files.
+- The Repair Safety Reviewer agrees on accepted and refused fixture groups
+  before implementation begins.
+
+### Safety Policy
+
+- Write refusal tests before repair rules.
+- Implement one repair rule at a time.
+- Every candidate must become strict valid JSON.
+- Original and repaired data-token values, types, exact source content, and
+  order must match exactly. Only approved delimiter characters may differ.
+- Reject any syntax edit that overlaps protected data-token content.
+- Multiple verified meanings must remain ambiguous.
+- No verified candidate must return manual guidance.
+- Never weaken a refusal test merely to make a repair pass.
+
+### Review Policy
+
+Each repair rule requires Requirements, Code, and Repair Safety review. The
+Repair Safety Reviewer checks both positive cases and cases that look similar
+but must be refused.
+
+### Completion Policy
+
+Repair Safety Approved requires the entire repair suite, type checking, import
+boundaries, mutation checks, and safety review to pass.
+
+## Tasks
+
+### Task 02.1: Build the Repair Safety Fixture Matrix
+
+- [ ] Add safe cases for missing comma, trailing comma, clear missing colon,
+  deterministic missing closing delimiter, and safe single-quote delimiter
+  replacement.
+- [ ] Add ambiguous cases where more than one verified structure is possible.
+- [ ] Add refused cases including `{'jhon'}`, unknown values, adjacent values,
+  unterminated strings, invalid escapes, and broken Unicode.
+- [ ] Add adversarial refused cases where decoded values look equivalent but
+  exact data text changes, including `1` to `1.0`, `1e1` to `10`, and
+  `"a"` to `"\u0061"`.
+- [ ] Record the expected classification and reason for every fixture.
+
+### Task 02.2: Implement Tolerant Tokenization and Fingerprints
+
+- [ ] Write failing tests for token kind, decoded value, exact protected source
+  content, protected source range, and source order.
+- [ ] Tokenize supported invalid syntax without treating syntax delimiters as
+  data.
+- [ ] Record both semantic value and exact protected source content for string,
+  number, boolean, and null data tokens.
+- [ ] Treat quote delimiters as syntax only when changing them preserves every
+  enclosed source character exactly.
+- [ ] Produce an ordered fingerprint that detects invented, removed, changed,
+  reformatted, re-escaped, or reordered data.
+- [ ] Confirm tokenizer and fingerprint functions do not mutate input.
+
+### Task 02.3: Implement Explicit Syntax Repair Rules
+
+- [ ] Make each rule return only explicit `SyntaxEdit[]`.
+- [ ] Implement and test missing comma.
+- [ ] Implement and test trailing comma removal.
+- [ ] Implement and test clear missing colon.
+- [ ] Implement and test deterministic missing closing delimiter.
+- [ ] Implement and test safe single-quote delimiter replacement with the same
+  decoded string value.
+- [ ] Keep unsupported and uncertain patterns out of automatic repair.
+
+### Task 02.4: Generate, Verify, and Classify Candidates
+
+- [ ] Apply edits without mutating the original input.
+- [ ] Reject any edit that overlaps protected key or value content; allow only
+  proven syntax-delimiter range edits.
+- [ ] Parse the complete candidate as strict JSON.
+- [ ] Compare complete semantic and exact-source data-token fingerprints.
+- [ ] Return one verified deterministic candidate as `safe`.
+- [ ] Return multiple verified candidates as `ambiguous` without selecting one.
+- [ ] Return `manual` when no candidate can be proven safe.
+
+### Task 02.5: Perform the Repair Safety Audit
+
+- [ ] Run every accepted, ambiguous, and refused fixture.
+- [ ] Add mutation and forbidden-import tests.
+- [ ] Add adversarial tests proving semantically equivalent number or string
+  rewrites are refused.
+- [ ] Add regression fixtures for every review finding.
+- [ ] Obtain explicit Repair Safety Reviewer approval.
+
+## Verification
+
+```bash
+npm test -- --run tests/engine/repair.test.ts \
+  tests/architecture/importBoundaries.test.ts
+npm run typecheck
+```
+
+Expected result: every unsafe or unsupported case is refused, and every
+returned candidate preserves the complete data-token fingerprint.
+
+## Acceptance Checklist
+
+- [ ] Pure API exposes analyze, generate, verify, and apply operations.
+- [ ] Original input is never mutated.
+- [ ] Every returned candidate is strict valid JSON.
+- [ ] Safe, ambiguous, and manual outcomes are explicit.
+- [ ] No rule invents, removes, changes, or reorders data.
+- [ ] Refusal cases include invalid strings, escapes, and Unicode.
+- [ ] Requirements, Code, and Repair Safety Reviewers approve.
+
+## Handoff to Later Epics
+
+Provide the accepted repair API, classification rules, safety fixture list, and
+the exact meaning of each refusal. Epic 03 may only adapt this API; it may not
+reimplement repair rules inside the worker.

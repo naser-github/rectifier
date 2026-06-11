@@ -179,6 +179,12 @@ The following prototype behaviors must not be copied:
 - The logo uses a red square containing a `{ }` mark.
 - The header shows the privacy message
   **Your JSON stays in this browser** with a privacy lock icon on the right.
+- The privacy message is an accessible button that opens a small Browser
+  storage popover.
+- The Browser storage popover explains that only the latest workspace is saved
+  locally and contains **Clear saved workspace**.
+- Clearing the saved workspace requires confirmation and removes persisted
+  work without clearing the currently open workspace.
 - The header does not contain light/dark theme controls.
 - The first-visit sample does not require a permanent **Load example** button
   in the header.
@@ -386,6 +392,11 @@ Examples:
 - **Repair JSON** appears at the end of the action dock.
 - It is available only when invalid JSON has at least one supported repair path.
 - It does not run automatically.
+- Automatic validation may return repair-eligibility metadata only to decide
+  whether the button is available. This metadata check must not generate,
+  select, preview, or apply a repair candidate.
+- Full repair candidate analysis begins only after the user clicks
+  **Repair JSON**.
 - It must never directly change the original input.
 - Repair analysis and safe repair support input up to 10 MB.
 
@@ -584,7 +595,10 @@ users.
 - New saved work replaces the previous saved workspace.
 - Rectifier does not provide workspace history.
 - Rectifier continues to work when browser storage is unavailable.
-- Users can clear the saved workspace.
+- Users can clear the saved workspace from the Browser storage popover in the
+  header.
+- Clearing saved workspace removes persisted work without clearing the
+  currently open workspace.
 
 ## 15. Performance Requirements
 

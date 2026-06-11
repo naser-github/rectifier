@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rectifier Interactive Prototype</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#292929;color:#000;font-family:"Prompt","Trebuchet MS",system-ui,sans-serif}button,textarea{font:inherit}
+  button{cursor:pointer}button:disabled{cursor:not-allowed}.shell{max-width:1500px;margin:18px auto;padding:14px;border-radius:14px;background:#000}
+  .app{--black:#000;--red:#ea4242;--paper:#f6f4f1;--white:#fff;--line:#a09d98;--muted:#706d68;min-height:calc(100vh - 64px);border-radius:7px;overflow:hidden;position:relative;background-color:var(--paper);background-image:radial-gradient(circle at 16% 18%,rgba(0,0,0,.036) 0 .65px,transparent .85px),radial-gradient(circle at 73% 42%,rgba(255,255,255,.78) 0 .75px,transparent .95px);background-size:5px 5px,7px 7px}
+  .top{height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:14px}.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:850;letter-spacing:-.04em}.logo{width:30px;height:30px;border-radius:5px;background:var(--red);color:#fff;display:grid;place-items:center;font:900 11px ui-monospace,monospace}.prototype-controls{display:flex;align-items:center;gap:7px;padding:4px 5px 4px 9px;border:1px dashed var(--line);border-radius:5px;background:rgba(255,255,255,.55);color:var(--muted);font-size:8px;font-weight:800}.prototype-controls select{border:1px solid var(--line);border-radius:4px;background:#fff;padding:5px 7px;color:#000;font-size:8px;font-weight:800}.privacy{display:flex;gap:7px;align-items:center;font-size:10px;color:var(--muted);font-weight:750}.privacy svg{width:14px;height:14px;fill:none;stroke:#000;stroke-width:1.7}
+  .workspace{display:grid;grid-template-columns:minmax(0,1fr) 142px minmax(0,1fr);gap:14px;padding:18px 20px 13px}.pane{min-width:0;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.73);overflow:hidden}.pane-head{height:52px;padding:0 10px 0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:8px}.title{display:flex;flex-direction:column;gap:2px;min-width:0}.title strong{font-size:13px}.title span{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.title .invalid{color:var(--red);font-weight:850}.title .valid{color:#000;font-weight:850}
+  .tools,.result-tools,.tabs{display:flex;gap:6px;align-items:center}.icon{width:32px;height:32px;border:1px solid var(--line);border-radius:5px;background:#fff;color:#000;display:grid;place-items:center;position:relative;transition:transform .17s ease,background .17s ease,color .17s ease}.icon:not(:disabled):hover{transform:translateY(-2px);background:#000;color:#fff}.icon:disabled{opacity:.35}.icon:not(:disabled)[data-tip]:hover:after{content:attr(data-tip);position:absolute;z-index:30;top:38px;right:0;padding:5px 7px;border-radius:4px;background:#000;color:#fff;white-space:nowrap;font-size:8px;font-weight:800}.icon svg,.action svg,.privacy svg,.empty svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .editor-wrap{height:calc(100vh - 252px);min-height:420px;background:rgba(255,255,255,.56);position:relative}.editor{width:100%;height:100%;resize:none;border:0;outline:0;background:transparent;padding:16px;color:#262626;caret-color:#000;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.editor::selection{background:rgba(0,0,0,.14)}.editor.error-focus{caret-color:#ea4242}.editor.error-focus::selection{background:rgba(234,66,66,.28);color:#9d1f31}.error-ruler{position:absolute;left:0;right:0;bottom:0;min-height:27px;padding:6px 12px;background:rgba(234,66,66,.1);border-top:1px solid rgba(234,66,66,.35);color:#b52b3b;font-size:9px;font-weight:800;display:none}.error-ruler.show{display:block}
+  .dock{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.48);overflow:visible}.dock-head{padding:11px 9px 10px;border-bottom:1px solid var(--line);text-align:center}.dock-head strong{display:block;font-size:10px}.dock-head span{display:block;margin-top:3px;color:var(--muted);font-size:7px;font-weight:850}.actions{display:flex;flex-direction:column;gap:8px;padding:12px 10px;flex:1}.action{width:100%;min-height:46px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#000;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:9px;font-weight:800;transition:transform .17s ease,background .17s ease,color .17s ease}.action:not(:disabled):hover{transform:translateX(2px);background:#000;color:#fff}.action:disabled{opacity:.38}.convert-wrap{position:relative}.convert-menu{position:absolute;z-index:25;left:calc(100% + 8px);top:0;width:160px;border:1px solid #000;border-radius:6px;background:#f6f4f1;padding:5px;box-shadow:8px 8px 0 rgba(0,0,0,.12);display:none}.convert-menu.open{display:block}.convert-menu button{width:100%;min-height:36px;border:0;border-radius:4px;background:transparent;text-align:left;padding:0 8px;color:#000;font-size:9px;font-weight:800}.convert-menu button:not(:disabled):hover{background:#000;color:#fff}.convert-menu button:disabled{opacity:.35}.convert-menu small{display:block;padding:5px 8px;color:var(--muted);font-size:7px;line-height:1.4}.repair-wrap{margin-top:auto;padding-top:13px;border-top:1px dashed var(--line)}.action.repair{min-height:54px;justify-content:center;background:var(--red);border-color:var(--red);color:#fff;opacity:1}.action.repair:disabled{opacity:.38}.dock-foot{padding:9px;border-top:1px solid var(--line);color:var(--muted);text-align:center;font-size:8px;font-weight:700;line-height:1.45}
+  .tabs button{border:1px solid transparent;border-radius:4px;padding:6px 8px;background:transparent;color:var(--muted);font-size:8px;font-weight:800}.tabs button.active{background:#000;color:#fff}.tabs button:disabled{opacity:.35}.result-area{height:calc(100vh - 252px);min-height:420px;background:rgba(255,255,255,.56);overflow:auto}.result-code{margin:0;padding:16px;white-space:pre-wrap;color:#262626;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}.empty{height:100%;display:grid;place-items:center}.empty-inner{max-width:260px;text-align:center;color:var(--muted)}.empty-icon{width:46px;height:46px;margin:0 auto 11px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:#000}.empty strong{display:block;margin-bottom:5px;color:#000;font-size:12px}.empty p{margin:0;font-size:9px;line-height:1.55}.tree,.object-view,.code-fold{padding:14px}.tree details,.object-view details{margin:5px 0;border-left:1px solid #cbc7c1;padding-left:9px}.tree summary,.object-view summary{list-style:none;display:flex;align-items:center;gap:7px;min-height:28px;cursor:pointer;border-radius:4px;padding:3px 6px;font:10px ui-monospace,monospace;transition:background .15s ease}.tree summary::-webkit-details-marker,.object-view summary::-webkit-details-marker,.code-branch summary::-webkit-details-marker{display:none}.tree summary:hover,.object-view summary:hover,.code-branch summary:hover{background:rgba(234,66,66,.08)}.tree summary:before,.object-view summary:before,.code-branch summary:before{content:"›";color:#000;font-size:13px;font-weight:900;transition:transform .15s ease}.tree details[open]>summary:before,.object-view details[open]>summary:before,.code-branch[open]>summary:before{transform:rotate(90deg)}.branch-key{color:#000;font-weight:850}.branch-mark{border:1px solid var(--line);border-radius:4px;background:#fff;padding:2px 5px;color:#ea4242;font-size:8px;font-weight:900}.branch-count{margin-left:auto;color:var(--muted);font-size:8px}.leaf{display:grid;grid-template-columns:minmax(70px,auto) 1fr;gap:8px;padding:4px 6px 4px 24px;font:10px/1.55 ui-monospace,monospace}.leaf .k{color:#000;font-weight:800}.leaf .v{color:#ea4242;word-break:break-all}.object-view>.branch{border-left:0;padding-left:0}.object-view>.branch>summary{border:1px solid var(--line);background:#fff}.object-view .branch-body{padding-left:7px}.code-fold{font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace}.code-branch{margin:0}.code-branch summary{list-style:none;display:flex;align-items:center;gap:5px;min-height:25px;cursor:pointer;border-radius:4px;padding:1px 4px}.code-key{color:#000;font-weight:800}.code-open,.code-close{color:#ea4242;font-weight:900}.code-closed{display:inline;color:#ea4242;font-weight:900}.code-branch[open]>summary .code-closed{display:none}.code-children{border-left:1px solid #d7d3cd;margin-left:9px}.code-close,.code-leaf{min-height:25px;padding:1px 4px}.code-value{color:#5e5b57}.code-leaf .code-key:after{content:":";color:#ea4242;margin-right:6px}
+  .errortray{margin:0 20px 18px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.77);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;padding:9px 11px}.errortray.has-error{border-color:var(--red)}.errorcount{width:31px;height:31px;border-radius:5px;background:#000;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}.has-error .errorcount{background:var(--red)}.errorcopy{display:flex;flex-direction:column;gap:2px}.errorcopy strong{font-size:10px}.errorcopy span{color:var(--muted);font-size:8px}.tray-action{border:1px solid var(--line);border-radius:5px;background:#fff;color:#000;padding:7px 9px;font-size:8px;font-weight:800}.tray-action:hover{background:#000;color:#fff}
+  .schema-tab{position:absolute;z-index:12;right:0;top:190px;width:31px;height:108px;border:1px solid #000;border-right:0;border-radius:6px 0 0 6px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-size:8px;font-weight:850;letter-spacing:.1em;transition:width .17s ease,background .17s ease}.schema-tab:hover{width:36px;background:var(--red)}.drawer{position:absolute;z-index:20;top:64px;right:0;width:min(390px,90vw);height:calc(100% - 64px);background:#f6f4f1;border-left:1px solid #000;box-shadow:-16px 0 38px rgba(0,0,0,.16);transform:translateX(101%);transition:transform .25s ease}.drawer.open{transform:translateX(0)}.drawer-head{height:54px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.drawer-head strong{font-size:12px}.drawer-body{padding:12px}.drawer-body p{margin:0 0 10px;color:var(--muted);font-size:9px;line-height:1.5}.schema-editor{width:100%;height:310px;resize:none;border:1px solid var(--line);border-radius:6px;background:#fff;padding:10px;outline:none;font:11px/1.55 ui-monospace,monospace}.drawer-actions{display:flex;gap:8px;margin-top:10px}.drawer-actions button{flex:1;min-height:38px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:9px;font-weight:800}.drawer-actions .primary{background:#000;color:#fff;border-color:#000}.schema-result{margin-top:10px;padding:9px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--muted);font-size:9px}
+  .modal-backdrop{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.58);display:none;place-items:center;padding:18px}.modal-backdrop.show{display:grid}.modal{width:min(720px,100%);max-height:90vh;overflow:auto;border:3px solid #000;border-radius:8px;background:#f6f4f1;padding:16px}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.modal-head h2{margin:0 0 4px;font-size:18px}.modal-head p{margin:0;color:var(--muted);font-size:10px}.diff{display:grid;grid-template-columns:1fr 1fr;gap:10px}.diff-pane{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}.diff-pane strong{display:block;padding:8px 10px;border-bottom:1px solid var(--line);font-size:9px}.diff-pane pre{margin:0;padding:10px;min-height:190px;white-space:pre-wrap;font:10px/1.55 ui-monospace,monospace}.change{background:rgba(234,66,66,.13);color:#b52738}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.modal-actions button{min-height:39px;border:1px solid #000;border-radius:5px;background:#fff;padding:0 14px;font-size:9px;font-weight:850}.modal-actions .accept{background:#ea4242;border-color:#ea4242;color:#fff}.toast{position:fixed;z-index:200;left:50%;bottom:25px;transform:translate(-50%,120px);padding:9px 12px;border-radius:5px;background:#000;color:#fff;font-size:10px;font-weight:800;transition:transform .22s ease}.toast.show{transform:translate(-50%,0)}
+  button:focus-visible,textarea:focus-visible{outline:2px solid #ea4242;outline-offset:2px}@media(prefers-reduced-motion:reduce){*{transition:none!important}}@media(max-width:980px){.workspace{grid-template-columns:1fr}.dock{order:2}.actions{flex-direction:row;overflow:auto}.action{min-width:105px}.repair-wrap{margin:0;padding:0;border:0}.result-area,.editor-wrap{height:420px}.errortray{grid-template-columns:auto 1fr}.tray-action{grid-column:1/-1}.diff{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell"><div class="app">
+  <header class="top">
+    <div class="brand"><span class="logo">{ }</span>Rectifier <small style="font-size:8px;color:#706d68;font-weight:700">interactive prototype</small></div>
+    <label class="prototype-controls">TEST STATE
+      <select id="scenarioSelect">
+        <option value="valid">Valid JSON</option>
+        <option value="tabular">Nested JSON for CSV</option>
+        <option value="repairable">Repairable JSON</option>
+        <option value="ambiguous">Ambiguous JSON</option>
+      </select>
+    </label>
+    <div class="privacy"><svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5z"/></svg>Your JSON stays in this browser</div>
+  </header>
+
+  <main class="workspace">
+    <section class="pane">
+      <div class="pane-head">
+        <div class="title"><strong>Input JSON</strong><span id="inputStatus">Example JSON · checking automatically...</span></div>
+        <div class="tools">
+          <input id="fileInput" type="file" accept=".json,application/json" hidden>
+          <button class="icon" id="uploadBtn" data-tip="Upload JSON" aria-label="Upload JSON"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 15v4h14v-4"/></svg></button>
+          <button class="icon" id="clearBtn" data-tip="Clear input" aria-label="Clear input"><svg viewBox="0 0 24 24"><path d="M4 7h16m-10 4v6m4-6v6M9 7l1-3h4l1 3m-8 0 1 13h8l1-13"/></svg></button>
+        </div>
+      </div>
+      <div class="editor-wrap"><textarea id="inputEditor" class="editor" spellcheck="false">{
+  "name": "John",
+  "active": true,
+  "contact": {
+    "city": "Dhaka",
+    "email": "john@example.com"
+  },
+  "roles": ["editor", "viewer"]
+}</textarea><div id="errorRuler" class="error-ruler"></div></div>
+    </section>
+
+    <nav class="dock" aria-label="JSON actions">
+      <div class="dock-head"><strong>Actions</strong><span id="dockStatus">Checking input</span></div>
+      <div class="actions">
+        <button class="action" id="beautifyBtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M7 12h10M9 17h6"/></svg>Beautify</button>
+        <button class="action" id="minifyBtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Minify</button>
+        <div class="convert-wrap"><button class="action" id="convertBtn"><svg viewBox="0 0 24 24"><path d="M7 7h10m0 0-3-3m3 3-3 3M17 17H7m0 0 3-3m-3 3 3 3"/></svg>Convert… <span style="margin-left:auto">›</span></button><div id="convertMenu" class="convert-menu"><button id="yamlBtn">Convert to YAML</button><button id="xmlBtn">Convert to XML</button><button id="csvBtn">Convert to CSV</button><small id="csvHelp">Nested objects flatten into CSV columns.</small></div></div>
+        <div class="repair-wrap"><button class="action repair" id="repairBtn"><svg viewBox="0 0 24 24"><path d="m4 14 6-6 4 4 6-6M4 20h16"/></svg>Repair JSON</button></div>
+      </div>
+      <div class="dock-foot">Validation runs after you pause typing.</div>
+    </nav>
+
+    <section class="pane">
+      <div class="pane-head">
+        <div class="title"><strong>Result</strong><span id="resultStatus">No result yet</span></div>
+        <div class="result-tools">
+          <div class="tabs"><button id="codeTab">Code</button><button id="treeTab">Tree</button><button id="objectTab">Object</button></div>
+          <button class="icon" id="copyBtn" data-tip="Copy result" aria-label="Copy result"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg></button>
+          <button class="icon" id="downloadBtn" data-tip="Download result" aria-label="Download result"><svg viewBox="0 0 24 24"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg></button>
+        </div>
+      </div>
+      <div id="resultArea" class="result-area"></div>
+    </section>
+  </main>
+
+  <section id="errorTray" class="errortray"><span id="errorCount" class="errorcount">…</span><div class="errorcopy"><strong id="errorTitle">Checking JSON</strong><span id="errorDetail">Validation runs automatically.</span></div><button id="trayAction" class="tray-action">Go to error</button></section>
+
+  <button id="schemaTab" class="schema-tab">SCHEMA</button>
+  <aside id="schemaDrawer" class="drawer">
+    <div class="drawer-head"><strong>JSON Schema</strong><button id="closeSchema" class="icon" aria-label="Close schema">×</button></div>
+    <div class="drawer-body">
+      <p>Paste optional rules. Schema checking is available only when the input JSON is valid.</p>
+      <textarea id="schemaEditor" class="schema-editor" spellcheck="false">{
+  "type": "object",
+  "required": ["name", "score"]
+}</textarea>
+      <div class="drawer-actions"><button id="clearSchema">Clear</button><button id="checkSchema" class="primary">Check schema</button></div>
+      <div id="schemaResult" class="schema-result">No schema check performed.</div>
+    </div>
+  </aside>
+</div></div>
+
+<div id="repairModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head"><div><h2>Review safe repair</h2><p id="repairReason">Rectifier proposes one syntax-only change.</p></div><button id="closeModal" class="icon" aria-label="Close">×</button></div>
+    <div class="diff"><div class="diff-pane"><strong>Original input</strong><pre id="beforeDiff"></pre></div><div class="diff-pane"><strong>Proposed result</strong><pre id="afterDiff"></pre></div></div>
+    <div class="modal-actions"><button id="rejectRepair">Reject</button><button id="acceptRepair" class="accept">Accept repair</button></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const el=id=>document.getElementById(id);
+const state={valid:false,parsed:null,resultText:"",resultData:null,resultFormat:"json",view:"code",repair:null,timer:null,errorOffset:null,example:true};
+const scenarios={
+  valid:`{
+  "name": "John",
+  "active": true,
+  "contact": {
+    "city": "Dhaka",
+    "email": "john@example.com"
+  },
+  "roles": ["editor", "viewer"]
+}`,
+  tabular:`[
+  {"name": "John", "contact": {"city": "Dhaka"}, "roles": ["editor", "viewer"]},
+  {"name": "Mina", "contact": {"city": "Chattogram"}, "roles": ["viewer"]}
+]`,
+  repairable:`{
+  "name": "John"
+  "active": true,
+  "score": 94,
+  "roles": ["editor", "viewer"]
+}`,
+  ambiguous:`{
+  "price": 10 20
+}`
+};
+const input=el("inputEditor"), inputStatus=el("inputStatus"), dockStatus=el("dockStatus"), errorRuler=el("errorRuler");
+const resultArea=el("resultArea"), resultStatus=el("resultStatus"), errorTray=el("errorTray"), errorCount=el("errorCount"), errorTitle=el("errorTitle"), errorDetail=el("errorDetail");
+const actionIds=["beautifyBtn","minifyBtn","convertBtn"], resultIds=["codeTab","treeTab","objectTab","copyBtn","downloadBtn"];
+function toast(msg){const t=el("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+function setDisabled(id,disabled,reason=""){
+  const button=el(id);
+  button.disabled=disabled;
+  if(disabled){
+    button.title=reason;
+    button.setAttribute("aria-label",(button.getAttribute("aria-label")||button.textContent.trim())+". Disabled: "+reason);
+  }else{
+    button.removeAttribute("title");
+    const label=button.getAttribute("aria-label");
+    if(label&&label.includes(". Disabled:"))button.setAttribute("aria-label",label.split(". Disabled:")[0]);
+  }
+}
+function findRepair(text){
+  const replaced=text.replace(/("(?:[^"\\]|\\.)*"|\d+|true|false|null|\}|\])(\s*\n\s*)(")/, "$1,$2$3");
+  if(replaced!==text){try{JSON.parse(replaced);return{result:replaced,reason:"Added one missing comma between complete JSON properties."}}catch{}}
+  return null;
+}
+function errorOffsetFrom(detail,text,repair){
+  if(repair){
+    const max=Math.min(text.length,repair.result.length);
+    for(let i=0;i<max;i++)if(text[i]!==repair.result[i])return i;
+  }
+  const position=detail.match(/position\s+(\d+)/i);
+  if(position)return Math.min(Number(position[1]),text.length);
+  const location=detail.match(/line\s+(\d+)\s+column\s+(\d+)/i);
+  if(location){
+    const lines=text.split("\n"),line=Math.max(1,Number(location[1])),column=Math.max(1,Number(location[2]));
+    return lines.slice(0,line-1).reduce((total,current)=>total+current.length+1,0)+column-1;
+  }
+  return 0;
+}
+function focusFirstError(){
+  if(state.errorOffset===null)return;
+  const offset=Math.min(state.errorOffset,input.value.length);
+  input.focus();
+  input.classList.add("error-focus");
+  input.setSelectionRange(offset,offset);
+  const line=input.value.slice(0,offset).split("\n").length;
+  input.scrollTop=Math.max(0,(line-3)*21);
+}
+function validate(){
+  const text=input.value;
+  state.repair=null;
+  if(!text.trim()){state.valid=false;state.parsed=null;state.errorOffset=null;setInvalid("Input is empty","Paste JSON or upload a .json file.",false);return}
+  try{
+    state.parsed=JSON.parse(text);state.valid=true;state.errorOffset=null;input.classList.remove("error-focus");
+    inputStatus.textContent=(state.example?"Example JSON · ":"")+"Valid JSON · checked automatically";inputStatus.className="valid";dockStatus.textContent=state.example?"Example is ready":"Input is valid";
+    errorRuler.classList.remove("show");errorTray.classList.remove("has-error");errorCount.textContent="✓";errorTitle.textContent="Valid JSON";errorDetail.textContent="Formatting, conversion, schema checking, and result views are available.";
+    setDisabled("repairBtn",true,"Repair JSON is only available when invalid JSON has one safe syntax repair.");
+    actionIds.forEach(id=>setDisabled(id,false));setDisabled("checkSchema",false);
+  }catch(err){
+    state.valid=false;state.parsed=null;state.repair=findRepair(text);
+    const msg=String(err.message).replace(/^JSON\.parse:\s*/,"");state.errorOffset=errorOffsetFrom(msg,text,state.repair);
+    setInvalid("Invalid JSON",msg,true);
+  }
+}
+function setInvalid(title,detail,hasInput){
+  inputStatus.textContent=title+" · checked automatically";inputStatus.className="invalid";dockStatus.textContent=state.repair?"Safe repair available":"Input needs manual editing";
+  errorRuler.textContent=detail;errorRuler.classList.toggle("show",hasInput);errorTray.classList.toggle("has-error",hasInput);errorCount.textContent=hasInput?"1":"—";errorTitle.textContent=title;errorDetail.textContent=state.repair?"One syntax-only repair is ready for review.":detail;
+  const validReason=hasInput?"Requires valid JSON. Fix the syntax error first.":"Paste JSON first.";
+  actionIds.forEach(id=>setDisabled(id,true,validReason));
+  setDisabled("repairBtn",!state.repair,state.repair?"":"No safe repair can be proposed. Edit the JSON manually.");
+  setDisabled("checkSchema",true,validReason);
+  if(hasInput)setTimeout(focusFirstError,0);
+}
+function setResult(text,data,format,label){
+  state.resultText=text;state.resultData=data;state.resultFormat=format;state.view="code";resultStatus.textContent=label;
+  resultIds.forEach(id=>setDisabled(id,false));renderResult();toast(label);
+}
+function renderEmpty(){
+  resultIds.forEach(id=>setDisabled(id,true,"Create a result first using Beautify, Minify, Convert, or Repair JSON."));["codeTab","treeTab","objectTab"].forEach(id=>el(id).classList.remove("active"));
+  resultArea.innerHTML='<div class="empty"><div class="empty-inner"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M8 6 3 12l5 6m8-12 5 6-5 6M14 4l-4 16"/></svg></div><strong>No result yet</strong><p>Use Beautify, Minify, Convert, or Repair JSON to create a result.</p></div></div>';
+}
+function branchMark(value){return Array.isArray(value)?"[…]":"{…}"}
+function branchCount(value){return Array.isArray(value)?value.length+" items":Object.keys(value).length+" fields"}
+function collapsibleHtml(value,label="root",depth=0){
+  if(value===null||typeof value!=="object")return '<div class="leaf"><span class="k">'+escapeHtml(label)+'</span><span class="v">'+escapeHtml(JSON.stringify(value))+'</span></div>';
+  const children=Object.entries(value).map(([key,val])=>collapsibleHtml(val,key,depth+1)).join("");
+  return '<details class="branch" '+(depth===0?"open":"")+'><summary><span class="branch-key">'+escapeHtml(label)+'</span><span class="branch-mark">'+branchMark(value)+'</span><span class="branch-count">'+branchCount(value)+'</span></summary><div class="branch-body">'+children+'</div></details>';
+}
+function treeHtml(value){return collapsibleHtml(value,"root",0)}
+function objectHtml(value){return collapsibleHtml(value,Array.isArray(value)?"Result array":"Result object",0)}
+function codeFoldHtml(value,label=null,depth=0,isLast=true){
+  const comma=isLast?"":",";
+  if(value===null||typeof value!=="object"){
+    const key=label===null?"":'<span class="code-key">"'+escapeHtml(label)+'"</span>';
+    return '<div class="code-leaf" style="padding-left:'+(depth*13+4)+'px">'+key+'<span class="code-value">'+escapeHtml(JSON.stringify(value))+'</span><span class="code-open">'+comma+'</span></div>';
+  }
+  const open=Array.isArray(value)?"[":"{",close=Array.isArray(value)?"]":"}",entries=Object.entries(value);
+  const key=label===null?"":'<span class="code-key">"'+escapeHtml(label)+'"</span><span class="code-open">:</span>';
+  const children=entries.map(([childKey,childValue],index)=>codeFoldHtml(childValue,childKey,depth+1,index===entries.length-1)).join("");
+  return '<details class="code-branch" '+(depth<1?"open":"")+'><summary style="margin-left:'+(depth*13)+'px">'+key+'<span class="code-open">'+open+'</span><span class="code-closed">…'+close+comma+'</span></summary><div class="code-children">'+children+'</div><div class="code-close" style="padding-left:'+(depth*13+18)+'px">'+close+comma+'</div></details>';
+}
+function renderResult(){
+  if(!state.resultText){renderEmpty();return}
+  ["codeTab","treeTab","objectTab"].forEach(id=>el(id).classList.remove("active"));el(state.view+"Tab").classList.add("active");
+  if(state.view==="tree")resultArea.innerHTML='<div class="tree">'+treeHtml(state.resultData)+'</div>';
+  else if(state.view==="object")resultArea.innerHTML='<div class="object-view">'+objectHtml(state.resultData)+'</div>';
+  else if(state.resultFormat==="json")resultArea.innerHTML='<div class="code-fold">'+codeFoldHtml(state.resultData)+'</div>';
+  else resultArea.innerHTML='<pre class="result-code">'+escapeHtml(state.resultText)+'</pre>';
+}
+function toYaml(v,indent=0){
+  const pad=" ".repeat(indent);
+  if(v===null||typeof v!=="object")return String(v);
+  return Object.entries(v).map(([k,val])=>typeof val==="object"&&val!==null?pad+k+":\n"+toYaml(val,indent+2):pad+k+": "+JSON.stringify(val)).join("\n");
+}
+function xmlEscape(value){return String(value).replace(/[<>&'"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;","'":"&apos;","\"":"&quot;"}[c]))}
+function toXml(value,name="root",indent=0){
+  const pad=" ".repeat(indent);
+  if(Array.isArray(value))return pad+"<"+name+">\n"+value.map(item=>toXml(item,"item",indent+2)).join("\n")+"\n"+pad+"</"+name+">";
+  if(value!==null&&typeof value==="object")return pad+"<"+name+">\n"+Object.entries(value).map(([key,val])=>toXml(val,key,indent+2)).join("\n")+"\n"+pad+"</"+name+">";
+  return pad+"<"+name+">"+xmlEscape(value===null?"null":value)+"</"+name+">";
+}
+function csvRows(value){return Array.isArray(value)?value:[value]}
+function csvObject(value){return value&&typeof value==="object"&&!Array.isArray(value)}
+function canCsv(value){const rows=csvRows(value);return rows.length>0&&rows.every(csvObject)&&rows.some(row=>Object.keys(row).length>0)}
+function csvPathKey(key){return String(key).replace(/\\/g,"\\\\").replace(/\./g,"\\.")}
+function flattenCsvObject(row){
+  const flat={};
+  function visit(value,path){
+    if(Array.isArray(value)){flat[path]=JSON.stringify(value);return}
+    if(csvObject(value)){
+      const entries=Object.entries(value);
+      if(!entries.length&&path)flat[path]="{}";
+      entries.forEach(([key,child])=>visit(child,path?path+"."+csvPathKey(key):csvPathKey(key)));
+      return;
+    }
+    flat[path]=value;
+  }
+  Object.entries(row).forEach(([key,value])=>visit(value,csvPathKey(key)));
+  return flat;
+}
+function csvCell(value){const text=value===null?"null":String(value);return /[",\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text}
+function toCsv(value){const rows=csvRows(value).map(flattenCsvObject),headers=[...new Set(rows.flatMap(row=>Object.keys(row)))];return [headers.map(csvCell).join(","),...rows.map(row=>headers.map(key=>csvCell(Object.prototype.hasOwnProperty.call(row,key)?row[key]:"")).join(","))].join("\n")}
+function updateOnInput(){state.example=false;clearTimeout(state.timer);input.classList.remove("error-focus");inputStatus.textContent="Checking after you pause...";inputStatus.className="";state.timer=setTimeout(validate,300)}
+input.addEventListener("input",updateOnInput);
+el("beautifyBtn").onclick=()=>setResult(JSON.stringify(state.parsed,null,2),state.parsed,"json","Beautified JSON");
+el("minifyBtn").onclick=()=>setResult(JSON.stringify(state.parsed),state.parsed,"json","Minified JSON");
+el("convertBtn").onclick=()=>{setDisabled("csvBtn",!canCsv(state.parsed),"CSV requires an object or a non-empty array of objects.");el("csvHelp").textContent=canCsv(state.parsed)?"Nested objects flatten automatically. Arrays stay in one cell.":"CSV requires an object or a non-empty array of objects.";el("convertMenu").classList.toggle("open")};
+el("yamlBtn").onclick=()=>{setResult(toYaml(state.parsed),state.parsed,"yaml","Converted to YAML");el("convertMenu").classList.remove("open")};
+el("xmlBtn").onclick=()=>{setResult('<?xml version="1.0" encoding="UTF-8"?>\n'+toXml(state.parsed),state.parsed,"xml","Converted to XML");el("convertMenu").classList.remove("open")};
+el("csvBtn").onclick=()=>{if(!canCsv(state.parsed))return;setResult(toCsv(state.parsed),state.parsed,"csv","Converted to CSV");el("convertMenu").classList.remove("open")};
+el("repairBtn").onclick=()=>{if(!state.repair)return;el("beforeDiff").textContent=input.value;el("afterDiff").textContent=state.repair.result;el("repairReason").textContent=state.repair.reason;el("repairModal").classList.add("show")};
+el("acceptRepair").onclick=()=>{input.value=state.repair.result;el("repairModal").classList.remove("show");validate();setResult(input.value,JSON.parse(input.value),"json","Repaired JSON");toast("Safe repair accepted")};
+el("rejectRepair").onclick=el("closeModal").onclick=()=>el("repairModal").classList.remove("show");
+el("clearBtn").onclick=()=>{state.example=false;input.value="";state.resultText="";resultStatus.textContent="No result yet";renderEmpty();validate();input.focus()};
+el("uploadBtn").onclick=()=>el("fileInput").click();
+el("fileInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024){toast("File is larger than 10 MB");return}state.example=false;input.value=await f.text();state.resultText="";renderEmpty();validate()};
+el("copyBtn").onclick=async()=>{await navigator.clipboard.writeText(state.resultText);toast("Result copied")};
+el("downloadBtn").onclick=()=>{const blob=new Blob([state.resultText],{type:"text/plain"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rectifier-result."+state.resultFormat;a.click();URL.revokeObjectURL(a.href);toast("Download started")};
+el("codeTab").onclick=()=>{state.view="code";renderResult()};el("treeTab").onclick=()=>{state.view="tree";renderResult()};el("objectTab").onclick=()=>{state.view="object";renderResult()};
+el("trayAction").onclick=focusFirstError;
+el("schemaTab").onclick=()=>el("schemaDrawer").classList.add("open");el("closeSchema").onclick=()=>el("schemaDrawer").classList.remove("open");
+el("clearSchema").onclick=()=>{el("schemaEditor").value="";el("schemaResult").textContent="Schema cleared."};
+el("checkSchema").onclick=()=>{try{const s=JSON.parse(el("schemaEditor").value),missing=(s.required||[]).filter(k=>!(k in state.parsed));el("schemaResult").textContent=missing.length?"Missing required fields: "+missing.join(", "):"Schema check passed for required fields."}catch(e){el("schemaResult").textContent="Invalid schema JSON: "+e.message}};
+el("scenarioSelect").onchange=e=>{state.example=e.target.value==="valid";input.value=scenarios[e.target.value];state.resultText="";resultStatus.textContent="No result yet";renderEmpty();validate();toast(e.target.options[e.target.selectedIndex].text+" loaded")};
+renderEmpty();validate();
+</script>
+</body>
+</html>
