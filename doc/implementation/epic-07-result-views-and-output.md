@@ -1,7 +1,6 @@
 # Epic 07: Result Views and Output Execution Plan
 
-> **Required workflow:** Normal implementation workflow from
-> `doc/agent-workflow.md`.
+> **Required workflow:** UI Feature workflow from `doc/agent-workflow.md`.
 
 **Goal:** Let users inspect, edit, collapse, copy, and download the exact current
 result without rendering large JSON trees all at once.
@@ -70,9 +69,9 @@ Workspace contract or worker protocol changes require Orchestrator approval.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. Result Experience Ready requires
-exact-output, edit-validation, collapse, virtualization, keyboard, and download
-tests to pass.
+Requirements, Code, and UI Reviewers must approve. Result Experience Ready
+requires exact-output, edit-validation, collapse, virtualization, keyboard, and
+download tests to pass.
 
 ## Tasks
 
@@ -135,6 +134,7 @@ correctly, and large data is virtualized.
 - [ ] Large views render only visible rows.
 - [ ] Copy and Download use exact current result.
 - [ ] Requirements and Code Reviewers approve.
+- [ ] UI Reviewer approves Code, Tree, Object, Copy, and Download behavior.
 
 ## Handoff to Later Epics
 

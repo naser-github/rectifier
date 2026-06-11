@@ -23,6 +23,8 @@ The product interface must not be completed until this epic is accepted.
 - Data-token fingerprints.
 - Explicit syntax edit rules.
 - Candidate generation, application, and verification.
+- Repair-eligibility classification that recognizes whether a supported rule
+  may apply without generating a candidate.
 - Safe, ambiguous, and manual classification.
 - Strong accepted and refused repair fixtures.
 
@@ -139,7 +141,19 @@ boundaries, mutation checks, and safety review to pass.
 - [ ] Return multiple verified candidates as `ambiguous` without selecting one.
 - [ ] Return `manual` when no candidate can be proven safe.
 
-### Task 02.5: Perform the Repair Safety Audit
+### Task 02.5: Classify Repair Eligibility
+
+- [ ] Add a pure `classifyRepairEligibility()` API that recognizes whether a
+  confirmed diagnostic and its local syntax context match a supported repair
+  rule.
+- [ ] Do not generate, verify, select, or expose a repair candidate from
+  eligibility classification.
+- [ ] Return metadata only: supported-rule-may-apply or unsupported.
+- [ ] Test supported-rule classifications and false-positive boundaries.
+- [ ] Confirm full candidate generation and verification happen only after the
+  user-triggered repair request.
+
+### Task 02.6: Perform the Repair Safety Audit
 
 - [ ] Run every accepted, ambiguous, and refused fixture.
 - [ ] Add mutation and forbidden-import tests.

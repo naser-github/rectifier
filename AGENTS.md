@@ -15,6 +15,8 @@ Read these files before changing code:
 5. The assigned file under `doc/implementation/` for exact tasks, owned files,
    tests, reviewers, and the epic exit gate.
 6. `doc/agent-workflow.md` for required agent roles, reviews, and acceptance.
+7. `doc/agent-model-routing.md` for agent capability tiers, reasoning, context,
+   tools, fallback, retry, and escalation.
 
 When documents differ:
 
@@ -49,7 +51,32 @@ The risk-first implementation stages are:
 
 Do not build the complete UI before the Repair Safety Approved milestone.
 
-## 3. Architecture Boundaries
+## 3. Required Workflow Selection
+
+Before a Worker starts, the Project Orchestrator must name the task's required
+workflow, reviewers, and agent routing in the task brief.
+
+Use the workflows in `doc/agent-workflow.md`:
+
+- Normal Task for implementation without repair or user-facing visual changes.
+- Repair-Sensitive Task for repair engine, repair contracts, repair worker
+  messages, repair state, or repair eligibility.
+- UI Feature Task for user-facing visual or interaction behavior.
+- Repair-Sensitive UI Task when both repair and UI behavior change.
+- UI Integration Task for Epic 08.
+- Release Workflow for Epic 09.
+- Documentation-Only Task for documentation changes.
+
+When more than one workflow rule applies, use the stricter combined workflow
+and include every required reviewer. Never select a weaker workflow to reduce
+review work.
+
+Small Task workflow is allowed only when the task does not change product,
+repair, user-facing visual, accessibility, or shared-contract behavior.
+
+Follow `doc/agent-model-routing.md`. Never downgrade mandatory Tier A work.
+
+## 4. Architecture Boundaries
 
 - `src/engine/` contains pure TypeScript business logic.
 - `src/worker/` adapts pure logic to Web Worker messages.
@@ -65,19 +92,27 @@ The strict repair engine:
 - Must never mutate the original input.
 - Must return explicit safe, ambiguous, or manual results.
 - Must never invent, remove, reorder, or change user data.
+- Must own `classifyRepairEligibility()`.
+- Eligibility classification may report only whether a supported repair rule
+  may apply.
+- Eligibility classification must not generate, verify, select, or expose a
+  repair candidate.
+- Full candidate generation and verification may begin only after the user
+  clicks Repair JSON.
 
 The Web Worker:
 
 - Must call pure engine functions.
 - Must not duplicate repair rules.
 - Must ignore stale jobs and revisions.
+- Must use `classifyRepairEligibility()` for automatic Repair JSON eligibility.
 
 The UI:
 
 - Must not contain parsing, repair, conversion, or schema business logic.
 - Must treat the original input as protected.
 
-## 4. Component Organization
+## 5. Component Organization
 
 Use feature folders for product-specific components:
 
@@ -121,9 +156,12 @@ Do not create a broad `common/` folder. Put shared visual primitives in
 `components/ui/`, shared domain contracts in `domain/`, and small general
 helpers in `lib/`.
 
-## 5. React and TypeScript Rules
+## 6. React and TypeScript Rules
 
 - Use TypeScript strict mode.
+- Enable `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+  `noImplicitOverride`, `noFallthroughCasesInSwitch`, `noUnusedLocals`, and
+  `noUnusedParameters`.
 - Prefer function components and hooks.
 - Prefer pure functions and immutable updates.
 - Use discriminated unions for state with different outcomes.
@@ -134,10 +172,73 @@ helpers in `lib/`.
 - Keep props small and explicit.
 - Do not pass the complete workspace state to components that need only a few
   fields.
+- Use `interface` for stable object-shaped public contracts, service
+  boundaries, and component props.
+- Use `type` for discriminated unions, aliases, tuples, primitive unions,
+  mapped types, and conditional types.
+- Do not prefix interfaces with `I`.
+- Prefer `readonly` properties and `ReadonlyArray` at boundaries where
+  mutation is not intended.
+- Export shared contracts from `src/domain/`. Keep feature-only and file-only
+  types local.
+- Model expected business outcomes with explicit result types or discriminated
+  unions. Do not use exceptions for normal validation, repair, or ambiguity
+  outcomes.
+- Throw only for unexpected failures. Never silently swallow an error.
 
 Use shared domain types instead of recreating similar local types.
 
-## 6. Tailwind and CSS Rules
+### 6.1 Naming Rules
+
+- Use `PascalCase` for components, interfaces, types, and enums.
+- Use `camelCase` for variables, functions, props, and object fields.
+- Prefix hooks with `use`.
+- Prefix booleans with `is`, `has`, `can`, or `should` when practical.
+- Use `UPPER_SNAKE_CASE` for true module-level constants.
+- Name files after their main export. Use `.test.ts` or `.test.tsx` for tests.
+- Use product terms from the BRD, PRD, and domain contracts. Do not create
+  alternate names for the same concept.
+
+### 6.2 Dependency and Side-Effect Rules
+
+- Dependencies must point inward toward stable contracts and pure logic.
+- `src/engine/` may depend only on `src/domain/` and small pure helpers from
+  `src/lib/`.
+- `src/domain/` must not depend on React, browser APIs, workers, components, or
+  feature implementations.
+- Components may use hooks and domain contracts, but must not call repair,
+  conversion, schema, or parsing implementations directly.
+- Keep browser side effects in hooks or adapters. Keep business decisions in
+  pure functions.
+- Define small interfaces at browser and service boundaries, including worker
+  clients, storage, clipboard, file upload, and download behavior when those
+  boundaries need substitution in tests.
+- Inject boundary dependencies where a test must replace them. Do not hide
+  mutable global services inside business logic.
+- Do not create circular imports.
+- Avoid broad barrel `index.ts` files. Use direct imports unless a small,
+  intentional public API needs one.
+- Do not deep-import another feature's private files.
+- Keep the `dependency-cruiser` rules passing. Do not add a known-violation
+  allowlist to bypass an architecture failure.
+
+### 6.3 Maintainability Rules
+
+- Keep functions focused and return early when it improves clarity.
+- Replace repeated meaningful values with named constants owned by the correct
+  feature or domain module.
+- Do not add abstractions before there are real repeated behaviors or a clear
+  architecture boundary.
+- Comments explain why a non-obvious decision exists, not what readable code
+  already says.
+- Do not leave dead code, commented-out code, placeholder implementations, or
+  untracked follow-up work.
+- Do not weaken types, tests, or architecture boundaries to make a change pass.
+- Use ESLint for code-quality rules and Prettier for formatting.
+- Do not disable a lint rule without a narrow reason recorded beside the
+  disable.
+
+## 7. Tailwind and CSS Rules
 
 Use Tailwind utility classes inside React components for component layout and
 appearance.
@@ -173,7 +274,7 @@ Prefer design tokens over repeated raw colors:
 
 Do not introduce dark-mode styles in v1.
 
-## 7. Shared UI Rules
+## 8. Shared UI Rules
 
 - Use `Button` for repeated text-button behavior and variants.
 - Use `IconButton` for Upload, Clear, Copy, Download, and similar icon actions.
@@ -186,7 +287,7 @@ Do not introduce dark-mode styles in v1.
 Shared components must include keyboard behavior, focus states, accessible
 names, and tests.
 
-## 8. State and Data Flow
+## 9. State and Data Flow
 
 - Keep the original input separate from generated results.
 - Do not copy the full 10 MB input into multiple React state fields.
@@ -195,9 +296,13 @@ names, and tests.
 - Ignore stale worker responses.
 - Keep result format and result text together.
 - Keep repair candidates immutable.
+- Store repair eligibility separately from generated repair candidates.
+- Treat eligibility as permission to open the user-triggered repair flow, not
+  proof that a verified candidate exists.
+- If full analysis finds no verified candidate, show manual guidance.
 - Persist only the latest workspace.
 
-## 9. Testing Rules
+## 10. Testing Rules
 
 Use test-driven development for repair rules and bug fixes:
 
@@ -214,11 +319,19 @@ Every repair rule requires:
 - A data-preservation test.
 - An ambiguous or manual case when relevant.
 
+Repair eligibility requires:
+
+- A supported-rule classification test.
+- An unsupported-rule classification test.
+- A false-positive boundary test that continues to manual guidance after
+  user-triggered full analysis.
+- A test proving automatic eligibility never generates a candidate.
+
 Shared UI components require keyboard and accessibility tests.
 
 Do not weaken or remove a test only to make the suite pass.
 
-## 10. Accessibility Rules
+## 11. Accessibility Rules
 
 - Every action must be keyboard usable.
 - Icon-only buttons require accessible names and tooltips.
@@ -227,7 +340,7 @@ Do not weaken or remove a test only to make the suite pass.
 - Focus must remain visible.
 - Respect reduced-motion preferences.
 
-## 11. Performance Rules
+## 12. Performance Rules
 
 - Keep expensive JSON work in the Web Worker.
 - Reject files larger than 10 MB before reading them fully.
@@ -236,7 +349,7 @@ Do not weaken or remove a test only to make the suite pass.
 - Test 1 MB, 5 MB, and 10 MB cases.
 - Record validation and repair-analysis time before release.
 
-## 12. Change Discipline
+## 13. Change Discipline
 
 - Follow existing patterns unless the master roadmap or assigned epic
   explicitly changes them.
@@ -250,12 +363,15 @@ Do not weaken or remove a test only to make the suite pass.
 - Update documentation when a confirmed product or architecture decision
   changes.
 
-## 13. Required Verification
+## 14. Required Verification
 
 Before claiming a task is complete, run the commands relevant to that task.
 Before claiming the project is complete, run:
 
 ```bash
+npm run lint
+npm run format:check
+npm run architecture
 npm run typecheck
 npm test -- --run
 npm run build

@@ -1,7 +1,7 @@
 # Epic 03: Worker and Validation Execution Plan
 
-> **Required workflow:** Repair-sensitive workflow because this epic exposes
-> repair analysis through the worker.
+> **Required workflow:** Normal workflow, with UI Feature review for editor and
+> error-tray tasks and Repair Safety review for repair worker tasks.
 
 **Goal:** Build revision-based background processing, strict automatic
 validation, input upload and clear behavior, and precise error navigation.
@@ -75,10 +75,11 @@ Worker protocol contract changes require Orchestrator approval.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers inspect all tasks. The Repair Safety Reviewer
-must confirm the worker delegates to the pure engine and does not bypass its
-verification. Validation Pipeline Ready requires worker, diagnostics, editor,
-size-limit, and stale-response tests to pass.
+Requirements and Code Reviewers inspect all tasks. UI Reviewer approval is
+required for editor, Error Tray, error-focus, and red-caret tasks. The Repair
+Safety Reviewer must confirm the worker delegates to the pure engine and does
+not bypass its verification. Validation Pipeline Ready requires worker,
+diagnostics, editor, size-limit, and stale-response tests to pass.
 
 ## Tasks
 
@@ -129,13 +130,12 @@ size-limit, and stale-response tests to pass.
 
 ### Task 03.5: Expose Repair Analysis Safely
 
-- [ ] After confirmed invalid diagnostics, automatically return lightweight
-  repair-eligibility metadata for the current revision so the UI can know
-  whether at least one supported path exists.
-- [ ] Keep eligibility classification separate from candidate generation. It
-  must not generate, apply, select, or preview a candidate; create a result; or
-  open a dialog.
-- [ ] Start full candidate analysis only after the user clicks Repair JSON.
+- [ ] After confirmed invalid diagnostics, call the pure
+  `classifyRepairEligibility()` API for the current revision only to return
+  supported-rule eligibility metadata.
+- [ ] Eligibility classification must not generate, verify, select, show,
+  preview, or apply a candidate; create a result; or open a dialog.
+- [ ] Generate and verify candidates only after the user clicks Repair JSON.
 - [ ] Route user-triggered repair analysis and candidate application to the
   pure repair API.
 - [ ] Return only the accepted `safe`, `ambiguous`, or `manual` result.
@@ -166,7 +166,9 @@ ignored, and the worker never bypasses the pure repair engine.
 - [ ] First error receives focus and a red caret.
 - [ ] Old responses cannot overwrite current state.
 - [ ] Repair adapter passes Repair Safety review.
-- [ ] Automatic eligibility analysis never applies or shows a repair.
+- [ ] Automatic eligibility classification never generates, applies, or shows
+  a repair candidate.
+- [ ] UI Reviewer approves editor, Error Tray, and error-focus behavior.
 
 ## Handoff to Later Epics
 

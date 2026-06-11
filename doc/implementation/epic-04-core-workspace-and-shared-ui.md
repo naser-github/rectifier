@@ -1,7 +1,8 @@
 # Epic 04: Core Workspace and Shared UI Execution Plan
 
-> **Required workflow:** Normal implementation workflow from
-> `doc/agent-workflow.md`.
+> **Required workflow:** Normal implementation workflow, with Repair Safety
+> review for repair-state tasks and UI Feature review for shared controls and
+> InputPanel tasks.
 
 **Goal:** Create one predictable workspace state model and the shared interface
 primitives that every product feature will use.
@@ -81,9 +82,13 @@ task. Feature epics must not independently modify it.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. Core Workspace Ready requires
-state-transition, accessibility, persistence, and sample behavior tests to
-pass before parallel feature epics begin.
+Requirements and Code Reviewers must approve. Repair Safety Reviewer approval
+is also required for Tasks 04.1, 04.3, and 04.5 because they own repair state,
+eligibility, or integration. UI Reviewer approval is required for Tasks 04.2,
+04.3, and 04.5 because they create shared controls, disabled reasons, and the
+InputPanel. Core Workspace Ready requires state-transition, accessibility,
+persistence, and sample behavior tests to pass before parallel feature epics
+begin.
 
 ## Tasks
 
@@ -112,8 +117,8 @@ pass before parallel feature epics begin.
   reliable focus or hover events.
 - [ ] Connect the visible reason to the control through accessible description.
 - [ ] Centralize action eligibility and reason text from workspace state.
-- [ ] Enable Repair JSON only for invalid input with at least one supported
-  safe or ambiguous repair path.
+- [ ] Enable Repair JSON only for invalid input whose eligibility metadata says
+  a supported repair rule may apply.
 - [ ] Disable Repair JSON for valid input and unsupported invalid input with
   the exact reason.
 
@@ -169,6 +174,8 @@ accessible, and storage failure does not break the app.
 - [ ] Only the latest workspace is persisted.
 - [ ] Users can clear saved workspace data.
 - [ ] Requirements and Code Reviewers approve.
+- [ ] Repair Safety Reviewer approves repair-state and eligibility tasks.
+- [ ] UI Reviewer approves shared controls, disabled reasons, and InputPanel.
 
 ## Handoff to Later Epics
 

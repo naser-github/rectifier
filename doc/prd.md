@@ -390,13 +390,15 @@ Examples:
 ### 8.1 Repair JSON Action
 
 - **Repair JSON** appears at the end of the action dock.
-- It is available only when invalid JSON has at least one supported repair path.
-- It does not run automatically.
-- Automatic validation may return repair-eligibility metadata only to decide
-  whether the button is available. This metadata check must not generate,
-  select, preview, or apply a repair candidate.
-- Full repair candidate analysis begins only after the user clicks
-  **Repair JSON**.
+- It is available only when invalid JSON matches a supported repair rule that
+  may produce a safe or ambiguous repair path.
+- The visible repair flow does not start automatically.
+- After invalid JSON is confirmed, automatic validation may classify whether a
+  supported repair rule may apply only to decide whether **Repair JSON** is
+  available.
+- Eligibility classification must not generate, verify, select, preview, show,
+  or apply a candidate and must not create a result.
+- The visible repair flow begins only after the user clicks **Repair JSON**.
 - It must never directly change the original input.
 - Repair analysis and safe repair support input up to 10 MB.
 
@@ -438,7 +440,11 @@ When Rectifier cannot create a safe repair or reliable choices:
 - It highlights the problem.
 - It explains why automatic repair is unavailable.
 - It asks the user to edit the input manually.
-- **Repair JSON** remains disabled and explains why on hover.
+- **Repair JSON** remains disabled when eligibility classification recognizes
+  that no supported repair rule applies and explains why on hover.
+- If a supported rule appeared possible but full user-triggered analysis cannot
+  verify any candidate, Rectifier shows manual guidance without applying a
+  repair.
 
 ### 8.5 Supported Repair Rules
 

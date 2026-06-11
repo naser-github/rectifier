@@ -1,7 +1,7 @@
 # Epic 06: Format, Convert, and Schema Execution Plan
 
-> **Required workflow:** Normal implementation workflow from
-> `doc/agent-workflow.md`.
+> **Required workflow:** Normal implementation workflow, with UI Feature review
+> for Schema Drawer tasks.
 
 **Goal:** Add deterministic formatting, YAML/XML/CSV conversion, automatic
 nested JSON flattening for CSV, and separate JSON Schema checking.
@@ -76,9 +76,10 @@ before changing `src/domain/workerProtocol.ts`.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. Processing Tools Ready requires
-focused worker tests, schema component tests, type checking, and documented
-conversion contracts.
+Requirements and Code Reviewers must approve. UI Reviewer approval is also
+required for Schema Drawer tasks. Processing Tools Ready requires focused
+worker tests, schema component tests, type checking, and documented conversion
+contracts.
 
 ## Tasks
 
@@ -157,6 +158,7 @@ unsupported CSV or schema state provides a clear reason.
 - [ ] Schema Drawer opens, closes, clears, and never changes the result.
 - [ ] All processing actions use the single revision-based worker.
 - [ ] Requirements and Code Reviewers approve.
+- [ ] UI Reviewer approves the Schema Drawer behavior.
 
 ## Handoff to Later Epics
 

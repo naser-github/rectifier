@@ -15,6 +15,8 @@ The goal is to prevent:
 The master epic order and global execution rules are defined in
 `doc/implementation.md`. Exact implementation tasks are defined in the assigned
 file under `doc/implementation/`. Coding standards are defined in `AGENTS.md`.
+Agent model, reasoning, context, tool, retry, and fallback rules are defined in
+`doc/agent-model-routing.md`.
 
 ## 2. Core Workflow
 
@@ -60,9 +62,11 @@ Use one Project Orchestrator for the complete project.
 Responsibilities:
 
 - Read `AGENTS.md`, BRD, PRD, approved prototype, master roadmap, assigned epic
-  plan, and this workflow.
+  plan, this workflow, and `doc/agent-model-routing.md`.
 - Select the next task using the required epic order and dependency gates.
 - Confirm task dependencies are complete.
+- Select the required workflow and every required reviewer.
+- Select agent routing using `doc/agent-model-routing.md`.
 - Create the task brief.
 - Assign non-overlapping file ownership.
 - Start the Worker and Reviewers.
@@ -135,9 +139,14 @@ The Code Reviewer checks:
 - Correctness and regressions.
 - Architecture boundaries.
 - TypeScript safety.
+- Correct `interface` and `type` usage for public contracts and unions.
+- Dependency direction, circular imports, and cross-feature private imports.
+- Naming consistency with product and domain terms.
 - Component reuse and file responsibilities.
 - Duplicate logic.
-- Error handling.
+- Explicit result modeling and error handling.
+- Side-effect isolation and replaceable boundary interfaces.
+- Magic values, dead code, commented-out code, and premature abstractions.
 - Test quality.
 - Accessibility implementation.
 - Performance and large-file risk.
@@ -159,6 +168,12 @@ The Repair Safety Reviewer checks:
 
 - Original input remains unchanged.
 - No user data is invented, removed, reordered, or changed.
+- Repair eligibility classification never generates, verifies, selects, or
+  exposes a repair candidate.
+- Full candidate generation and verification begin only after the user clicks
+  Repair JSON.
+- Eligibility false positives continue to manual guidance without applying a
+  repair.
 - Candidate semantic and exact-source data-token fingerprints match.
 - Syntax edits do not overlap protected key or value content.
 - Complete repaired JSON is strictly valid.
@@ -170,8 +185,8 @@ A Repair Safety Reviewer rejection blocks the task.
 
 ### 3.6 UI Reviewer
 
-Add a UI Reviewer for Epic 08 and any task that changes the final product
-layout or approved visual behavior.
+Add a UI Reviewer for Epic 08 and any task that changes user-facing visual,
+interaction, responsive, focus, or accessibility behavior.
 
 The UI Reviewer checks:
 
@@ -202,6 +217,21 @@ Safety approval.
 
 ## 4. Workflow Types
 
+### Workflow Selection Rules
+
+The Project Orchestrator selects the workflow before assigning a Worker.
+
+- Always include Requirements and Code review coverage for implementation
+  tasks. A Combined Reviewer may cover both only for an eligible Small Task.
+- Add Repair Safety review for repair engine, repair contracts, repair worker
+  messages, repair state, repair eligibility, or repair UX.
+- Add UI review for user-facing visual, interaction, responsive, focus, or
+  accessibility behavior.
+- Use Repair-Sensitive UI when both repair and UI rules apply.
+- Use Release Workflow for Epic 09.
+- Never use Small Task to avoid a required specialist reviewer.
+- When multiple rules apply, include every required reviewer.
+
 ### 4.1 Normal Task
 
 Use for most implementation tasks:
@@ -223,7 +253,34 @@ Orchestrator
   -> Orchestrator
 ```
 
-### 4.3 Small Task
+### 4.3 UI Feature Task
+
+Use for a task that creates or changes user-facing visual behavior:
+
+```text
+Orchestrator
+  -> Worker
+  -> Requirements Reviewer
+  -> Code Reviewer
+  -> UI Reviewer
+  -> Orchestrator
+```
+
+### 4.4 Repair-Sensitive UI Task
+
+Use for repair dialogs and other user-facing repair behavior:
+
+```text
+Orchestrator
+  -> Worker
+  -> Repair Safety Reviewer
+  -> Requirements Reviewer
+  -> Code Reviewer
+  -> UI Reviewer
+  -> Orchestrator
+```
+
+### 4.5 Small Task
 
 Use only when the change:
 
@@ -240,7 +297,7 @@ Orchestrator -> Worker -> Combined Reviewer -> Orchestrator
 
 The Combined Reviewer performs both requirements and code review.
 
-### 4.4 Documentation-Only Task
+### 4.6 Documentation-Only Task
 
 Use:
 
@@ -250,7 +307,7 @@ Orchestrator -> Documentation Worker -> Requirements Reviewer -> Orchestrator
 
 The reviewer checks document priority, links, naming, and contradictions.
 
-### 4.5 UI Integration Task
+### 4.7 UI Integration Task
 
 Use for Epic 08:
 
@@ -263,7 +320,7 @@ Orchestrator
   -> Orchestrator
 ```
 
-### 4.6 Release Workflow
+### 4.8 Release Workflow
 
 Use for Epic 09:
 
@@ -293,11 +350,34 @@ this format:
 ## Source Task
 - Task [epic.task number and name]
 
+## Required Workflow
+- [Exact workflow name]
+
+## Workflow Reason
+- [Why this workflow and its specialist reviewers are required]
+
+## Required Reviewers
+- [Exact reviewer names required by the selected workflow]
+
+## Agent Routing
+- Role: [Agent role]
+- Capability tier: [Tier A, Tier B, or Tier C]
+- Reasoning level: [XHigh, High, Medium, or Low]
+- Exact model for this run: [Required current model name]
+- Routing reason: [Why this tier is sufficient]
+- Allowed tools: [Tools]
+- Required context: [Documents and contracts]
+- Retry limit: [Number]
+- Escalation trigger: [Concrete trigger]
+- Fallback: [Same-tier or higher-tier model]
+
 ## Goal
 [One clear outcome]
 
 ## Required Reading
 - `AGENTS.md`
+- `doc/agent-workflow.md`
+- `doc/agent-model-routing.md`
 - Relevant BRD sections
 - Relevant PRD sections
 - Master roadmap
@@ -306,6 +386,12 @@ this format:
 
 ## Dependencies
 - [Accepted tasks or contracts this task depends on]
+
+## Required Contracts and Interfaces
+- [Shared types, public interfaces, boundary interfaces, or none]
+
+## Dependency Boundaries
+- [Allowed dependency direction and forbidden imports]
 
 ## File Ownership
 - Create: `path`
@@ -334,7 +420,9 @@ this format:
 ```
 
 The brief must use exact paths and cannot contain unresolved placeholder text
-or vague instructions.
+or vague instructions. The named workflow and reviewers must match the assigned
+epic task and the workflow-selection rules. Agent routing must follow
+`doc/agent-model-routing.md`.
 
 ## 6. Worker Handoff
 
@@ -342,6 +430,17 @@ The Worker reports:
 
 ```markdown
 ## Worker Handoff
+
+### Workflow Followed
+- [Exact workflow name from the task brief]
+
+### Agent Routing Used
+- Role: [Agent role]
+- Capability tier: [Tier]
+- Exact model: [Model name]
+- Reasoning level: [Level]
+- Retries used: [Number]
+- Fallback or escalation used: [Details or "None"]
 
 ### Implemented
 - [Behavior]
@@ -357,9 +456,14 @@ The Worker reports:
 
 ### Reviewer Attention
 - [High-risk areas]
+
+### Required Reviewers
+- [Reviewer name]: Pending or Approved
 ```
 
 The Orchestrator sends the implementation and handoff to reviewers.
+Reviewers must be separate read-only agent instances and must not approve their
+own implementation work.
 
 ## 7. Review Findings
 
@@ -395,12 +499,14 @@ Rules:
 
 The Project Orchestrator accepts a task only after:
 
-1. Required reviewers approve.
+1. Every reviewer named in the task brief approves.
 2. Required task tests pass.
 3. Type checking passes for affected TypeScript work.
 4. The task diff contains no unrelated changes.
 5. Required documents and architecture rules are followed.
-6. No known blocking issue remains.
+6. The workflow named in the task brief was followed.
+7. Agent routing, retry, and escalation followed `doc/agent-model-routing.md`.
+8. No known blocking issue remains.
 
 The Orchestrator then:
 
@@ -468,6 +574,10 @@ When a Worker needs one:
 Stop the task and notify the Orchestrator when:
 
 - Requirements conflict.
+- The assigned workflow omits a reviewer required by the workflow-selection
+  rules.
+- The selected model tier is below the minimum required by
+  `doc/agent-model-routing.md`.
 - The approved prototype conflicts with a safety rule.
 - A repair cannot be proven data-preserving.
 - A required dependency or browser API is unsuitable.

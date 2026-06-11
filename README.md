@@ -11,3 +11,4 @@ safe syntax repair tool.
 - [Approved light UI prototype](doc/ui/rectifier-light-v1.html)
 - [Agent coding standards](AGENTS.md)
 - [Agent workflow](doc/agent-workflow.md)
+- [Agent model routing](doc/agent-model-routing.md)

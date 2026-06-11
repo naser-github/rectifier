@@ -1,7 +1,7 @@
 # Epic 05: Repair Experience Execution Plan
 
-> **Required workflow:** Repair-sensitive workflow from
-> `doc/agent-workflow.md`, including a Repair Safety Reviewer.
+> **Required workflow:** Repair-Sensitive UI workflow from
+> `doc/agent-workflow.md`.
 
 **Goal:** Let users understand and control safe, ambiguous, and unsupported
 repairs without changing the protected original input.
@@ -67,7 +67,7 @@ the final Action Dock require Orchestrator approval.
 
 ### Review and Completion Policy
 
-Requirements, Code, and Repair Safety Reviewers must approve. Repair UX
+Requirements, Code, Repair Safety, and UI Reviewers must approve. Repair UX
 Approved requires component tests proving protected input and explicit user
 choice for every repair outcome.
 
@@ -102,6 +102,8 @@ choice for every repair outcome.
 - [ ] Keep Repair JSON disabled for unsupported input and show its manual-edit
   reason through DisabledReason.
 - [ ] Show Edit manually inside an ambiguous choice flow.
+- [ ] Show manual guidance when user-triggered full analysis finds no verified
+  candidate even though eligibility classification allowed the click.
 - [ ] Close any open repair dialog and clear its state immediately when the
   input revision changes.
 - [ ] Close the dialog and focus the relevant input error when manual editing is
@@ -136,6 +138,7 @@ continue until the user explicitly selects a verified choice.
 - [ ] Cancel and Reject preserve all existing state correctly.
 - [ ] Dialogs are keyboard accessible.
 - [ ] Requirements, Code, and Repair Safety Reviewers approve.
+- [ ] UI Reviewer approves repair dialogs and focus behavior.
 
 ## Handoff to Later Epics
 

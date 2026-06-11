@@ -16,7 +16,8 @@ interface state and browser interactions.
 **Tech Stack:** React, TypeScript, Vite, Tailwind CSS, CodeMirror 6,
 `jsonc-parser`, Ajv with `ajv-formats`, `js-yaml`, `fast-xml-parser`, Papa Parse,
 `@tanstack/react-virtual`, `idb-keyval`, Radix Tooltip, Lucide React, `clsx`,
-`tailwind-merge`, Vitest, Testing Library, and Playwright.
+`tailwind-merge`, ESLint, Prettier, dependency-cruiser, Vitest, Testing Library,
+and Playwright.
 
 ## 1. Purpose of This Roadmap
 
@@ -43,6 +44,8 @@ All implementation work must read:
 5. This roadmap for epic order and global execution rules.
 6. The assigned epic file for exact execution work.
 7. `doc/agent-workflow.md` for roles, handoffs, reviews, and acceptance.
+8. `doc/agent-model-routing.md` for agent capability, reasoning, context, tools,
+   fallback, retry, and escalation.
 
 When documents differ:
 
@@ -92,6 +95,23 @@ Orchestrator.
   paper texture, CodeMirror overrides, shared animations, and accessibility
   helpers.
 
+### 3.5 Code Quality and Interface Policy
+
+- Follow the interface, type, naming, dependency, side-effect, and
+  maintainability rules in `AGENTS.md`.
+- Use `interface` for stable object-shaped public contracts and replaceable
+  browser or service boundaries.
+- Use `type` for discriminated unions and other composed TypeScript types.
+- Keep shared contracts in `src/domain/`; keep feature-private types local.
+- Keep domain and engine logic pure. Put browser side effects behind hooks or
+  small adapters with explicit interfaces when tests need substitution.
+- Enforce inward dependency direction, direct imports, and no circular imports.
+- Use dependency-cruiser to enforce source boundaries and circular-import
+  rules.
+- Model expected validation, repair, and ambiguity outcomes with explicit
+  result types rather than exceptions.
+- Enforce code-quality rules with ESLint and formatting with Prettier.
+
 ## 4. Planned Source Boundaries
 
 ```text
@@ -119,6 +139,9 @@ e2e/                   Browser and performance tests
 Shared contracts include files under `src/domain/`, the worker protocol,
 workspace reducer state, repair result types, and shared UI primitive APIs.
 Only the Project Orchestrator may approve a shared contract change.
+
+Architecture tests must enforce the source dependency direction, forbidden
+imports, and circular-import policy defined in `AGENTS.md`.
 
 ## 5. Epic Order
 
@@ -154,13 +177,13 @@ Repair Safety approval.
 
 | Epic | Purpose | Depends On | Required Workflow | Exit Milestone | Status |
 | --- | --- | --- | --- | --- | --- |
-| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | None | Normal | Foundation Ready | Not started |
+| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | None | Normal plus UI Feature for visual shell | Foundation Ready | Not started |
 | [02 Strict Repair Engine](implementation/epic-02-strict-repair-engine.md) | Prove repairs cannot change user data or guess intent | Epic 01 contracts and tests | Repair-sensitive | Repair Safety Approved | Not started |
-| [03 Worker and Validation](implementation/epic-03-worker-and-validation.md) | Add revision-based worker processing, validation, upload, and error focus | Epics 01-02 | Repair-sensitive | Validation Pipeline Ready | Not started |
-| [04 Core Workspace and Shared UI](implementation/epic-04-core-workspace-and-shared-ui.md) | Add workspace state, shared controls, first sample, disabled reasons, and storage | Epic 03 | Normal | Core Workspace Ready | Not started |
-| [05 Repair Experience](implementation/epic-05-repair-experience.md) | Add safe repair preview, ambiguous choices, and manual path | Epic 04 | Repair-sensitive | Repair UX Approved | Not started |
-| [06 Format, Convert, and Schema](implementation/epic-06-format-convert-schema.md) | Add Beautify, Minify, YAML, XML, flattened CSV, and Schema Check | Epic 04 | Normal | Processing Tools Ready | Not started |
-| [07 Result Views and Output](implementation/epic-07-result-views-and-output.md) | Add editable Code, collapsible Tree/Object, Copy, and Download | Epic 04 | Normal | Result Experience Ready | Not started |
+| [03 Worker and Validation](implementation/epic-03-worker-and-validation.md) | Add revision-based worker processing, validation, upload, and error focus | Epics 01-02 | Normal plus Repair Safety and UI Feature tasks | Validation Pipeline Ready | Not started |
+| [04 Core Workspace and Shared UI](implementation/epic-04-core-workspace-and-shared-ui.md) | Add workspace state, shared controls, first sample, disabled reasons, and storage | Epic 03 | Normal plus Repair Safety and UI Feature tasks | Core Workspace Ready | Not started |
+| [05 Repair Experience](implementation/epic-05-repair-experience.md) | Add safe repair preview, ambiguous choices, and manual path | Epic 04 | Repair-Sensitive UI | Repair UX Approved | Not started |
+| [06 Format, Convert, and Schema](implementation/epic-06-format-convert-schema.md) | Add Beautify, Minify, YAML, XML, flattened CSV, and Schema Check | Epic 04 | Normal plus UI Feature for Schema Drawer | Processing Tools Ready | Not started |
+| [07 Result Views and Output](implementation/epic-07-result-views-and-output.md) | Add editable Code, collapsible Tree/Object, Copy, and Download | Epic 04 | UI Feature | Result Experience Ready | Not started |
 | [08 Product UI, Accessibility, and Responsive](implementation/epic-08-product-ui-accessibility-responsive.md) | Assemble and polish the approved light workspace | Epics 05-07 | UI Integration | UI Acceptance Approved | Not started |
 | [09 E2E, Performance, and Release](implementation/epic-09-e2e-performance-release.md) | Prove full flows, 10 MB behavior, safety, and release readiness | Epics 01-08 | Release | Release Candidate Approved | Not started |
 
@@ -187,7 +210,8 @@ An epic may start only when:
 - Every required dependency milestone is accepted.
 - Its detailed epic file has no unresolved conflict with the BRD or PRD.
 - The Project Orchestrator selects its first dependency-safe task.
-- The Orchestrator creates a task brief with exact file ownership.
+- The Orchestrator creates a task brief with exact workflow, reviewers, file
+  ownership, agent routing, tests, and verification commands.
 - No active Worker owns the same files or shared contracts.
 
 Inside each epic, numbered tasks run in numeric order unless the epic explicitly
@@ -225,6 +249,14 @@ Normal tasks require:
 Repair-sensitive tasks also require:
 
 - Repair Safety Reviewer.
+
+User-facing visual, interaction, responsive, focus, or accessibility tasks also
+require:
+
+- UI Reviewer.
+
+Repair-sensitive UI tasks require both Repair Safety and UI Reviewers. Release
+tasks require the complete Release Workflow from `doc/agent-workflow.md`.
 
 A task is blocked by any unresolved Blocking finding. Important findings must
 be fixed unless the Orchestrator records a specific reason for deferral.
@@ -306,6 +338,9 @@ The Project Orchestrator accepts an epic only when:
 - [ ] Final verification passes:
 
 ```bash
+npm run lint
+npm run format:check
+npm run architecture
 npm run typecheck
 npm test -- --run
 npm run build
