@@ -11,12 +11,16 @@ The goal is to prevent:
 - Architecture violations.
 - Duplicate or conflicting agent changes.
 - Tasks being marked complete without verification.
+- Tasks and epics finishing without estimated and actual-or-unavailable
+  execution-cost evidence.
 
 The master epic order and global execution rules are defined in
 `doc/implementation.md`. Exact implementation tasks are defined in the assigned
 file under `doc/implementation/`. Coding standards are defined in `AGENTS.md`.
 Agent model, reasoning, context, tool, retry, and fallback rules are defined in
 `doc/agent-model-routing.md`.
+Execution report ownership, cost terms, templates, and calculation rules are
+defined in `doc/execution-reports/README.md`.
 
 ## 2. Core Workflow
 
@@ -51,6 +55,8 @@ Worker verification passes
 + Requirements Reviewer approves
 + Code Reviewer approves
 + Project Orchestrator verification passes
++ Task execution report is complete
++ Epic execution report is updated
 ```
 
 ## 3. Roles
@@ -68,12 +74,17 @@ Responsibilities:
 - Select the required workflow and every required reviewer.
 - Select agent routing using `doc/agent-model-routing.md`.
 - Create the task brief.
+- Create the task execution report and record its planned routing, estimated
+  cost, and retry reserve before starting the Worker.
 - Assign non-overlapping file ownership.
 - Start the Worker and Reviewers.
+- Record every Orchestrator, Worker, Reviewer, retry, fallback, and rework
+  execution in the task report.
 - Resolve reviewer disagreements using document priority.
 - Run final task verification.
 - Review the final diff.
 - Update completed epic-plan checkboxes only after acceptance.
+- Update the epic execution report before accepting each task.
 - Accept an epic only after its exit gate and milestone review pass.
 - Update the epic status in the master roadmap only after epic acceptance.
 - Prevent agents from changing unrelated files.
@@ -360,16 +371,28 @@ this format:
 - [Exact reviewer names required by the selected workflow]
 
 ## Agent Routing
+- Provider: [Provider name]
 - Role: [Agent role]
 - Capability tier: [Tier A, Tier B, or Tier C]
 - Reasoning level: [XHigh, High, Medium, or Low]
 - Exact model for this run: [Required current model name]
+- Billing type: [API, subscription, local, or other]
+- Processing tier: [Provider-specific tier or "Not applicable"]
 - Routing reason: [Why this tier is sufficient]
 - Allowed tools: [Tools]
 - Required context: [Documents and contracts]
 - Retry limit: [Number]
 - Escalation trigger: [Concrete trigger]
 - Fallback: [Same-tier or higher-tier model]
+
+## Execution Reporting
+- Task report: `doc/execution-reports/epic-[number]/tasks/task-[number].md`
+- Epic report: `doc/execution-reports/epic-[number]/epic-report.md`
+- Pricing registry: `doc/execution-reports/pricing.yml`
+- Estimated usage cost: [Amount and currency, or `Unavailable` with reason]
+- Estimate basis: [Comparable task, planned usage, and pricing assumptions]
+- Retry reserve: [Amount or percentage]
+- Report owner: Project Orchestrator
 
 ## Goal
 [One clear outcome]
@@ -378,6 +401,7 @@ this format:
 - `AGENTS.md`
 - `doc/agent-workflow.md`
 - `doc/agent-model-routing.md`
+- `doc/execution-reports/README.md`
 - Relevant BRD sections
 - Relevant PRD sections
 - Master roadmap
@@ -435,12 +459,21 @@ The Worker reports:
 - [Exact workflow name from the task brief]
 
 ### Agent Routing Used
+- Provider: [Provider name]
 - Role: [Agent role]
 - Capability tier: [Tier]
 - Exact model: [Model name]
 - Reasoning level: [Level]
+- Billing type: [API, subscription, local, or other]
+- Processing tier: [Provider-specific tier or "Not applicable"]
 - Retries used: [Number]
 - Fallback or escalation used: [Details or "None"]
+
+### Execution Usage
+- Execution ID: [Epic, task, role, and run number]
+- Reported usage: [Provider-specific usage values or `Unavailable`]
+- Usage source: [Runner, provider response, dashboard, or `Unavailable`]
+- Usage unavailable reason: [Reason or "None"]
 
 ### Implemented
 - [Behavior]
@@ -464,6 +497,10 @@ The Worker reports:
 The Orchestrator sends the implementation and handoff to reviewers.
 Reviewers must be separate read-only agent instances and must not approve their
 own implementation work.
+
+Every Reviewer handoff must also include the `Agent Routing Used` and
+`Execution Usage` fields above. Agents report only usage that their runner or
+provider exposes. They must not estimate or guess actual usage.
 
 ## 7. Review Findings
 
@@ -495,7 +532,40 @@ Rules:
 - Minor findings may be deferred when unrelated to task acceptance.
 - Reviewers re-check affected areas after fixes.
 
-## 8. Task Acceptance
+## 8. Execution Reports
+
+The Project Orchestrator creates and maintains reports using:
+
+- `doc/execution-reports/templates/task-report.md`
+- `doc/execution-reports/templates/epic-report.md`
+- `doc/execution-reports/pricing.yml`
+
+Before execution, the task report records planned roles, providers, models,
+estimated cost, and retry reserve.
+
+After each execution, the Orchestrator records the execution ID, actual
+provider and model, reported usage, applicable pricing entry, calculated cost,
+result, and routing-change reason. Estimated values are allowed only when
+labeled `Estimated`. Actual usage and actual cost must never be guessed.
+
+Use these cost labels exactly:
+
+- `Estimated usage cost`: pre-execution forecast.
+- `Calculated usage cost`: real reported usage multiplied by recorded provider
+  prices.
+- `API-equivalent cost`: public API price comparison for subscription or other
+  non-API execution.
+- `Billed cost`: amount proven by a provider invoice or billing dashboard.
+- `Unavailable`: exact evidence is not exposed; include the reason.
+
+The task report includes all Worker, Reviewer, Orchestrator, retry, fallback,
+and rework executions. The epic report summarizes accepted task reports.
+Executions that span multiple tasks must stay as shared epic overhead and must
+not be guessed or divided between tasks.
+Detailed calculation and provider-neutral rules live in
+`doc/execution-reports/README.md`.
+
+## 9. Task Acceptance
 
 The Project Orchestrator accepts a task only after:
 
@@ -507,6 +577,9 @@ The Project Orchestrator accepts a task only after:
 6. The workflow named in the task brief was followed.
 7. Agent routing, retry, and escalation followed `doc/agent-model-routing.md`.
 8. No known blocking issue remains.
+9. The task execution report is complete, every execution is recorded, and
+   missing usage or cost fields contain an `Unavailable` reason.
+10. The epic execution report is updated with the task result.
 
 The Orchestrator then:
 
@@ -514,7 +587,7 @@ The Orchestrator then:
 - Records any accepted limitation.
 - Moves to the next dependency-safe task.
 
-### 8.1 Epic Acceptance
+### 9.1 Epic Acceptance
 
 The Project Orchestrator accepts an epic only after:
 
@@ -524,11 +597,13 @@ The Project Orchestrator accepts an epic only after:
 4. Required milestone reviewers approve.
 5. The epic output and contract handoff are recorded.
 6. No unresolved Blocking or unexplained Important finding remains.
+7. The epic execution report is complete and reconciles all accepted task
+   reports.
 
 The Orchestrator then changes the epic status in `doc/implementation.md` to
 `Accepted` and may open dependent epics.
 
-## 9. Parallel Work Rules
+## 10. Parallel Work Rules
 
 Parallel work is allowed only after the Orchestrator confirms:
 
@@ -549,7 +624,7 @@ Unsafe parallel examples:
 - UI and Worker agents independently changing the worker protocol.
 - Any complete UI work before repair-engine safety approval.
 
-## 10. Shared Contract Changes
+## 11. Shared Contract Changes
 
 Shared contracts include:
 
@@ -569,7 +644,7 @@ When a Worker needs one:
 4. Apply and test the contract change.
 5. Notify affected agents before work resumes.
 
-## 11. Failure and Escalation Rules
+## 12. Failure and Escalation Rules
 
 Stop the task and notify the Orchestrator when:
 
@@ -586,7 +661,7 @@ Stop the task and notify the Orchestrator when:
 
 Do not silently choose a new product behavior.
 
-## 12. Project Completion
+## 13. Project Completion
 
 Before declaring Rectifier complete, the Project Orchestrator requires:
 
@@ -604,4 +679,5 @@ npx playwright test
 ```
 
 - Recorded 1 MB, 5 MB, and 10 MB performance results.
+- Complete task and epic execution reports.
 - No unresolved Blocking or Important findings.

@@ -46,6 +46,7 @@ All implementation work must read:
 7. `doc/agent-workflow.md` for roles, handoffs, reviews, and acceptance.
 8. `doc/agent-model-routing.md` for agent capability, reasoning, context, tools,
    fallback, retry, and escalation.
+9. `doc/execution-reports/README.md` for task and epic execution-cost reporting.
 
 When documents differ:
 
@@ -212,6 +213,9 @@ An epic may start only when:
 - The Project Orchestrator selects its first dependency-safe task.
 - The Orchestrator creates a task brief with exact workflow, reviewers, file
   ownership, agent routing, tests, and verification commands.
+- The Orchestrator creates the epic execution report when the epic first
+  starts and creates the selected task's execution report before its Worker
+  starts.
 - No active Worker owns the same files or shared contracts.
 
 Inside each epic, numbered tasks run in numeric order unless the epic explicitly
@@ -223,17 +227,23 @@ files or shared contracts.
 
 For every task:
 
-1. Worker defines the exact verification before editing.
-2. For behavior code and bug fixes, Worker writes the required failing test and
+1. Project Orchestrator creates the task execution report, records planned
+   routing and estimated cost, and records the report paths in the task brief.
+2. Worker defines the exact verification before editing.
+3. For behavior code and bug fixes, Worker writes the required failing test and
    confirms the expected failure.
-3. For configuration or documentation work, Worker records the focused check
+4. For configuration or documentation work, Worker records the focused check
    that will prove the change.
-4. Worker implements only the assigned behavior.
-5. Worker runs focused tests, type checking, and other required verification.
-6. Worker sends a handoff with changed files, results, limits, and review risks.
-7. Required reviewers inspect the work.
-8. Worker fixes accepted findings and reviewers re-check affected areas.
-9. Project Orchestrator verifies the task and marks its epic checkbox complete.
+5. Worker implements only the assigned behavior.
+6. Worker runs focused tests, type checking, and other required verification.
+7. Worker sends a handoff with changed files, results, limits, review risks,
+   and available execution-usage details.
+8. Required reviewers inspect the work and report available execution-usage
+   details.
+9. Worker fixes accepted findings and reviewers re-check affected areas.
+10. Project Orchestrator records every execution, completes the task report,
+    and updates the epic report.
+11. Project Orchestrator verifies the task and marks its epic checkbox complete.
 
 Documentation-only tasks use the documentation workflow in
 `doc/agent-workflow.md`.
@@ -290,7 +300,27 @@ The Project Orchestrator accepts an epic only when:
 - The epic acceptance checklist passes.
 - No Blocking or unexplained Important finding remains.
 - The epic's output and contract handoff are recorded for dependent epics.
+- Every task execution report is complete and the epic execution report shows
+  estimated and actual-or-unavailable cost results.
 - The roadmap status is changed to `Accepted`.
+
+### 7.7 Execution Reporting
+
+Every task and epic must follow `doc/execution-reports/README.md`.
+
+- Create one task report for each task.
+- Create one epic report that summarizes all task reports.
+- Record planned provider and model routing before execution.
+- Record the actual provider and exact model used for every Orchestrator,
+  Worker, Reviewer, retry, fallback, and rework execution.
+- Keep estimated cost, calculated usage cost, API-equivalent cost, and billed
+  cost separate.
+- Calculate provider-neutral cost using only usage dimensions and rates that
+  the provider charges.
+- Never guess actual usage or cost. Use `Unavailable` with a reason when exact
+  evidence is missing.
+- The Project Orchestrator owns report updates and must update the epic report
+  before accepting each task.
 
 ## 8. Global Repair Safety Rules
 
@@ -334,6 +364,7 @@ The Project Orchestrator accepts an epic only when:
   invalid escapes, and unterminated strings are tested.
 - [ ] Validation time, repair-analysis time, and available memory measurements
   are recorded.
+- [ ] Every task execution report and epic execution report is complete.
 - [ ] The approved light prototype and PRD prototype exceptions are followed.
 - [ ] Final verification passes:
 

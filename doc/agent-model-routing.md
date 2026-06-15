@@ -134,9 +134,12 @@ cross-epic scope, repair policy, or final release traceability.
 
 Before assigning a Worker or Reviewer, the Project Orchestrator records:
 
+- Provider.
 - Agent role.
 - Capability tier.
 - Reasoning level.
+- Billing type.
+- Processing tier when the provider uses one.
 - Why the selected tier is sufficient.
 - Required context documents.
 - Allowed tools.
@@ -146,8 +149,9 @@ Before assigning a Worker or Reviewer, the Project Orchestrator records:
 Use a higher tier when uncertain. Never use a lower tier because the preferred
 model is busy if that would violate this policy.
 
-The exact model name must be recorded in every task brief for that execution
-run. Capability tiers remain the durable policy.
+The provider and exact model name must be recorded in every task brief and every
+actual execution record for that run. Capability tiers remain the durable
+policy.
 
 ## 7. Mandatory Tier A Work
 
@@ -191,6 +195,7 @@ Every agent receives:
 - `AGENTS.md`
 - `doc/agent-workflow.md`
 - `doc/agent-model-routing.md`
+- `doc/execution-reports/README.md`
 - The task brief
 - The assigned epic task
 
@@ -286,7 +291,7 @@ When the preferred model is unavailable:
 
 Never silently downgrade a mandatory Tier A role.
 
-## 13. Cost and Speed Policy
+## 13. Cost, Usage, and Speed Policy
 
 - Prefer Tier C for safe, mechanical documentation work.
 - Prefer Tier B for focused normal implementation and UI tasks.
@@ -298,26 +303,74 @@ Never silently downgrade a mandatory Tier A role.
 
 Safety, correctness, and required reviews take priority over cost.
 
+The Project Orchestrator must use the provider-neutral reporting rules and
+templates in `doc/execution-reports/README.md`.
+
+Before a task starts:
+
+- Record each planned role, provider, exact model, billing type, estimated
+  usage cost, estimate basis, processing tier, and retry reserve.
+- Use a current pricing entry from `doc/execution-reports/pricing.yml` when a
+  provider exposes public or contracted rates.
+
+After every execution:
+
+- Record the actual provider, exact model, reported usage dimensions, pricing
+  entry, calculation result, and execution result.
+- Record a routing-change reason when actual routing differs from planned
+  routing.
+- Use only runner, provider response, dashboard, or invoice evidence for actual
+  usage and billed cost.
+- Never guess actual usage or cost. Use `Unavailable` with a reason when exact
+  evidence is missing.
+
+Different providers may charge for input, output, cache reads, cache writes,
+reasoning, requests, tools, images, time, or other dimensions. Calculate only
+the dimensions charged by that provider. Do not apply an OpenAI-specific
+formula to another provider.
+
+Keep these values separate:
+
+- Estimated usage cost.
+- Calculated usage cost.
+- API-equivalent cost for subscription or non-API execution.
+- Billed cost proven by billing evidence.
+
+Local execution may have zero API cost while infrastructure cost remains
+`Unavailable`. Subscription execution may have billed cost marked
+`Included in subscription` while API-equivalent cost is recorded separately.
+
 ## 14. Task Brief Model Routing Template
 
 ```markdown
 ## Agent Routing
+- Provider: [Provider name]
 - Role: [Agent role]
 - Capability tier: [Tier A, Tier B, or Tier C]
 - Reasoning level: [XHigh, High, Medium, or Low]
 - Exact model for this run: [Required current model name]
+- Billing type: [API, subscription, local, or other]
+- Processing tier: [Provider-specific tier or "Not applicable"]
 - Routing reason: [Why this tier is sufficient]
 - Allowed tools: [Tools]
 - Required context: [Documents and contracts]
 - Retry limit: [Number]
 - Escalation trigger: [Concrete trigger]
 - Fallback: [Same-tier or higher-tier model]
+- Estimated usage cost: [Amount and currency, or `Unavailable` with reason]
+- Estimate basis: [Comparable task, planned usage, and pricing assumptions]
+- Retry reserve: [Amount or percentage]
 ```
 
 ## 15. Routing Acceptance Checklist
 
 - [ ] Every task brief records agent routing.
+- [ ] Every task brief records the provider, billing type, and processing tier.
 - [ ] Every task brief records the exact model used for that run.
+- [ ] Every actual execution records its provider and exact model.
+- [ ] Estimated usage cost and retry reserve are recorded before execution.
+- [ ] Actual usage and cost are evidence-based or marked `Unavailable` with a
+      reason.
 - [ ] Mandatory Tier A work is not downgraded.
 - [ ] Every agent receives the required context.
 - [ ] Reviewer agents remain read-only.

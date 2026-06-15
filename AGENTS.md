@@ -17,6 +17,7 @@ Read these files before changing code:
 6. `doc/agent-workflow.md` for required agent roles, reviews, and acceptance.
 7. `doc/agent-model-routing.md` for agent capability tiers, reasoning, context,
    tools, fallback, retry, and escalation.
+8. `doc/execution-reports/README.md` for required task and epic cost reporting.
 
 When documents differ:
 
@@ -36,7 +37,8 @@ Follow the risk-first epic order in `doc/implementation.md` and execute the
 exact tasks in the assigned file under `doc/implementation/`.
 
 Every task must also follow `doc/agent-workflow.md`. A task is not complete
-until its required reviews and Orchestrator verification pass.
+until its required reviews and Orchestrator verification pass, its task
+execution report is complete, and its epic execution report is updated.
 
 The risk-first implementation stages are:
 
@@ -363,7 +365,39 @@ Do not weaken or remove a test only to make the suite pass.
 - Update documentation when a confirmed product or architecture decision
   changes.
 
-## 14. Required Verification
+## 14. Required Execution Reporting
+
+The Project Orchestrator owns execution reporting. Workers and Reviewers provide
+their execution details in their handoffs; they do not edit report files unless
+the task brief explicitly assigns those files.
+
+Before starting a task, the Project Orchestrator must:
+
+- Create the task execution report from
+  `doc/execution-reports/templates/task-report.md`.
+- Record planned roles, providers, models, estimated usage cost, and retry
+  reserve.
+- Record the task report and epic report paths in the task brief.
+
+After every Orchestrator, Worker, Reviewer, retry, fallback, or rework
+execution, the Project Orchestrator must record:
+
+- Execution ID, role, provider, exact model, capability tier, reasoning level,
+  billing type, and processing tier.
+- Reported usage dimensions provided by the runner or provider.
+- Calculated usage cost, billed cost, or API-equivalent cost when each is
+  available.
+- The execution result and any model-routing change reason.
+
+Estimated values must be labeled `Estimated`. Actual usage or cost must never
+be guessed. Record `Unavailable` and the reason when the runner, provider, or
+invoice does not expose a required value.
+
+A task is not complete until its task execution report is complete and its epic
+execution report is updated. An epic is not complete until its epic execution
+report is complete. Follow `doc/execution-reports/README.md`.
+
+## 15. Required Verification
 
 Before claiming a task is complete, run the commands relevant to that task.
 Before claiming the project is complete, run:

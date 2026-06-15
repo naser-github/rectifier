@@ -1,0 +1,22 @@
+version: 1
+
+# Add entries before calculating task costs. Do not add a rate without a
+# provider source and checked date. Use separate entries when a provider has
+# different processing tiers, context bands, or billing methods.
+pricing_entries: []
+
+# Example shape:
+# pricing_entries:
+#   - id: provider-model-standard-2026-06-15
+#     provider: provider-name
+#     model: exact-model-name
+#     billing_type: api
+#     processing_tier: standard
+#     currency: USD
+#     effective_date: 2026-06-15
+#     checked_date: 2026-06-15
+#     source: https://provider.example/pricing
+#     rates:
+#       input_per_million: 0
+#       cached_input_per_million: 0
+#       output_per_million: 0
