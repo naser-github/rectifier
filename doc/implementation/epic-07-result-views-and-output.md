@@ -73,6 +73,20 @@ Requirements, Code, and UI Reviewers must approve. Result Experience Ready
 requires exact-output, edit-validation, collapse, virtualization, keyboard, and
 download tests to pass.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 07.1 Implement Editable Code Result View | 120k-210k | Up to 60k | Low | CodeMirror, worker validation, structured-view state, and UI review |
+| 07.2 Implement Collapsible Virtualized Tree View | 160k-280k | Up to 90k | Low | Virtualization, stable rows, keyboard behavior, and large-data tests |
+| 07.3 Implement Collapsible Object View | 130k-230k | Up to 70k | Low | Nested rendering, collapse behavior, and UI review |
+| 07.4 Implement Exact Copy and Download | 90k-160k | Up to 50k | Medium | Browser boundaries, exact-output tests, and accessibility review |
+| **Epic Total** | **500k-880k** | **Up to 270k** | **Low** | **Structured views and virtualization have high UI rework risk** |
+
 ## Tasks
 
 ### Task 07.1: Implement Editable Code Result View

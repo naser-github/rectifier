@@ -10,10 +10,10 @@
 
 ## Epic Budget
 
-| Task | Estimated Usage Cost | Retry Reserve | Estimated Budget |
-| --- | ---: | ---: | ---: |
-| [Task number and name] | [Amount or Unavailable] | [Amount or percentage] | [Amount or Unavailable] |
-| **Epic Total** | **[Amount or Unavailable]** | **[Amount or percentage]** | **[Amount or Unavailable]** |
+| Task | Implementation-Plan Agent Tokens | Planning Retry Reserve | Refined Estimated Usage Cost | Execution Retry Reserve | Estimated Budget |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Task number and name] | [Range] | [Amount] | [Amount or Unavailable] | [Amount or percentage] | [Amount or Unavailable] |
+| **Epic Total** | **[Range]** | **[Amount]** | **[Amount or Unavailable]** | **[Amount or percentage]** | **[Amount or Unavailable]** |
 
 ## Task Results
 

@@ -90,6 +90,20 @@ tests/components/App.test.tsx
 Do not mark Foundation Ready until the app renders, all base tests pass, a
 production build succeeds, and later epics can import stable domain contracts.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 01.1 Create the Static Client Toolchain | 90k-150k | Up to 40k | Medium | Multi-tool configuration, dependency setup, tests, and Code review |
+| 01.2 Prove the Minimal Application Shell | 80k-140k | Up to 35k | Medium | Small UI build with component tests and UI review |
+| 01.3 Establish Shared Domain Contracts | 110k-180k | Up to 50k | Low | Cross-epic contracts require careful review and likely rework |
+| 01.4 Enforce Architecture Boundaries | 70k-120k | Up to 30k | Medium | Focused dependency rules, tests, and Code review |
+| **Epic Total** | **350k-590k** | **Up to 155k** | **Low** | **First epic has no accepted Rectifier tasks for comparison** |
+
 ## Tasks
 
 ### Task 01.1: Create the Static Client Toolchain

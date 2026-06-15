@@ -74,8 +74,11 @@ Responsibilities:
 - Select the required workflow and every required reviewer.
 - Select agent routing using `doc/agent-model-routing.md`.
 - Create the task brief.
-- Create the task execution report and record its planned routing, estimated
-  cost, and retry reserve before starting the Worker.
+- Confirm the assigned epic plan contains the task's implementation-plan usage
+  estimate and planning retry reserve.
+- Create the task execution report, preserve the implementation-plan estimate,
+  and record refined routing, estimated usage cost, and retry reserve before
+  starting the Worker.
 - Assign non-overlapping file ownership.
 - Start the Worker and Reviewers.
 - Record every Orchestrator, Worker, Reviewer, retry, fallback, and rework
@@ -389,8 +392,14 @@ this format:
 - Task report: `doc/execution-reports/epic-[number]/tasks/task-[number].md`
 - Epic report: `doc/execution-reports/epic-[number]/epic-report.md`
 - Pricing registry: `doc/execution-reports/pricing.yml`
-- Estimated usage cost: [Amount and currency, or `Unavailable` with reason]
-- Estimate basis: [Comparable task, planned usage, and pricing assumptions]
+- Implementation-plan agent tokens: [Range copied from assigned epic plan]
+- Implementation-plan retry reserve: [Amount copied from assigned epic plan]
+- Refined estimated usage: [Provider-specific dimensions or token range]
+- Refined estimated usage cost: [Amount and currency, or `Unavailable` with
+  reason]
+- Refinement basis: [Comparable task, routing, planned usage, and pricing
+  assumptions]
+- Plan variance: [Within plan, or reason the epic plan was updated]
 - Retry reserve: [Amount or percentage]
 - Report owner: Project Orchestrator
 
@@ -540,8 +549,14 @@ The Project Orchestrator creates and maintains reports using:
 - `doc/execution-reports/templates/epic-report.md`
 - `doc/execution-reports/pricing.yml`
 
-Before execution, the task report records planned roles, providers, models,
-estimated cost, and retry reserve.
+During implementation planning, every epic task receives an estimated agent
+token range and a separate planning retry reserve. Before execution, the task
+report preserves that source estimate and records refined planned roles,
+providers, models, usage, cost, and retry reserve.
+
+If the refined estimate exceeds the implementation-plan upper bound, the
+Orchestrator updates the epic plan and records the reason before starting the
+Worker.
 
 After each execution, the Orchestrator records the execution ID, actual
 provider and model, reported usage, applicable pricing entry, calculated cost,
@@ -577,9 +592,11 @@ The Project Orchestrator accepts a task only after:
 6. The workflow named in the task brief was followed.
 7. Agent routing, retry, and escalation followed `doc/agent-model-routing.md`.
 8. No known blocking issue remains.
-9. The task execution report is complete, every execution is recorded, and
+9. The task's implementation-plan estimate was preserved or its approved
+   planning change was recorded.
+10. The task execution report is complete, every execution is recorded, and
    missing usage or cost fields contain an `Unavailable` reason.
-10. The epic execution report is updated with the task result.
+11. The epic execution report is updated with the task result.
 
 The Orchestrator then:
 

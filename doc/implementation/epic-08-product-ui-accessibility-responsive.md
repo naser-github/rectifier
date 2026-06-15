@@ -77,6 +77,21 @@ Requirements and Code Reviewers must approve. A final UI Reviewer compares the
 running product with the approved prototype and PRD exceptions. UI Acceptance
 Approved requires component, accessibility, typecheck, and build verification.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 08.1 Assemble the Desktop Workspace | 150k-260k | Up to 80k | Low | Full accepted-feature integration and UI review |
+| 08.2 Assemble Actions and Feedback | 120k-210k | Up to 60k | Low | Shared action states, disabled reasons, feedback, and UI review |
+| 08.3 Apply the Approved Light Visual System | 140k-240k | Up to 70k | Low | Prototype comparison, token styling, and visual rework |
+| 08.4 Implement Mobile and Responsive Behavior | 150k-260k | Up to 80k | Low | Responsive integration, keyboard behavior, and browser checks |
+| 08.5 Complete Accessibility and Security Review | 140k-240k | Up to 90k | Low | Cross-product audit and accepted rework |
+| **Epic Total** | **700k-1,210k** | **Up to 380k** | **Low** | **Integration and visual acceptance can require repeated review** |
+
 ## Tasks
 
 ### Task 08.1: Assemble the Desktop Workspace

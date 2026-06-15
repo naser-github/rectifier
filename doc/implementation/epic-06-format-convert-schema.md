@@ -81,6 +81,21 @@ required for Schema Drawer tasks. Processing Tools Ready requires focused
 worker tests, schema component tests, type checking, and documented conversion
 contracts.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 06.1 Implement Beautify and Minify | 80k-140k | Up to 40k | Medium | Small worker actions with focused tests |
+| 06.2 Implement YAML and XML Conversion | 120k-210k | Up to 60k | Medium | Two conversion libraries, escaping rules, and tests |
+| 06.3 Implement Automatic Flattened CSV | 130k-230k | Up to 70k | Low | New flattening contract, escaping, refusal behavior, and tests |
+| 06.4 Implement Schema Check | 130k-230k | Up to 70k | Low | Schema worker behavior plus UI Feature review |
+| 06.5 Integrate Processing Actions into the Single Worker | 140k-240k | Up to 80k | Low | Cross-action worker integration and regression risk |
+| **Epic Total** | **600k-1,050k** | **Up to 320k** | **Low** | **Conversion and integration behavior has several boundary cases** |
+
 ## Tasks
 
 ### Task 06.1: Implement Beautify and Minify

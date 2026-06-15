@@ -71,6 +71,20 @@ Requirements, Code, Repair Safety, and UI Reviewers must approve. Repair UX
 Approved requires component tests proving protected input and explicit user
 choice for every repair outcome.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 05.1 Implement Safe Repair Preview | 140k-240k | Up to 80k | Low | Repair-sensitive UI flow with four required reviewers |
+| 05.2 Implement Ambiguous Repair Choices | 150k-260k | Up to 90k | Low | Complex explicit-choice flow with safety and accessibility review |
+| 05.3 Implement Manual Guidance | 80k-140k | Up to 40k | Medium | Focused manual path and disabled-reason behavior |
+| 05.4 Perform Repair UX Safety Audit | 110k-190k | Up to 70k | Low | Full repair UX review and likely accepted rework |
+| **Epic Total** | **480k-830k** | **Up to 280k** | **Low** | **Every task combines repair safety and user-facing behavior** |
+
 ## Tasks
 
 ### Task 05.1: Implement Safe Repair Preview

@@ -308,10 +308,14 @@ templates in `doc/execution-reports/README.md`.
 
 Before a task starts:
 
+- Copy the task's implementation-plan agent-token estimate and planning retry
+  reserve from the assigned epic plan.
 - Record each planned role, provider, exact model, billing type, estimated
   usage cost, estimate basis, processing tier, and retry reserve.
 - Use a current pricing entry from `doc/execution-reports/pricing.yml` when a
   provider exposes public or contracted rates.
+- If the routing-specific refined estimate exceeds the implementation-plan
+  upper bound, update the epic plan and record the reason before execution.
 
 After every execution:
 
@@ -357,8 +361,13 @@ Local execution may have zero API cost while infrastructure cost remains
 - Retry limit: [Number]
 - Escalation trigger: [Concrete trigger]
 - Fallback: [Same-tier or higher-tier model]
+- Implementation-plan agent tokens: [Range from assigned epic plan]
+- Implementation-plan retry reserve: [Amount from assigned epic plan]
+- Refined estimated usage: [Provider-specific dimensions or token range]
 - Estimated usage cost: [Amount and currency, or `Unavailable` with reason]
-- Estimate basis: [Comparable task, planned usage, and pricing assumptions]
+- Estimate basis: [Comparable task, routing, planned usage, and pricing
+  assumptions]
+- Plan variance: [Within plan, or reason the epic plan was updated]
 - Retry reserve: [Amount or percentage]
 ```
 
@@ -368,7 +377,10 @@ Local execution may have zero API cost while infrastructure cost remains
 - [ ] Every task brief records the provider, billing type, and processing tier.
 - [ ] Every task brief records the exact model used for that run.
 - [ ] Every actual execution records its provider and exact model.
+- [ ] Every task brief preserves its implementation-plan estimate.
 - [ ] Estimated usage cost and retry reserve are recorded before execution.
+- [ ] Any refined estimate above the planned upper bound updates the epic plan
+      and records a reason before execution.
 - [ ] Actual usage and cost are evidence-based or marked `Unavailable` with a
       reason.
 - [ ] Mandatory Tier A work is not downgraded.

@@ -6,6 +6,7 @@ Every Rectifier task and epic must show:
 
 - What work was completed.
 - Which providers, models, and agent roles performed the work.
+- The implementation-plan usage estimate made before execution planning.
 - The estimated usage cost before work started.
 - The reported usage and calculated cost after work finished.
 - The final task and epic totals.
@@ -35,17 +36,28 @@ assigned epic plan.
 
 ## 3. Report Lifecycle
 
+During implementation planning:
+
+1. Add an estimated agent-token range for every task in the detailed epic
+   plan.
+2. Add a separate planning retry reserve and confidence level.
+3. Record an estimate basis using task scope, required workflows, required
+   reviewers, and comparable accepted work when available.
+
 Before an epic starts:
 
 1. Create its `epic-report.md` from the epic template.
-2. Record the epic's initial estimated budget.
+2. Copy the epic's implementation-plan usage budget into the report.
 
 Before a task starts:
 
 1. Create its task report from the task template.
-2. Record planned roles, providers, exact models, and billing types.
-3. Record estimated usage cost, estimate basis, and retry reserve.
-4. Put the task report, epic report, and pricing registry paths in the task
+2. Copy the task's implementation-plan estimate and planning retry reserve.
+3. Record planned roles, providers, exact models, and billing types.
+4. Refine the estimated usage, usage cost, estimate basis, and retry reserve.
+5. If the refined estimate exceeds the implementation-plan upper bound, update
+   the epic plan and record the reason before execution.
+6. Put the task report, epic report, and pricing registry paths in the task
    brief.
 
 After every Orchestrator, Worker, Reviewer, retry, fallback, or rework
@@ -92,9 +104,16 @@ execution_id
 agent_role
 ```
 
-## 5. Estimating Before Execution
+## 5. Planning and Refining Estimates
 
-Estimate each planned execution from the best available evidence:
+The implementation plan must estimate each task before exact agent routing is
+selected. Use a range because provider, model, cache, and retry details may
+still change. The range is a combined token proxy for planned Orchestrator,
+Worker, and required Reviewer executions. It is not actual usage and is not a
+provider-neutral cost calculation.
+
+Before execution, refine each planned execution from the best available
+evidence:
 
 - Measured usage from a comparable accepted task.
 - A planned input, output, request, tool, time, or other provider billing
@@ -102,14 +121,21 @@ Estimate each planned execution from the best available evidence:
 - The exact provider, model, processing tier, billing type, and current pricing
   entry.
 
-Record the assumptions and calculation basis. Keep retry reserve separate from
-the normal estimate. Estimates may be uncertain, but they must be clearly
-labeled and must not later replace actual-or-unavailable results.
+Record the assumptions and calculation basis. Keep planning and execution retry
+reserves separate from the normal estimate. Preserve the source
+implementation-plan estimate in task and epic reports. Estimates may be
+uncertain, but they must be clearly labeled and must not later replace
+actual-or-unavailable results.
 
 ## 6. Required Cost Labels
 
 Use these labels exactly:
 
+- `Implementation-plan agent tokens`: early combined token range recorded in
+  the detailed epic plan.
+- `Planning retry reserve`: early token reserve recorded in the detailed epic
+  plan.
+- `Refined estimated usage`: routing-specific forecast made before execution.
 - `Estimated usage cost`: forecast made before execution.
 - `Estimated budget`: estimated usage cost plus retry reserve.
 - `Calculated usage cost`: reported usage multiplied by recorded prices.

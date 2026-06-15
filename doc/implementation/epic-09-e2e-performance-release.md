@@ -84,6 +84,22 @@ Release Candidate Approved requires all verification commands, complete
 requirements coverage, final safety and UI reviews, performance evidence, and a
 verified run guide.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 09.1 Build Full User-Flow Browser Tests | 170k-300k | Up to 100k | Low | Many browser flows, test debugging, and Release review |
+| 09.2 Build Large-File and Responsiveness Tests | 150k-260k | Up to 90k | Low | 1 MB-10 MB fixtures, performance behavior, and browser variance |
+| 09.3 Build Adversarial Safety and Stability Tests | 170k-300k | Up to 100k | Low | Safety-critical adversarial coverage and Repair Safety review |
+| 09.4 Record Performance Evidence | 110k-190k | Up to 60k | Low | Production measurements, repeat runs, and evidence review |
+| 09.5 Create and Verify the Run Guide | 70k-120k | Up to 30k | Medium | Focused documentation plus clean-run verification |
+| 09.6 Perform Final Release Audit | 150k-260k | Up to 100k | Low | Full verification, multiple reviewers, and release rework |
+| **Epic Total** | **820k-1,430k** | **Up to 480k** | **Low** | **Release work depends on complete system behavior and environment evidence** |
+
 ## Tasks
 
 ### Task 09.1: Build Full User-Flow Browser Tests

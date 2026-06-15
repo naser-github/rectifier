@@ -90,6 +90,22 @@ but must be refused.
 Repair Safety Approved requires the entire repair suite, type checking, import
 boundaries, mutation checks, and safety review to pass.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 02.1 Build the Repair Safety Fixture Matrix | 90k-150k | Up to 40k | Medium | Test-focused work with Requirements, Code, and Repair Safety review |
+| 02.2 Implement Tolerant Tokenization and Fingerprints | 150k-250k | Up to 80k | Low | New safety-critical parser logic and adversarial tests |
+| 02.3 Implement Explicit Syntax Repair Rules | 180k-300k | Up to 100k | Low | Multiple test-first repair rules and refusal boundaries |
+| 02.4 Generate, Verify, and Classify Candidates | 170k-280k | Up to 90k | Low | Safety-critical candidate verification and ambiguity behavior |
+| 02.5 Classify Repair Eligibility | 120k-200k | Up to 60k | Low | Strict separation from candidate generation with boundary tests |
+| 02.6 Perform the Repair Safety Audit | 120k-220k | Up to 80k | Low | Full adversarial review and likely accepted rework |
+| **Epic Total** | **830k-1,400k** | **Up to 450k** | **Low** | **Repair safety requires independent review and has high rework risk** |
+
 ## Tasks
 
 ### Task 02.1: Build the Repair Safety Fixture Matrix

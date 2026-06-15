@@ -371,12 +371,22 @@ The Project Orchestrator owns execution reporting. Workers and Reviewers provide
 their execution details in their handoffs; they do not edit report files unless
 the task brief explicitly assigns those files.
 
+During implementation planning, the Project Orchestrator must add an estimated
+agent-token range, planning retry reserve, confidence level, and estimate basis
+for every task in the detailed epic plan.
+
 Before starting a task, the Project Orchestrator must:
 
+- Confirm the assigned epic plan contains the task's implementation-plan
+  usage estimate and planning retry reserve.
 - Create the task execution report from
   `doc/execution-reports/templates/task-report.md`.
-- Record planned roles, providers, models, estimated usage cost, and retry
-  reserve.
+- Refine the implementation-plan estimate using the selected roles, providers,
+  models, current pricing, and execution retry reserve.
+- Record the source implementation-plan estimate, refined estimated usage
+  cost, estimate basis, and retry reserve.
+- Update the epic plan and record the reason before execution when the refined
+  estimate exceeds the implementation-plan upper bound.
 - Record the task report and epic report paths in the task brief.
 
 After every Orchestrator, Worker, Reviewer, retry, fallback, or rework

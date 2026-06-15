@@ -202,6 +202,35 @@ Repair Safety approval.
 | Approved light UI, Prompt, paper texture, mobile, and accessibility | Epic 08 | UI/accessibility review and Epic 09 browser flows |
 | 10 MB, deep nesting, large arrays, broken JSON, and release evidence | Epic 09 | Full release verification |
 
+### 6.2 Implementation Planning Usage Budget
+
+The detailed epic plans estimate agent usage before implementation starts.
+These estimates are an early planning control, not actual usage or a cost
+calculation.
+
+`Estimated agent tokens` is the combined token proxy for planned Orchestrator,
+Worker, and required Reviewer executions. `Planning retry reserve` is separate
+and may be used only for retries, fallback, or accepted rework.
+
+| Epic | Estimated Agent Tokens | Planning Retry Reserve |
+| --- | ---: | ---: |
+| Epic 01 Foundation and Contracts | 350k-590k | Up to 155k |
+| Epic 02 Strict Repair Engine | 830k-1,400k | Up to 450k |
+| Epic 03 Worker and Validation | 570k-960k | Up to 280k |
+| Epic 04 Core Workspace and Shared UI | 600k-1,020k | Up to 300k |
+| Epic 05 Repair Experience | 480k-830k | Up to 280k |
+| Epic 06 Format, Convert, and Schema | 600k-1,050k | Up to 320k |
+| Epic 07 Result Views and Output | 500k-880k | Up to 270k |
+| Epic 08 Product UI, Accessibility, and Responsive | 700k-1,210k | Up to 380k |
+| Epic 09 E2E, Performance, and Release | 820k-1,430k | Up to 480k |
+| **Project Base Estimate** | **5,450k-9,370k** | **Up to 2,915k** |
+
+Before a task starts, the Orchestrator refines its plan estimate using exact
+routing, provider billing dimensions, current pricing, and known comparable
+work. If the refined estimate exceeds the task's planned upper bound, the
+Orchestrator must update the epic plan and record the reason before starting
+the Worker.
+
 ## 7. Global Execution Policy
 
 ### 7.1 Epic Entry Gate
@@ -210,6 +239,8 @@ An epic may start only when:
 
 - Every required dependency milestone is accepted.
 - Its detailed epic file has no unresolved conflict with the BRD or PRD.
+- Its detailed epic file contains an implementation-plan usage estimate and
+  planning retry reserve for every task.
 - The Project Orchestrator selects its first dependency-safe task.
 - The Orchestrator creates a task brief with exact workflow, reviewers, file
   ownership, agent routing, tests, and verification commands.
@@ -227,8 +258,9 @@ files or shared contracts.
 
 For every task:
 
-1. Project Orchestrator creates the task execution report, records planned
-   routing and estimated cost, and records the report paths in the task brief.
+1. Project Orchestrator creates the task execution report, copies the source
+   implementation-plan estimate, records planned routing, refines estimated
+   usage and cost, and records the report paths in the task brief.
 2. Worker defines the exact verification before editing.
 3. For behavior code and bug fixes, Worker writes the required failing test and
    confirms the expected failure.
@@ -310,6 +342,10 @@ Every task and epic must follow `doc/execution-reports/README.md`.
 
 - Create one task report for each task.
 - Create one epic report that summarizes all task reports.
+- Set task and epic usage estimates in the implementation plans before
+  execution.
+- Preserve the source implementation-plan estimate when refining a task
+  estimate before execution.
 - Record planned provider and model routing before execution.
 - Record the actual provider and exact model used for every Orchestrator,
   Worker, Reviewer, retry, fallback, and rework execution.

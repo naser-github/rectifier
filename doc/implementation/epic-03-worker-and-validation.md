@@ -81,6 +81,21 @@ Safety Reviewer must confirm the worker delegates to the pure engine and does
 not bypass its verification. Validation Pipeline Ready requires worker,
 diagnostics, editor, size-limit, and stale-response tests to pass.
 
+## Planning Usage Budget
+
+These early estimates include planned Orchestrator, Worker, and required
+Reviewer executions. The Orchestrator refines usage and cost before each task
+starts.
+
+| Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
+| --- | ---: | ---: | --- | --- |
+| 03.1 Implement Revision-Based Worker Communication | 120k-200k | Up to 60k | Low | Worker lifecycle, stale-response behavior, and Repair Safety review |
+| 03.2 Implement Strict Diagnostics | 100k-170k | Up to 50k | Medium | Focused parser diagnostics and tests |
+| 03.3 Implement Input Size, Upload, and Clear | 90k-150k | Up to 40k | Medium | Browser boundary work, component tests, and UI review |
+| 03.4 Implement Automatic Validation and Error Focus | 130k-220k | Up to 60k | Low | Worker, editor, focus, accessibility, and UI integration |
+| 03.5 Expose Repair Analysis Safely | 130k-220k | Up to 70k | Low | Worker-to-engine safety boundary and Repair Safety review |
+| **Epic Total** | **570k-960k** | **Up to 280k** | **Low** | **Worker and UI integration create cross-boundary rework risk** |
+
 ## Tasks
 
 ### Task 03.1: Implement Revision-Based Worker Communication
