@@ -42,14 +42,15 @@ execution report is complete, and its epic execution report is updated.
 
 The risk-first implementation stages are:
 
-1. Foundation and Contracts.
-2. Strict Repair Engine.
-3. Worker and Validation.
-4. Core Workspace and Shared UI.
-5. Repair Experience, Processing Tools, and Result Views; these are separate
+1. Docker Runtime Foundation.
+2. Foundation and Contracts.
+3. Strict Repair Engine.
+4. Worker and Validation.
+5. Core Workspace and Shared UI.
+6. Repair Experience, Processing Tools, and Result Views; these are separate
    Epics 05, 06, and 07.
-6. Product UI, Accessibility, and Responsive integration.
-7. E2E, Performance, and Release.
+7. Product UI, Accessibility, and Responsive integration.
+8. E2E, Performance, and Release.
 
 Do not build the complete UI before the Repair Safety Approved milestone.
 
@@ -439,6 +440,7 @@ npm run architecture
 npm run typecheck
 npm test -- --run
 npm run build
+docker compose config
 npx playwright test
 ```
 

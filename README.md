@@ -8,6 +8,7 @@ safe syntax repair tool.
 - [Product requirements](doc/prd.md)
 - [Epic implementation roadmap](doc/implementation.md)
 - [Detailed epic execution plans](doc/implementation/)
+- [Docker runtime foundation](doc/implementation/epic-00-docker-runtime-foundation.md)
 - [Approved light UI prototype](doc/ui/rectifier-light-v1.html)
 - [Agent coding standards](AGENTS.md)
 - [Agent workflow](doc/agent-workflow.md)

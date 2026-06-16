@@ -11,7 +11,9 @@ conversion, schema-checking, and inspection tool that supports files up to
 **Architecture:** Rectifier is a static React application. CodeMirror handles
 editing and code views. Pure TypeScript modules own repair rules. One dedicated
 Web Worker owns expensive parsing and processing. The main thread owns only
-interface state and browser interactions.
+interface state and browser interactions. The finished project must run through
+one Docker Compose app service that builds and serves the static client in one
+container.
 
 **Tech Stack:** React, TypeScript, Vite, Tailwind CSS, CodeMirror 6,
 `jsonc-parser`, Ajv with `ajv-formats`, `js-yaml`, `fast-xml-parser`, Papa Parse,
@@ -65,7 +67,10 @@ Orchestrator.
 
 - Use React and Vite.
 - Produce static files.
+- Provide one Docker Compose app service for local and release runtime.
+- Use one container to serve the built static client.
 - Do not add a backend, account system, server route, or AI service.
+- Do not add a database, cache, model service, or sidecar container.
 - Keep user JSON and schemas inside the browser.
 
 ### 3.2 Strict Repair Engine
@@ -147,6 +152,9 @@ imports, and circular-import policy defined in `AGENTS.md`.
 ## 5. Epic Order
 
 ```text
+Epic 00 Docker Runtime Foundation
+  |
+  v
 Epic 01 Foundation and Contracts
   |
   v
@@ -178,7 +186,8 @@ Repair Safety approval.
 
 | Epic | Purpose | Depends On | Required Workflow | Exit Milestone | Status |
 | --- | --- | --- | --- | --- | --- |
-| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | None | Normal plus UI Feature for visual shell | Foundation Ready | Not started |
+| [00 Docker Runtime Foundation](implementation/epic-00-docker-runtime-foundation.md) | Define one-container Docker Compose runtime for the static client | None | Normal configuration and documentation | Docker Runtime Ready | Not started |
+| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | Epic 00 Docker runtime | Normal plus UI Feature for visual shell | Foundation Ready | Not started |
 | [02 Strict Repair Engine](implementation/epic-02-strict-repair-engine.md) | Prove repairs cannot change user data or guess intent | Epic 01 contracts and tests | Repair-sensitive | Repair Safety Approved | Not started |
 | [03 Worker and Validation](implementation/epic-03-worker-and-validation.md) | Add revision-based worker processing, validation, upload, and error focus | Epics 01-02 | Normal plus Repair Safety and UI Feature tasks | Validation Pipeline Ready | Not started |
 | [04 Core Workspace and Shared UI](implementation/epic-04-core-workspace-and-shared-ui.md) | Add workspace state, shared controls, first sample, disabled reasons, and storage | Epic 03 | Normal plus Repair Safety and UI Feature tasks | Core Workspace Ready | Not started |
@@ -192,6 +201,7 @@ Repair Safety approval.
 
 | Product Area | Primary Epic | Release Proof |
 | --- | --- | --- |
+| One-container Docker Compose runtime | Epic 00 | Epic 00 verification and Epic 09 run guide |
 | Static client, stack, contracts, and architecture boundaries | Epic 01 | Epic 01 verification and Epic 09 build |
 | Strict safe, ambiguous, and manual repair classification | Epic 02 | Repair safety suite and Epic 09 adversarial tests |
 | Input, upload, automatic validation, diagnostics, and error focus | Epic 03 | Worker/component tests and Epic 09 browser flows |
@@ -218,6 +228,7 @@ only for code, repair-safety, UI, and release risks.
 
 | Epic | Estimated Agent Tokens | Planning Retry Reserve |
 | --- | ---: | ---: |
+| Epic 00 Docker Runtime Foundation | 80k-135k | Up to 35k |
 | Epic 01 Foundation and Contracts | 275k-465k | Up to 125k |
 | Epic 02 Strict Repair Engine | 720k-1,205k | Up to 390k |
 | Epic 03 Worker and Validation | 470k-790k | Up to 225k |
@@ -227,7 +238,7 @@ only for code, repair-safety, UI, and release risks.
 | Epic 07 Result Views and Output | 330k-570k | Up to 180k |
 | Epic 08 Product UI, Accessibility, and Responsive | 460k-785k | Up to 245k |
 | Epic 09 E2E, Performance, and Release | 520k-905k | Up to 305k |
-| **Project Base Estimate** | **4,060k-6,945k** | **Up to 2,160k** |
+| **Project Base Estimate** | **4,140k-7,080k** | **Up to 2,195k** |
 
 Before a task starts, the Orchestrator refines its plan estimate using exact
 routing, provider billing dimensions, current pricing, and known comparable
@@ -393,6 +404,7 @@ Every task and epic must follow `doc/execution-reports/README.md`.
 - [ ] Every epic milestone is accepted.
 - [ ] BRD and PRD requirements have an implemented and tested owner.
 - [ ] There is no backend or AI dependency.
+- [ ] The app runs through one Docker Compose app service using one container.
 - [ ] Original input always remains unchanged.
 - [ ] Automatic validation works without a Validate button.
 - [ ] First-error focus and red caret work.
@@ -418,5 +430,6 @@ npm run architecture
 npm run typecheck
 npm test -- --run
 npm run build
+docker compose config
 npx playwright test
 ```

@@ -166,7 +166,9 @@ each task starts.
 
 - [ ] Document install, development, typecheck, unit test, build, and Playwright
   commands in `doc/RUN.md`.
-- [ ] State clearly that no backend or AI service is required.
+- [ ] Document Docker Compose startup using the single app service from Epic 00.
+- [ ] State clearly that no backend, database, sidecar, or AI service is
+  required.
 - [ ] Run every documented command exactly as written.
 - [ ] Update `README.md` to link the run guide only after it is verified.
 
@@ -186,6 +188,7 @@ each task starts.
 npm run typecheck
 npm test -- --run
 npm run build
+docker compose config
 npx playwright test
 ```
 

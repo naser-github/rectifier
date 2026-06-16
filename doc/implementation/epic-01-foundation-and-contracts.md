@@ -37,7 +37,7 @@ complete product interface.
 
 ## Dependencies and References
 
-- No earlier epic dependency.
+- Requires Epic 00 Docker Runtime Ready.
 - Read: `AGENTS.md`, `doc/brd.md`, `doc/prd.md` sections 4 and 17, and
   `doc/ui/rectifier-light-v1.html`.
 
