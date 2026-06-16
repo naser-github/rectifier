@@ -82,28 +82,28 @@ task. Feature epics must not independently modify it.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. Repair Safety Reviewer approval
-is also required for Tasks 04.1, 04.3, and 04.5 because they own repair state,
-eligibility, or integration. UI Reviewer approval is required for Tasks 04.2,
-04.3, and 04.5 because they create shared controls, disabled reasons, and the
-InputPanel. Core Workspace Ready requires state-transition, accessibility,
-persistence, and sample behavior tests to pass before parallel feature epics
-begin.
+Code Reviewer approval is required for Tasks 04.1 and 04.4. Repair Safety
+Reviewer approval is required for Tasks 04.1, 04.3, and 04.5 because they own
+repair state, eligibility, or integration. UI Reviewer approval is required for
+Tasks 04.2, 04.3, and 04.5 because they create shared controls, disabled
+reasons, and the InputPanel. Core Workspace Ready requires state-transition,
+accessibility, persistence, and sample behavior tests to pass before parallel
+feature epics begin.
 
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 04.1 Define the Workspace State Machine | 130k-220k | Up to 60k | Low | Shared state contract, stale responses, and Repair Safety review |
-| 04.2 Build Shared Interface Primitives | 140k-240k | Up to 70k | Low | Multiple accessible primitives with component and UI review |
-| 04.3 Implement Disabled Reasons | 100k-170k | Up to 50k | Medium | Focused shared behavior with accessibility and safety review |
-| 04.4 Implement First-Visit Sample and Persistence | 100k-170k | Up to 50k | Medium | Storage boundary, reducer behavior, and failure tests |
-| 04.5 Perform Base Integration | 130k-220k | Up to 70k | Low | State, worker, shared UI, safety, and UI integration |
-| **Epic Total** | **600k-1,020k** | **Up to 300k** | **Low** | **Shared contracts and integration affect later parallel epics** |
+| 04.1 Define the Workspace State Machine | 110k-190k | Up to 50k | Low | Shared state contract with Code and Repair Safety review |
+| 04.2 Build Shared Interface Primitives | 90k-155k | Up to 45k | Low | Multiple accessible primitives with component and UI review |
+| 04.3 Implement Disabled Reasons | 70k-120k | Up to 35k | Medium | Focused shared behavior with accessibility and safety review |
+| 04.4 Implement First-Visit Sample and Persistence | 85k-140k | Up to 40k | Medium | Storage boundary, reducer behavior, failure tests, and Code review |
+| 04.5 Perform Base Integration | 90k-155k | Up to 50k | Low | State, worker, shared UI, safety, and UI integration |
+| **Epic Total** | **445k-760k** | **Up to 220k** | **Low** | **Shared contracts and integration affect later parallel epics** |
 
 ## Tasks
 
@@ -188,7 +188,7 @@ accessible, and storage failure does not break the app.
 - [ ] First-visit sample follows PRD rules.
 - [ ] Only the latest workspace is persisted.
 - [ ] Users can clear saved workspace data.
-- [ ] Requirements and Code Reviewers approve.
+- [ ] Code Reviewer approves state and persistence tasks.
 - [ ] Repair Safety Reviewer approves repair-state and eligibility tasks.
 - [ ] UI Reviewer approves shared controls, disabled reasons, and InputPanel.
 

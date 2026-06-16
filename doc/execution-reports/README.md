@@ -46,8 +46,10 @@ During implementation planning:
 
 Before an epic starts:
 
-1. Create its `epic-report.md` from the epic template.
-2. Copy the epic's implementation-plan usage budget into the report.
+1. Show the mandatory Epic Start Reminder from `AGENTS.md`.
+2. Wait for clear user approval.
+3. Create its `epic-report.md` from the epic template.
+4. Copy the epic's implementation-plan usage budget into the report.
 
 Before a task starts:
 

@@ -2,7 +2,8 @@
 
 ## 1. Purpose
 
-Rectifier uses a review-gated workflow for every implementation task.
+Rectifier uses a verification-gated workflow for every task and independent
+specialist review only where the task risk requires it.
 
 The goal is to prevent:
 
@@ -33,16 +34,13 @@ Project Orchestrator
 Task Worker
         |
         v
-Requirements Reviewer
-        |
-        v
 Code Reviewer
         |
         v
 Task Worker fixes findings
         |
         v
-Reviewers re-check affected areas
+Code Reviewer re-checks affected areas
         |
         v
 Project Orchestrator verifies and accepts the task
@@ -52,7 +50,6 @@ A task is complete only when:
 
 ```text
 Worker verification passes
-+ Requirements Reviewer approves
 + Code Reviewer approves
 + Project Orchestrator verification passes
 + Task execution report is complete
@@ -71,7 +68,8 @@ Responsibilities:
   plan, this workflow, and `doc/agent-model-routing.md`.
 - Select the next task using the required epic order and dependency gates.
 - Confirm task dependencies are complete.
-- Select the required workflow and every required reviewer.
+- Select the required workflow and every required specialist reviewer, when
+  any.
 - Select agent routing using `doc/agent-model-routing.md`.
 - Create the task brief.
 - Confirm the assigned epic plan contains the task's implementation-plan usage
@@ -84,6 +82,8 @@ Responsibilities:
 - Record every Orchestrator, Worker, Reviewer, retry, fallback, and rework
   execution in the task report.
 - Resolve reviewer disagreements using document priority.
+- Check the completed task against the BRD, PRD, prototype, roadmap, assigned
+  epic, and task brief.
 - Run final task verification.
 - Review the final diff.
 - Update completed epic-plan checkboxes only after acceptance.
@@ -95,6 +95,35 @@ Responsibilities:
 The Project Orchestrator should not normally implement feature code. It may make
 small integration or documentation fixes after review when that is safer than
 starting another Worker.
+
+Before starting an epic, the Project Orchestrator must show this reminder and
+wait for clear user approval:
+
+```text
+Ready to start Epic [number]: [name]
+
+- Exit milestone: [milestone]
+- Dependencies and entry gates: [status]
+- Epic token budget: [range]
+- Planning retry reserve: [amount]
+- Epic report: [planned path]
+- First task: [task number and name]
+- First task brief: [planned path]
+- First task report: [planned path]
+
+After approval:
+1. Create the epic execution report.
+2. Copy the epic planning budget.
+3. Prepare the first task brief.
+4. Select exact agents and models.
+5. Create the first task execution report.
+6. Refine the first task usage and cost estimate.
+
+Start this epic?
+```
+
+The Orchestrator must not create these artifacts, dispatch agents, edit
+implementation files, or start the first Worker until the user approves.
 
 ### 3.2 Task Worker
 
@@ -118,35 +147,7 @@ The Worker must not:
 - Edit files outside assigned ownership without Orchestrator approval.
 - Mark the task complete.
 
-### 3.3 Requirements Reviewer
-
-The Requirements Reviewer checks whether the implementation matches:
-
-- `doc/brd.md`
-- `doc/prd.md`
-- `doc/ui/rectifier-light-v1.html`
-- The master roadmap in `doc/implementation.md`
-- The assigned epic and task under `doc/implementation/`
-- The task brief
-
-Review focus:
-
-- Missing requirements.
-- Wrong behavior.
-- UI differences that are not approved prototype exceptions.
-- Privacy violations.
-- Original-input mutation.
-- Missing accessibility behavior.
-- Incorrect disabled-state explanations.
-
-The Requirements Reviewer reports findings with:
-
-- Severity.
-- Requirement source.
-- File and line.
-- Expected behavior.
-
-### 3.4 Code Reviewer
+### 3.3 Code Reviewer
 
 The Code Reviewer checks:
 
@@ -168,7 +169,7 @@ The Code Reviewer checks:
 
 The Code Reviewer does not redesign the product or add optional features.
 
-### 3.5 Repair Safety Reviewer
+### 3.4 Repair Safety Reviewer
 
 Add a Repair Safety Reviewer for any task that changes:
 
@@ -197,7 +198,7 @@ The Repair Safety Reviewer checks:
 
 A Repair Safety Reviewer rejection blocks the task.
 
-### 3.6 UI Reviewer
+### 3.5 UI Reviewer
 
 Add a UI Reviewer for Epic 08 and any task that changes user-facing visual,
 interaction, responsive, focus, or accessibility behavior.
@@ -213,7 +214,7 @@ The UI Reviewer checks:
 
 The UI Reviewer does not change product behavior or override safety rules.
 
-### 3.7 Release Reviewer
+### 3.6 Release Reviewer
 
 Add a Release Reviewer for Epic 09.
 
@@ -226,8 +227,8 @@ The Release Reviewer checks:
 - Verified `doc/RUN.md` commands.
 - Unresolved findings and release blockers.
 
-Release Reviewer approval does not replace Requirements, Code, UI, or Repair
-Safety approval.
+Release Reviewer approval does not replace a specialist review required by the
+release task's risk.
 
 ## 4. Workflow Types
 
@@ -235,23 +236,27 @@ Safety approval.
 
 The Project Orchestrator selects the workflow before assigning a Worker.
 
-- Always include Requirements and Code review coverage for implementation
-  tasks. A Combined Reviewer may cover both only for an eligible Small Task.
+- The Project Orchestrator performs requirements review for every task.
+- Add Code review for normal implementation, shared contracts, architecture,
+  repair code, and other complex non-UI logic.
 - Add Repair Safety review for repair engine, repair contracts, repair worker
   messages, repair state, repair eligibility, or repair UX.
 - Add UI review for user-facing visual, interaction, responsive, focus, or
   accessibility behavior.
 - Use Repair-Sensitive UI when both repair and UI rules apply.
-- Use Release Workflow for Epic 09.
-- Never use Small Task to avoid a required specialist reviewer.
-- When multiple rules apply, include every required reviewer.
+- Use Release Workflow for Epic 09 and add only the specialist reviewers
+  required by that release task.
+- Never use Small Task or Documentation-Only Task to avoid a required
+  specialist reviewer.
+- When multiple specialist rules apply, include every required specialist
+  reviewer.
 
 ### 4.1 Normal Task
 
 Use for most implementation tasks:
 
 ```text
-Orchestrator -> Worker -> Requirements Reviewer -> Code Reviewer -> Orchestrator
+Orchestrator -> Worker -> Code Reviewer -> Orchestrator
 ```
 
 ### 4.2 Repair-Sensitive Task
@@ -262,7 +267,6 @@ Use for repair engine and repair behavior:
 Orchestrator
   -> Worker
   -> Repair Safety Reviewer
-  -> Requirements Reviewer
   -> Code Reviewer
   -> Orchestrator
 ```
@@ -274,8 +278,6 @@ Use for a task that creates or changes user-facing visual behavior:
 ```text
 Orchestrator
   -> Worker
-  -> Requirements Reviewer
-  -> Code Reviewer
   -> UI Reviewer
   -> Orchestrator
 ```
@@ -288,8 +290,6 @@ Use for repair dialogs and other user-facing repair behavior:
 Orchestrator
   -> Worker
   -> Repair Safety Reviewer
-  -> Requirements Reviewer
-  -> Code Reviewer
   -> UI Reviewer
   -> Orchestrator
 ```
@@ -306,20 +306,20 @@ Use only when the change:
 Workflow:
 
 ```text
-Orchestrator -> Worker -> Combined Reviewer -> Orchestrator
+Orchestrator -> Worker -> Orchestrator verification
 ```
 
-The Combined Reviewer performs both requirements and code review.
+The Orchestrator performs the requirements, diff, and verification checks.
 
 ### 4.6 Documentation-Only Task
 
 Use:
 
 ```text
-Orchestrator -> Documentation Worker -> Requirements Reviewer -> Orchestrator
+Orchestrator -> Documentation Worker -> Orchestrator verification
 ```
 
-The reviewer checks document priority, links, naming, and contradictions.
+The Orchestrator checks document priority, links, naming, and contradictions.
 
 ### 4.7 UI Integration Task
 
@@ -328,8 +328,6 @@ Use for Epic 08:
 ```text
 Orchestrator
   -> Worker
-  -> Requirements Reviewer
-  -> Code Reviewer
   -> UI Reviewer
   -> Orchestrator
 ```
@@ -341,11 +339,8 @@ Use for Epic 09:
 ```text
 Orchestrator
   -> Release Worker
-  -> Requirements Reviewer
-  -> Code Reviewer
-  -> UI Reviewer
-  -> Repair Safety Reviewer
   -> Release Reviewer
+  -> Required specialist reviewers, when needed
   -> Orchestrator
 ```
 
@@ -370,8 +365,8 @@ this format:
 ## Workflow Reason
 - [Why this workflow and its specialist reviewers are required]
 
-## Required Reviewers
-- [Exact reviewer names required by the selected workflow]
+## Required Specialist Reviewers
+- [Exact reviewer names required by the selected workflow, or `None`]
 
 ## Agent Routing
 - Provider: [Provider name]
@@ -453,9 +448,9 @@ this format:
 ```
 
 The brief must use exact paths and cannot contain unresolved placeholder text
-or vague instructions. The named workflow and reviewers must match the assigned
-epic task and the workflow-selection rules. Agent routing must follow
-`doc/agent-model-routing.md`.
+or vague instructions. The named workflow and specialist reviewers must match
+the assigned epic task and the workflow-selection rules. Agent routing must
+follow `doc/agent-model-routing.md`.
 
 ## 6. Worker Handoff
 
@@ -499,17 +494,17 @@ The Worker reports:
 ### Reviewer Attention
 - [High-risk areas]
 
-### Required Reviewers
-- [Reviewer name]: Pending or Approved
+### Required Specialist Reviewers
+- [Reviewer name]: Pending or Approved, or `None`
 ```
 
-The Orchestrator sends the implementation and handoff to reviewers.
-Reviewers must be separate read-only agent instances and must not approve their
-own implementation work.
+When specialist review is required, the Orchestrator sends the implementation
+and handoff to those reviewers. Specialist reviewers must be separate read-only
+agent instances and must not approve their own implementation work.
 
-Every Reviewer handoff must also include the `Agent Routing Used` and
-`Execution Usage` fields above. Agents report only usage that their runner or
-provider exposes. They must not estimate or guess actual usage.
+Every specialist Reviewer handoff must also include the `Agent Routing Used`
+and `Execution Usage` fields above. Agents report only usage that their runner
+or provider exposes. They must not estimate or guess actual usage.
 
 ## 7. Review Findings
 
@@ -584,7 +579,8 @@ Detailed calculation and provider-neutral rules live in
 
 The Project Orchestrator accepts a task only after:
 
-1. Every reviewer named in the task brief approves.
+1. Every specialist reviewer named in the task brief approves, or the task
+   brief records that none is required.
 2. Required task tests pass.
 3. Type checking passes for affected TypeScript work.
 4. The task diff contains no unrelated changes.
@@ -611,7 +607,7 @@ The Project Orchestrator accepts an epic only after:
 1. Every required task in the epic plan is accepted.
 2. The epic verification commands pass.
 3. The epic acceptance checklist passes.
-4. Required milestone reviewers approve.
+4. Required milestone specialist reviewers approve.
 5. The epic output and contract handoff are recorded.
 6. No unresolved Blocking or unexplained Important finding remains.
 7. The epic execution report is complete and reconciles all accepted task
@@ -666,8 +662,8 @@ When a Worker needs one:
 Stop the task and notify the Orchestrator when:
 
 - Requirements conflict.
-- The assigned workflow omits a reviewer required by the workflow-selection
-  rules.
+- The assigned workflow omits a specialist reviewer required by the
+  workflow-selection rules.
 - The selected model tier is below the minimum required by
   `doc/agent-model-routing.md`.
 - The approved prototype conflicts with a safety rule.
@@ -683,7 +679,7 @@ Do not silently choose a new product behavior.
 Before declaring Rectifier complete, the Project Orchestrator requires:
 
 - Every epic milestone and implementation task accepted.
-- Final requirements review against BRD and PRD.
+- Final Project Orchestrator requirements check against BRD and PRD.
 - Final UI review against the approved prototype and prototype exceptions.
 - Final repair-safety review.
 - Complete verification:

@@ -79,7 +79,7 @@ tests/components/App.test.tsx
 
 - Execute numbered tasks in order.
 - Use test-first implementation for application and contract behavior.
-- The Requirements Reviewer checks stack and product constraints.
+- The Project Orchestrator checks stack and product constraints.
 - The Code Reviewer checks configuration, strict types, and source boundaries.
 - The UI Reviewer checks Task 01.2 typography, palette, borders, and base
   three-section layout.
@@ -93,16 +93,16 @@ production build succeeds, and later epics can import stable domain contracts.
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 01.1 Create the Static Client Toolchain | 90k-150k | Up to 40k | Medium | Multi-tool configuration, dependency setup, tests, and Code review |
-| 01.2 Prove the Minimal Application Shell | 80k-140k | Up to 35k | Medium | Small UI build with component tests and UI review |
-| 01.3 Establish Shared Domain Contracts | 110k-180k | Up to 50k | Low | Cross-epic contracts require careful review and likely rework |
-| 01.4 Enforce Architecture Boundaries | 70k-120k | Up to 30k | Medium | Focused dependency rules, tests, and Code review |
-| **Epic Total** | **350k-590k** | **Up to 155k** | **Low** | **First epic has no accepted Rectifier tasks for comparison** |
+| 01.1 Create the Static Client Toolchain | 75k-125k | Up to 35k | Medium | Multi-tool configuration, dependency setup, tests, and Code review |
+| 01.2 Prove the Minimal Application Shell | 50k-90k | Up to 25k | Medium | Small UI build with component tests and UI review |
+| 01.3 Establish Shared Domain Contracts | 90k-150k | Up to 40k | Low | Cross-epic contracts require careful review and likely rework |
+| 01.4 Enforce Architecture Boundaries | 60k-100k | Up to 25k | Medium | Focused dependency rules, tests, and Code review |
+| **Epic Total** | **275k-465k** | **Up to 125k** | **Low** | **First epic has no accepted Rectifier tasks for comparison** |
 
 ## Tasks
 
@@ -194,7 +194,7 @@ or replaced.
   documented interface policy.
 - [ ] Pure-engine import boundaries are test-enforced.
 - [ ] Circular imports and invalid dependency directions are test-enforced.
-- [ ] Requirements Reviewer and Code Reviewer approve.
+- [ ] Code Reviewer approves toolchain, contracts, and architecture work.
 - [ ] UI Reviewer approves the minimal visual shell.
 
 ## Handoff to Later Epics

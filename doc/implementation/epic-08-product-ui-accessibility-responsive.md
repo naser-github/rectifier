@@ -73,24 +73,24 @@ approved by the Orchestrator.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. A final UI Reviewer compares the
-running product with the approved prototype and PRD exceptions. UI Acceptance
-Approved requires component, accessibility, typecheck, and build verification.
+A UI Reviewer compares the running product with the approved prototype and PRD
+exceptions. UI Acceptance Approved requires component, accessibility,
+typecheck, and build verification.
 
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 08.1 Assemble the Desktop Workspace | 150k-260k | Up to 80k | Low | Full accepted-feature integration and UI review |
-| 08.2 Assemble Actions and Feedback | 120k-210k | Up to 60k | Low | Shared action states, disabled reasons, feedback, and UI review |
-| 08.3 Apply the Approved Light Visual System | 140k-240k | Up to 70k | Low | Prototype comparison, token styling, and visual rework |
-| 08.4 Implement Mobile and Responsive Behavior | 150k-260k | Up to 80k | Low | Responsive integration, keyboard behavior, and browser checks |
-| 08.5 Complete Accessibility and Security Review | 140k-240k | Up to 90k | Low | Cross-product audit and accepted rework |
-| **Epic Total** | **700k-1,210k** | **Up to 380k** | **Low** | **Integration and visual acceptance can require repeated review** |
+| 08.1 Assemble the Desktop Workspace | 100k-170k | Up to 50k | Low | Full accepted-feature integration and UI review |
+| 08.2 Assemble Actions and Feedback | 80k-135k | Up to 40k | Low | Shared action states, disabled reasons, feedback, and UI review |
+| 08.3 Apply the Approved Light Visual System | 90k-155k | Up to 45k | Low | Prototype comparison, token styling, and UI review |
+| 08.4 Implement Mobile and Responsive Behavior | 100k-170k | Up to 50k | Low | Responsive integration, keyboard behavior, and UI review |
+| 08.5 Complete Accessibility and Security Review | 90k-155k | Up to 60k | Low | Cross-product UI audit and accepted rework |
+| **Epic Total** | **460k-785k** | **Up to 245k** | **Low** | **Integration and visual acceptance can require repeated review** |
 
 ## Tasks
 
@@ -165,7 +165,7 @@ approved light design, and passes accessibility checks.
 - [ ] Upload, Clear, Copy, and Download are icon controls with tooltips.
 - [ ] Disabled controls explain why.
 - [ ] No user content is rendered as executable HTML.
-- [ ] Requirements, Code, and final UI Reviewers approve.
+- [ ] Final UI Reviewer approves.
 
 ## Handoff to Later Epics
 

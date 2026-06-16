@@ -209,21 +209,25 @@ These estimates are an early planning control, not actual usage or a cost
 calculation.
 
 `Estimated agent tokens` is the combined token proxy for planned Orchestrator,
-Worker, and required Reviewer executions. `Planning retry reserve` is separate
-and may be used only for retries, fallback, or accepted rework.
+Worker, and required specialist Reviewer executions. `Planning retry reserve`
+is separate and may be used only for retries, fallback, or accepted rework.
+
+These budgets use the lean workflow: the Orchestrator owns requirements,
+small-task, and documentation checks; independent specialist reviewers run
+only for code, repair-safety, UI, and release risks.
 
 | Epic | Estimated Agent Tokens | Planning Retry Reserve |
 | --- | ---: | ---: |
-| Epic 01 Foundation and Contracts | 350k-590k | Up to 155k |
-| Epic 02 Strict Repair Engine | 830k-1,400k | Up to 450k |
-| Epic 03 Worker and Validation | 570k-960k | Up to 280k |
-| Epic 04 Core Workspace and Shared UI | 600k-1,020k | Up to 300k |
-| Epic 05 Repair Experience | 480k-830k | Up to 280k |
-| Epic 06 Format, Convert, and Schema | 600k-1,050k | Up to 320k |
-| Epic 07 Result Views and Output | 500k-880k | Up to 270k |
-| Epic 08 Product UI, Accessibility, and Responsive | 700k-1,210k | Up to 380k |
-| Epic 09 E2E, Performance, and Release | 820k-1,430k | Up to 480k |
-| **Project Base Estimate** | **5,450k-9,370k** | **Up to 2,915k** |
+| Epic 01 Foundation and Contracts | 275k-465k | Up to 125k |
+| Epic 02 Strict Repair Engine | 720k-1,205k | Up to 390k |
+| Epic 03 Worker and Validation | 470k-790k | Up to 225k |
+| Epic 04 Core Workspace and Shared UI | 445k-760k | Up to 220k |
+| Epic 05 Repair Experience | 340k-590k | Up to 200k |
+| Epic 06 Format, Convert, and Schema | 500k-875k | Up to 270k |
+| Epic 07 Result Views and Output | 330k-570k | Up to 180k |
+| Epic 08 Product UI, Accessibility, and Responsive | 460k-785k | Up to 245k |
+| Epic 09 E2E, Performance, and Release | 520k-905k | Up to 305k |
+| **Project Base Estimate** | **4,060k-6,945k** | **Up to 2,160k** |
 
 Before a task starts, the Orchestrator refines its plan estimate using exact
 routing, provider billing dimensions, current pricing, and known comparable
@@ -234,6 +238,11 @@ the Worker.
 ## 7. Global Execution Policy
 
 ### 7.1 Epic Entry Gate
+
+Before applying the entry gate, the Project Orchestrator must show the
+mandatory Epic Start Reminder from `AGENTS.md` and wait for clear user
+approval. No epic report, task brief, task report, Worker execution, or
+implementation edit may begin before that approval.
 
 An epic may start only when:
 
@@ -270,9 +279,10 @@ For every task:
 6. Worker runs focused tests, type checking, and other required verification.
 7. Worker sends a handoff with changed files, results, limits, review risks,
    and available execution-usage details.
-8. Required reviewers inspect the work and report available execution-usage
-   details.
-9. Worker fixes accepted findings and reviewers re-check affected areas.
+8. Required specialist reviewers, when any, inspect the work and report
+   available execution-usage details.
+9. Worker fixes accepted findings and specialist reviewers re-check affected
+   areas.
 10. Project Orchestrator records every execution, completes the task report,
     and updates the epic report.
 11. Project Orchestrator verifies the task and marks its epic checkbox complete.
@@ -282,11 +292,7 @@ Documentation-only tasks use the documentation workflow in
 
 ### 7.3 Review Policy
 
-Normal tasks require:
-
-- Requirements Reviewer.
-- Code Reviewer.
-- Project Orchestrator acceptance.
+Normal tasks require Code Reviewer and Project Orchestrator acceptance.
 
 Repair-sensitive tasks also require:
 
@@ -297,8 +303,9 @@ require:
 
 - UI Reviewer.
 
-Repair-sensitive UI tasks require both Repair Safety and UI Reviewers. Release
-tasks require the complete Release Workflow from `doc/agent-workflow.md`.
+UI-only tasks require UI review instead of Code review. Repair-sensitive UI
+tasks require both Repair Safety and UI Reviewers. Release tasks require a
+Release Reviewer plus only the specialist reviewers needed by the task.
 
 A task is blocked by any unresolved Blocking finding. Important findings must
 be fixed unless the Orchestrator records a specific reason for deferral.

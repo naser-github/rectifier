@@ -75,26 +75,26 @@ Worker protocol contract changes require Orchestrator approval.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers inspect all tasks. UI Reviewer approval is
-required for editor, Error Tray, error-focus, and red-caret tasks. The Repair
-Safety Reviewer must confirm the worker delegates to the pure engine and does
+Code Reviewer approval is required for Tasks 03.1, 03.2, 03.4, and 03.5. UI
+Reviewer approval is required for Tasks 03.3 and 03.4. The Repair Safety
+Reviewer must confirm Tasks 03.1 and 03.5 delegate to the pure engine and do
 not bypass its verification. Validation Pipeline Ready requires worker,
 diagnostics, editor, size-limit, and stale-response tests to pass.
 
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 03.1 Implement Revision-Based Worker Communication | 120k-200k | Up to 60k | Low | Worker lifecycle, stale-response behavior, and Repair Safety review |
-| 03.2 Implement Strict Diagnostics | 100k-170k | Up to 50k | Medium | Focused parser diagnostics and tests |
-| 03.3 Implement Input Size, Upload, and Clear | 90k-150k | Up to 40k | Medium | Browser boundary work, component tests, and UI review |
-| 03.4 Implement Automatic Validation and Error Focus | 130k-220k | Up to 60k | Low | Worker, editor, focus, accessibility, and UI integration |
-| 03.5 Expose Repair Analysis Safely | 130k-220k | Up to 70k | Low | Worker-to-engine safety boundary and Repair Safety review |
-| **Epic Total** | **570k-960k** | **Up to 280k** | **Low** | **Worker and UI integration create cross-boundary rework risk** |
+| 03.1 Implement Revision-Based Worker Communication | 105k-170k | Up to 50k | Low | Worker lifecycle, stale-response behavior, Code, and Repair Safety review |
+| 03.2 Implement Strict Diagnostics | 85k-140k | Up to 40k | Medium | Focused parser diagnostics, tests, and Code review |
+| 03.3 Implement Input Size, Upload, and Clear | 60k-100k | Up to 25k | Medium | Browser boundary work, component tests, and UI review |
+| 03.4 Implement Automatic Validation and Error Focus | 110k-190k | Up to 50k | Low | Worker, editor, focus, accessibility, Code, and UI review |
+| 03.5 Expose Repair Analysis Safely | 110k-190k | Up to 60k | Low | Worker-to-engine safety boundary with Code and Repair Safety review |
+| **Epic Total** | **470k-790k** | **Up to 225k** | **Low** | **Worker and UI integration create cross-boundary rework risk** |
 
 ## Tasks
 
@@ -183,6 +183,7 @@ ignored, and the worker never bypasses the pure repair engine.
 - [ ] Repair adapter passes Repair Safety review.
 - [ ] Automatic eligibility classification never generates, applies, or shows
   a repair candidate.
+- [ ] Code Reviewer approves worker and diagnostics tasks.
 - [ ] UI Reviewer approves editor, Error Tray, and error-focus behavior.
 
 ## Handoff to Later Epics

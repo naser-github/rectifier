@@ -78,6 +78,15 @@ regression test, and the reviewers required by the affected epic.
   measurement. Any budget change must be an approved product decision recorded
   before Epic 09 execution begins.
 
+### Review Policy
+
+- Release Reviewer approval is required for every task.
+- UI Reviewer approval is also required for Tasks 09.1 and 09.6.
+- Repair Safety Reviewer approval is also required for Tasks 09.1, 09.3, and
+  09.6.
+- Code Reviewer is added only if a release task creates or changes production
+  code, shared contracts, or architecture.
+
 ### Completion Policy
 
 Release Candidate Approved requires all verification commands, complete
@@ -87,18 +96,18 @@ verified run guide.
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 09.1 Build Full User-Flow Browser Tests | 170k-300k | Up to 100k | Low | Many browser flows, test debugging, and Release review |
-| 09.2 Build Large-File and Responsiveness Tests | 150k-260k | Up to 90k | Low | 1 MB-10 MB fixtures, performance behavior, and browser variance |
-| 09.3 Build Adversarial Safety and Stability Tests | 170k-300k | Up to 100k | Low | Safety-critical adversarial coverage and Repair Safety review |
-| 09.4 Record Performance Evidence | 110k-190k | Up to 60k | Low | Production measurements, repeat runs, and evidence review |
-| 09.5 Create and Verify the Run Guide | 70k-120k | Up to 30k | Medium | Focused documentation plus clean-run verification |
-| 09.6 Perform Final Release Audit | 150k-260k | Up to 100k | Low | Full verification, multiple reviewers, and release rework |
-| **Epic Total** | **820k-1,430k** | **Up to 480k** | **Low** | **Release work depends on complete system behavior and environment evidence** |
+| 09.1 Build Full User-Flow Browser Tests | 130k-225k | Up to 75k | Low | Browser flows with Release, UI, and Repair Safety review |
+| 09.2 Build Large-File and Responsiveness Tests | 75k-135k | Up to 45k | Low | 1 MB-10 MB fixtures, browser variance, and Release review |
+| 09.3 Build Adversarial Safety and Stability Tests | 110k-195k | Up to 65k | Low | Adversarial coverage with Release and Repair Safety review |
+| 09.4 Record Performance Evidence | 55k-95k | Up to 30k | Low | Production measurements and Release review |
+| 09.5 Create and Verify the Run Guide | 35k-60k | Up to 15k | Medium | Focused documentation, clean-run verification, and Release review |
+| 09.6 Perform Final Release Audit | 115k-195k | Up to 75k | Low | Full verification with Release, UI, and Repair Safety review |
+| **Epic Total** | **520k-905k** | **Up to 305k** | **Low** | **Release work depends on complete system behavior and environment evidence** |
 
 ## Tasks
 
@@ -193,8 +202,8 @@ and recorded performance supports the 10 MB product promise.
 - [ ] Every objective release performance budget passes or a product decision
   explicitly changed the budget before Epic 09 execution began.
 - [ ] Run guide commands are verified.
-- [ ] Final Requirements, Code, UI, Repair Safety, and Release Reviewers
-  approve.
+- [ ] Release Reviewer approves.
+- [ ] UI and Repair Safety Reviewers approve the final release audit.
 - [ ] Project Orchestrator approves the release candidate.
 
 ## Final Handoff

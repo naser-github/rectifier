@@ -81,9 +81,9 @@ Project Orchestrator approval.
 
 ### Review Policy
 
-Each repair rule requires Requirements, Code, and Repair Safety review. The
-Repair Safety Reviewer checks both positive cases and cases that look similar
-but must be refused.
+Each repair rule requires Code and Repair Safety review. The Repair Safety
+Reviewer checks both positive cases and cases that look similar but must be
+refused.
 
 ### Completion Policy
 
@@ -93,18 +93,18 @@ boundaries, mutation checks, and safety review to pass.
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 02.1 Build the Repair Safety Fixture Matrix | 90k-150k | Up to 40k | Medium | Test-focused work with Requirements, Code, and Repair Safety review |
-| 02.2 Implement Tolerant Tokenization and Fingerprints | 150k-250k | Up to 80k | Low | New safety-critical parser logic and adversarial tests |
-| 02.3 Implement Explicit Syntax Repair Rules | 180k-300k | Up to 100k | Low | Multiple test-first repair rules and refusal boundaries |
-| 02.4 Generate, Verify, and Classify Candidates | 170k-280k | Up to 90k | Low | Safety-critical candidate verification and ambiguity behavior |
-| 02.5 Classify Repair Eligibility | 120k-200k | Up to 60k | Low | Strict separation from candidate generation with boundary tests |
-| 02.6 Perform the Repair Safety Audit | 120k-220k | Up to 80k | Low | Full adversarial review and likely accepted rework |
-| **Epic Total** | **830k-1,400k** | **Up to 450k** | **Low** | **Repair safety requires independent review and has high rework risk** |
+| 02.1 Build the Repair Safety Fixture Matrix | 80k-130k | Up to 35k | Medium | Test-focused work with Code and Repair Safety review |
+| 02.2 Implement Tolerant Tokenization and Fingerprints | 130k-215k | Up to 70k | Low | New safety-critical parser logic and adversarial tests |
+| 02.3 Implement Explicit Syntax Repair Rules | 155k-260k | Up to 85k | Low | Multiple test-first repair rules and refusal boundaries |
+| 02.4 Generate, Verify, and Classify Candidates | 145k-240k | Up to 80k | Low | Safety-critical candidate verification and ambiguity behavior |
+| 02.5 Classify Repair Eligibility | 105k-170k | Up to 50k | Low | Strict separation from candidate generation with boundary tests |
+| 02.6 Perform the Repair Safety Audit | 105k-190k | Up to 70k | Low | Full adversarial review and likely accepted rework |
+| **Epic Total** | **720k-1,205k** | **Up to 390k** | **Low** | **Repair safety requires independent review and has high rework risk** |
 
 ## Tasks
 
@@ -197,7 +197,7 @@ returned candidate preserves the complete data-token fingerprint.
 - [ ] Safe, ambiguous, and manual outcomes are explicit.
 - [ ] No rule invents, removes, changes, or reorders data.
 - [ ] Refusal cases include invalid strings, escapes, and Unicode.
-- [ ] Requirements, Code, and Repair Safety Reviewers approve.
+- [ ] Code and Repair Safety Reviewers approve.
 
 ## Handoff to Later Epics
 

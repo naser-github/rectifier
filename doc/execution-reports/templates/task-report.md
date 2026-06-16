@@ -36,7 +36,7 @@
 | --- | --- | --- | --- | --- | ---: | ---: |
 | Project Orchestrator | [Provider] | [Model] | [Type] | [Tier or N/A] | [Provider-specific amount] | [Amount or Unavailable] |
 | Worker | [Provider] | [Model] | [Type] | [Tier or N/A] | [Provider-specific amount] | [Amount or Unavailable] |
-| Required Reviewer | [Provider] | [Model] | [Type] | [Tier or N/A] | [Provider-specific amount] | [Amount or Unavailable] |
+| Required Specialist Reviewer, repeat as needed or use None | [Provider] | [Model] | [Type] | [Tier or N/A] | [Provider-specific amount] | [Amount or Unavailable] |
 | **Refined Estimated Usage / Cost** | | | | | **[Amount]** | **[Amount or Unavailable]** |
 | **Execution Retry Reserve** | | | | | **[Amount or percentage]** | **[Amount or percentage]** |
 | **Estimated Budget** | | | | | **[Amount or Unavailable]** | **[Amount or Unavailable]** |
@@ -84,5 +84,5 @@ provider's usage into these example token columns.
 
 ## Review Results
 
-- Required reviewers: Pending
+- Required specialist reviewers: [Pending, Approved, or None]
 - Project Orchestrator: Pending

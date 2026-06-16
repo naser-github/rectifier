@@ -53,6 +53,26 @@ The risk-first implementation stages are:
 
 Do not build the complete UI before the Repair Safety Approved milestone.
 
+### 2.1 Mandatory Epic Start Reminder
+
+When the user asks to start or execute an epic, the Project Orchestrator must
+stop before creating reports, task briefs, dispatching agents, editing
+implementation files, or starting the first Worker.
+
+Show the user:
+
+- The epic number, name, and exit milestone.
+- Dependency and epic entry-gate status.
+- The epic implementation-plan token budget and planning retry reserve.
+- The planned epic execution report path.
+- The first dependency-safe task.
+- The planned first task brief and task execution report paths.
+- A short list of the setup actions that will happen after approval.
+
+End the reminder by asking whether to start the epic. Wait for clear user
+approval. Do not treat an earlier planning approval as approval to start an
+epic.
+
 ## 3. Required Workflow Selection
 
 Before a Worker starts, the Project Orchestrator must name the task's required
@@ -69,9 +89,9 @@ Use the workflows in `doc/agent-workflow.md`:
 - Release Workflow for Epic 09.
 - Documentation-Only Task for documentation changes.
 
-When more than one workflow rule applies, use the stricter combined workflow
-and include every required reviewer. Never select a weaker workflow to reduce
-review work.
+The Project Orchestrator performs requirements review for every task. Use only
+the specialist reviewers required by the selected workflow. When more than one
+specialist rule applies, include each required specialist reviewer.
 
 Small Task workflow is allowed only when the task does not change product,
 repair, user-facing visual, accessibility, or shared-contract behavior.
@@ -357,8 +377,8 @@ Do not weaken or remove a test only to make the suite pass.
   explicitly changes them.
 - Keep changes focused on the active task.
 - Edit only files listed in the task brief.
-- Do not mark an epic task complete until the required reviewers and Project
-  Orchestrator accept it.
+- Do not mark an epic task complete until its required specialist reviewers,
+  when any, and the Project Orchestrator accept it.
 - Do not add dependencies without a clear need.
 - Do not add backend, AI, accounts, or dark mode.
 - Do not edit the approved UI prototype as implementation code.

@@ -90,13 +90,10 @@ Increase from High to XHigh only when:
 | Task Worker: normal implementation | Tier B | Medium | Read, edit owned files, focused tests, typecheck | Assigned task, contracts, relevant requirements |
 | Task Worker: UI feature | Tier B | Medium | Read, edit owned files, component tests, browser preview when available | PRD UI sections, prototype, shared UI rules |
 | Task Worker: documentation or mechanical change | Tier C | Low | Read and assigned-file edits | Exact source documents and expected output |
-| Requirements Reviewer | Tier B | Medium | Read-only, diff inspection, test evidence | BRD, PRD, prototype, roadmap, assigned epic and task |
 | Code Reviewer | Tier A | High | Read-only, diff inspection, test and build evidence | Changed code, architecture rules, task brief, handoff |
 | Repair Safety Reviewer | Tier A | High | Read-only, repair tests and fixture evidence | Full repair rules, exact-source policy, candidate verification |
 | UI Reviewer | Tier B | Medium | Read-only, component/browser evidence | Prototype, PRD UI rules, accessibility requirements |
 | Release Reviewer | Tier A | High | Read-only, full verification and traceability evidence | All accepted epics, traceability, performance, run guide |
-| Combined Reviewer for eligible Small Task | Tier B | Medium | Read-only and focused verification evidence | Task brief, changed files, relevant requirements |
-| Documentation Reviewer | Tier B | Medium | Read-only | Document priority, names, links, and affected decisions |
 
 ## 5. Current Recommended Model Profile
 
@@ -119,16 +116,13 @@ Current role assignments:
 | Normal Task Worker | `gpt-5.4` | Medium |
 | UI Feature Worker | `gpt-5.4` | Medium |
 | Documentation or Mechanical Worker | `gpt-5.4-mini` | Low |
-| Requirements Reviewer | `gpt-5.4` | Medium |
 | Code Reviewer | `gpt-5.5` | High |
 | Repair Safety Reviewer | `gpt-5.5` | High |
 | UI Reviewer | `gpt-5.4` | Medium |
 | Release Reviewer | `gpt-5.5` | High |
-| Combined Small-Task Reviewer | `gpt-5.4` | Medium |
-| Documentation Reviewer | `gpt-5.4` | Medium |
 
-Use `gpt-5.5` with High reasoning for a Requirements Reviewer when reviewing
-cross-epic scope, repair policy, or final release traceability.
+The Project Orchestrator owns requirements checks, small-task checks, and
+documentation checks.
 
 ## 6. Model Assignment Rules
 
@@ -201,7 +195,7 @@ Every agent receives:
 
 Add these when relevant:
 
-- BRD and PRD sections for Requirements, Worker, and Reviewer roles.
+- BRD and PRD sections for Worker and specialist Reviewer roles.
 - Approved prototype for UI work.
 - Repair engine rules and fixtures for repair work.
 - Shared-contract definitions for integration work.
@@ -387,4 +381,4 @@ Local execution may have zero API cost while infrastructure cost remains
 - [ ] Every agent receives the required context.
 - [ ] Reviewer agents remain read-only.
 - [ ] Retry and escalation rules are followed.
-- [ ] Model routing never weakens workflow or reviewer requirements.
+- [ ] Model routing never weakens workflow or specialist reviewer requirements.

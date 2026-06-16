@@ -76,25 +76,25 @@ before changing `src/domain/workerProtocol.ts`.
 
 ### Review and Completion Policy
 
-Requirements and Code Reviewers must approve. UI Reviewer approval is also
-required for Schema Drawer tasks. Processing Tools Ready requires focused
-worker tests, schema component tests, type checking, and documented conversion
-contracts.
+Code Reviewer approval is required for all worker processing tasks, including
+Task 06.4 schema logic. UI Reviewer approval is also required for Task 06.4
+Schema Drawer behavior. Processing Tools Ready requires focused worker tests,
+schema component tests, type checking, and documented conversion contracts.
 
 ## Planning Usage Budget
 
 These early estimates include planned Orchestrator, Worker, and required
-Reviewer executions. The Orchestrator refines usage and cost before each task
-starts.
+specialist Reviewer executions. The Orchestrator refines usage and cost before
+each task starts.
 
 | Task | Estimated Agent Tokens | Planning Retry Reserve | Confidence | Estimate Basis |
 | --- | ---: | ---: | --- | --- |
-| 06.1 Implement Beautify and Minify | 80k-140k | Up to 40k | Medium | Small worker actions with focused tests |
-| 06.2 Implement YAML and XML Conversion | 120k-210k | Up to 60k | Medium | Two conversion libraries, escaping rules, and tests |
-| 06.3 Implement Automatic Flattened CSV | 130k-230k | Up to 70k | Low | New flattening contract, escaping, refusal behavior, and tests |
-| 06.4 Implement Schema Check | 130k-230k | Up to 70k | Low | Schema worker behavior plus UI Feature review |
-| 06.5 Integrate Processing Actions into the Single Worker | 140k-240k | Up to 80k | Low | Cross-action worker integration and regression risk |
-| **Epic Total** | **600k-1,050k** | **Up to 320k** | **Low** | **Conversion and integration behavior has several boundary cases** |
+| 06.1 Implement Beautify and Minify | 65k-115k | Up to 35k | Medium | Small worker actions with focused tests and Code review |
+| 06.2 Implement YAML and XML Conversion | 100k-175k | Up to 50k | Medium | Two conversion libraries, escaping rules, tests, and Code review |
+| 06.3 Implement Automatic Flattened CSV | 110k-190k | Up to 60k | Low | New flattening contract, refusal behavior, tests, and Code review |
+| 06.4 Implement Schema Check | 110k-195k | Up to 60k | Low | Schema worker and drawer behavior with Code and UI review |
+| 06.5 Integrate Processing Actions into the Single Worker | 115k-200k | Up to 65k | Low | Cross-action worker integration, regression risk, and Code review |
+| **Epic Total** | **500k-875k** | **Up to 270k** | **Low** | **Conversion and integration behavior has several boundary cases** |
 
 ## Tasks
 
@@ -172,7 +172,7 @@ unsupported CSV or schema state provides a clear reason.
 - [ ] Schema errors use plain messages and data paths.
 - [ ] Schema Drawer opens, closes, clears, and never changes the result.
 - [ ] All processing actions use the single revision-based worker.
-- [ ] Requirements and Code Reviewers approve.
+- [ ] Code Reviewer approves worker processing tasks.
 - [ ] UI Reviewer approves the Schema Drawer behavior.
 
 ## Handoff to Later Epics
