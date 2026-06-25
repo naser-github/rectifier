@@ -110,73 +110,73 @@ each task starts.
 
 ### Task 02.1: Build the Repair Safety Fixture Matrix
 
-- [ ] Add safe cases for missing comma, trailing comma, clear missing colon,
+- [x] Add safe cases for missing comma, trailing comma, clear missing colon,
   deterministic missing closing delimiter, and safe single-quote delimiter
   replacement.
-- [ ] Add ambiguous cases where more than one verified structure is possible.
-- [ ] Add refused cases including `{'jhon'}`, unknown values, adjacent values,
+- [x] Add ambiguous cases where more than one verified structure is possible.
+- [x] Add refused cases including `{'jhon'}`, unknown values, adjacent values,
   unterminated strings, invalid escapes, and broken Unicode.
-- [ ] Add adversarial refused cases where decoded values look equivalent but
+- [x] Add adversarial refused cases where decoded values look equivalent but
   exact data text changes, including `1` to `1.0`, `1e1` to `10`, and
   `"a"` to `"\u0061"`.
-- [ ] Record the expected classification and reason for every fixture.
+- [x] Record the expected classification and reason for every fixture.
 
 ### Task 02.2: Implement Tolerant Tokenization and Fingerprints
 
-- [ ] Write failing tests for token kind, decoded value, exact protected source
+- [x] Write failing tests for token kind, decoded value, exact protected source
   content, protected source range, and source order.
-- [ ] Tokenize supported invalid syntax without treating syntax delimiters as
+- [x] Tokenize supported invalid syntax without treating syntax delimiters as
   data.
-- [ ] Record both semantic value and exact protected source content for string,
+- [x] Record both semantic value and exact protected source content for string,
   number, boolean, and null data tokens.
-- [ ] Treat quote delimiters as syntax only when changing them preserves every
+- [x] Treat quote delimiters as syntax only when changing them preserves every
   enclosed source character exactly.
-- [ ] Produce an ordered fingerprint that detects invented, removed, changed,
+- [x] Produce an ordered fingerprint that detects invented, removed, changed,
   reformatted, re-escaped, or reordered data.
-- [ ] Confirm tokenizer and fingerprint functions do not mutate input.
+- [x] Confirm tokenizer and fingerprint functions do not mutate input.
 
 ### Task 02.3: Implement Explicit Syntax Repair Rules
 
-- [ ] Make each rule return only explicit `SyntaxEdit[]`.
-- [ ] Implement and test missing comma.
-- [ ] Implement and test trailing comma removal.
-- [ ] Implement and test clear missing colon.
-- [ ] Implement and test deterministic missing closing delimiter.
-- [ ] Implement and test safe single-quote delimiter replacement with the same
+- [x] Make each rule return only explicit `SyntaxEdit[]`.
+- [x] Implement and test missing comma.
+- [x] Implement and test trailing comma removal.
+- [x] Implement and test clear missing colon.
+- [x] Implement and test deterministic missing closing delimiter.
+- [x] Implement and test safe single-quote delimiter replacement with the same
   decoded string value.
-- [ ] Keep unsupported and uncertain patterns out of automatic repair.
+- [x] Keep unsupported and uncertain patterns out of automatic repair.
 
 ### Task 02.4: Generate, Verify, and Classify Candidates
 
-- [ ] Apply edits without mutating the original input.
-- [ ] Reject any edit that overlaps protected key or value content; allow only
+- [x] Apply edits without mutating the original input.
+- [x] Reject any edit that overlaps protected key or value content; allow only
   proven syntax-delimiter range edits.
-- [ ] Parse the complete candidate as strict JSON.
-- [ ] Compare complete semantic and exact-source data-token fingerprints.
-- [ ] Return one verified deterministic candidate as `safe`.
-- [ ] Return multiple verified candidates as `ambiguous` without selecting one.
-- [ ] Return `manual` when no candidate can be proven safe.
+- [x] Parse the complete candidate as strict JSON.
+- [x] Compare complete semantic and exact-source data-token fingerprints.
+- [x] Return one verified deterministic candidate as `safe`.
+- [x] Return multiple verified candidates as `ambiguous` without selecting one.
+- [x] Return `manual` when no candidate can be proven safe.
 
 ### Task 02.5: Classify Repair Eligibility
 
-- [ ] Add a pure `classifyRepairEligibility()` API that recognizes whether a
+- [x] Add a pure `classifyRepairEligibility()` API that recognizes whether a
   confirmed diagnostic and its local syntax context match a supported repair
   rule.
-- [ ] Do not generate, verify, select, or expose a repair candidate from
+- [x] Do not generate, verify, select, or expose a repair candidate from
   eligibility classification.
-- [ ] Return metadata only: supported-rule-may-apply or unsupported.
-- [ ] Test supported-rule classifications and false-positive boundaries.
-- [ ] Confirm full candidate generation and verification happen only after the
+- [x] Return metadata only: supported-rule-may-apply or unsupported.
+- [x] Test supported-rule classifications and false-positive boundaries.
+- [x] Confirm full candidate generation and verification happen only after the
   user-triggered repair request.
 
 ### Task 02.6: Perform the Repair Safety Audit
 
-- [ ] Run every accepted, ambiguous, and refused fixture.
-- [ ] Add mutation and forbidden-import tests.
-- [ ] Add adversarial tests proving semantically equivalent number or string
+- [x] Run every accepted, ambiguous, and refused fixture.
+- [x] Add mutation and forbidden-import tests.
+- [x] Add adversarial tests proving semantically equivalent number or string
   rewrites are refused.
-- [ ] Add regression fixtures for every review finding.
-- [ ] Obtain explicit Repair Safety Reviewer approval.
+- [x] Add regression fixtures for every review finding.
+- [x] Obtain explicit Repair Safety Reviewer approval.
 
 ## Verification
 
@@ -191,13 +191,13 @@ returned candidate preserves the complete data-token fingerprint.
 
 ## Acceptance Checklist
 
-- [ ] Pure API exposes analyze, generate, verify, and apply operations.
-- [ ] Original input is never mutated.
-- [ ] Every returned candidate is strict valid JSON.
-- [ ] Safe, ambiguous, and manual outcomes are explicit.
-- [ ] No rule invents, removes, changes, or reorders data.
-- [ ] Refusal cases include invalid strings, escapes, and Unicode.
-- [ ] Code and Repair Safety Reviewers approve.
+- [x] Pure API exposes analyze, generate, verify, and apply operations.
+- [x] Original input is never mutated.
+- [x] Every returned candidate is strict valid JSON.
+- [x] Safe, ambiguous, and manual outcomes are explicit.
+- [x] No rule invents, removes, changes, or reorders data.
+- [x] Refusal cases include invalid strings, escapes, and Unicode.
+- [x] Code and Repair Safety Reviewers approve.
 
 ## Handoff to Later Epics
 

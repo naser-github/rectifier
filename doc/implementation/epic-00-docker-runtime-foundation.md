@@ -19,7 +19,7 @@ features.
 ## Scope
 
 - One `docker-compose.yml` app service.
-- One production container for the built static client.
+- One production container named `rectifier_app` for the built static client.
 - Multi-stage `Dockerfile` that builds the Vite app and serves static files.
 - `.dockerignore` that keeps local dependencies, build output, reports, and
   secrets out of the image context.
@@ -93,28 +93,30 @@ starts.
 
 ### Task 00.1: Define Docker Runtime Files
 
-- [ ] Create `Dockerfile` with a Node build stage and a static serving runtime
+- [x] Create `Dockerfile` with a Node build stage and a static serving runtime
   stage.
-- [ ] The runtime container must serve the built `dist/` output only.
-- [ ] Do not add server routes that receive user JSON.
-- [ ] Create `.dockerignore` and exclude `node_modules`, `dist`,
+- [x] The runtime container must serve the built `dist/` output only.
+- [x] Do not add server routes that receive user JSON.
+- [x] Create `.dockerignore` and exclude `node_modules`, `dist`,
   `.git`, `.env`, `.env.*`, Playwright output, coverage, and execution reports.
-- [ ] Create `docker-compose.yml` with one app service.
-- [ ] Expose one local HTTP port for the app.
-- [ ] Run `docker compose config`.
+- [x] Create `docker-compose.yml` with one app service and the fixed container
+  name `rectifier_app`.
+- [x] Expose one local HTTP port for the app.
+- [x] Run `docker compose config`.
 
 ### Task 00.2: Document and Verify Docker Runtime
 
-- [ ] Create or update `doc/RUN.md` with Docker Compose run commands.
-- [ ] State that Docker Compose starts one app container only.
-- [ ] State that no backend, database, AI service, or account service is
+- [x] Create or update `doc/RUN.md` with Docker Compose run commands.
+- [x] State that Docker Compose starts one app container only.
+- [x] State that no backend, database, AI service, or account service is
   required.
-- [ ] Update `README.md` to link the run guide.
-- [ ] Run `docker compose config`.
-- [ ] If Docker daemon access is available, run the documented Docker startup
+- [x] Update `README.md` to link the run guide.
+- [x] Run `docker compose config`.
+- [x] If Docker daemon access is available, run the documented Docker startup
   command and record the result.
-- [ ] If Docker daemon access is unavailable, record it as `Unavailable` in the
-  task report and keep `docker compose config` as the verified check.
+- [x] Docker daemon access was available; record the documented startup command
+  result in the task report and keep `docker compose config` as the verified
+  Epic 00 check.
 
 ## Verification
 
@@ -136,14 +138,15 @@ services.
 
 ## Acceptance Checklist
 
-- [ ] `Dockerfile` builds the static client and serves only built assets.
-- [ ] `docker-compose.yml` contains one app service.
-- [ ] No backend, database, cache, AI, or sidecar service exists.
-- [ ] `.dockerignore` excludes dependencies, build output, reports, and secrets.
-- [ ] Docker run docs are present.
-- [ ] `docker compose config` passes.
-- [ ] Code Reviewer approves the runtime configuration.
-- [ ] Project Orchestrator confirms Docker Runtime Ready.
+- [x] `Dockerfile` builds the static client and serves only built assets.
+- [x] `docker-compose.yml` contains one app service and the fixed container name
+  `rectifier_app`.
+- [x] No backend, database, cache, AI, or sidecar service exists.
+- [x] `.dockerignore` excludes dependencies, build output, reports, and secrets.
+- [x] Docker run docs are present.
+- [x] `docker compose config` passes.
+- [x] Code Reviewer approves the runtime configuration.
+- [x] Project Orchestrator confirms Docker Runtime Ready.
 
 ## Handoff to Later Epics
 

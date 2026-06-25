@@ -3,7 +3,33 @@ version: 1
 # Add entries before calculating task costs. Do not add a rate without a
 # provider source and checked date. Use separate entries when a provider has
 # different processing tiers, context bands, or billing methods.
-pricing_entries: []
+pricing_entries:
+  - id: openai-gpt-5-5-standard-2026-06-18
+    provider: openai
+    model: gpt-5.5
+    billing_type: api-equivalent
+    processing_tier: standard
+    currency: USD
+    effective_date: 2026-06-18
+    checked_date: 2026-06-18
+    source: https://openai.com/api/pricing/
+    rates:
+      input_per_million: 5.00
+      cached_input_per_million: 0.50
+      output_per_million: 30.00
+  - id: openai-gpt-5-4-standard-2026-06-18
+    provider: openai
+    model: gpt-5.4
+    billing_type: api-equivalent
+    processing_tier: standard
+    currency: USD
+    effective_date: 2026-06-18
+    checked_date: 2026-06-18
+    source: https://openai.com/api/pricing/
+    rates:
+      input_per_million: 2.50
+      cached_input_per_million: 0.25
+      output_per_million: 15.00
 
 # Example shape:
 # pricing_entries:

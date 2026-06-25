@@ -5,3 +5,9 @@
 .commandcode
 .serena
 .superpowers
+
+node_modules
+dist
+coverage
+playwright-report
+test-results

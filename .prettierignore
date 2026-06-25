@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+.claude
+playwright-report
+test-results
+doc
+doc/execution-reports
+doc/ui/rectifier-light-v1.html

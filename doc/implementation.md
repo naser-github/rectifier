@@ -186,10 +186,10 @@ Repair Safety approval.
 
 | Epic | Purpose | Depends On | Required Workflow | Exit Milestone | Status |
 | --- | --- | --- | --- | --- | --- |
-| [00 Docker Runtime Foundation](implementation/epic-00-docker-runtime-foundation.md) | Define one-container Docker Compose runtime for the static client | None | Normal configuration and documentation | Docker Runtime Ready | Not started |
-| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | Epic 00 Docker runtime | Normal plus UI Feature for visual shell | Foundation Ready | Not started |
-| [02 Strict Repair Engine](implementation/epic-02-strict-repair-engine.md) | Prove repairs cannot change user data or guess intent | Epic 01 contracts and tests | Repair-sensitive | Repair Safety Approved | Not started |
-| [03 Worker and Validation](implementation/epic-03-worker-and-validation.md) | Add revision-based worker processing, validation, upload, and error focus | Epics 01-02 | Normal plus Repair Safety and UI Feature tasks | Validation Pipeline Ready | Not started |
+| [00 Docker Runtime Foundation](implementation/epic-00-docker-runtime-foundation.md) | Define one-container Docker Compose runtime for the static client | None | Normal configuration and documentation | Docker Runtime Ready | Accepted |
+| [01 Foundation and Contracts](implementation/epic-01-foundation-and-contracts.md) | Create the runnable client, test tools, architecture boundaries, and shared contracts | Epic 00 Docker runtime | Normal plus UI Feature for visual shell | Foundation Ready | Accepted |
+| [02 Strict Repair Engine](implementation/epic-02-strict-repair-engine.md) | Prove repairs cannot change user data or guess intent | Epic 01 contracts and tests | Repair-sensitive | Repair Safety Approved | Accepted |
+| [03 Worker and Validation](implementation/epic-03-worker-and-validation.md) | Add revision-based worker processing, validation, upload, and error focus | Epics 01-02 | Normal plus Repair Safety and UI Feature tasks | Validation Pipeline Ready | Accepted |
 | [04 Core Workspace and Shared UI](implementation/epic-04-core-workspace-and-shared-ui.md) | Add workspace state, shared controls, first sample, disabled reasons, and storage | Epic 03 | Normal plus Repair Safety and UI Feature tasks | Core Workspace Ready | Not started |
 | [05 Repair Experience](implementation/epic-05-repair-experience.md) | Add safe repair preview, ambiguous choices, and manual path | Epic 04 | Repair-Sensitive UI | Repair UX Approved | Not started |
 | [06 Format, Convert, and Schema](implementation/epic-06-format-convert-schema.md) | Add Beautify, Minify, YAML, XML, flattened CSV, and Schema Check | Epic 04 | Normal plus UI Feature for Schema Drawer | Processing Tools Ready | Not started |

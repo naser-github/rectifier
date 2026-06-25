@@ -100,62 +100,62 @@ each task starts.
 
 ### Task 03.1: Implement Revision-Based Worker Communication
 
-- [ ] Write failing protocol tests for stale responses, stored revisions,
+- [x] Write failing protocol tests for stale responses, stored revisions,
   unknown revisions, and repair-engine delegation.
-- [ ] Start one worker and terminate it on application unmount.
-- [ ] Increase `jobId` for every request and `revision` only for input changes.
-- [ ] Store the latest document and parse state in the worker.
-- [ ] Return `stale-revision` for actions against old input.
-- [ ] Ignore responses from older jobs or revisions in the client.
+- [x] Start one worker and terminate it on application unmount.
+- [x] Increase `jobId` for every request and `revision` only for input changes.
+- [x] Store the latest document and parse state in the worker.
+- [x] Return `stale-revision` for actions against old input.
+- [x] Ignore responses from older jobs or revisions in the client.
 
 ### Task 03.2: Implement Strict Diagnostics
 
-- [ ] Test every valid top-level JSON type.
-- [ ] Test missing comma, trailing comma, and uncertain follow-on errors.
-- [ ] Parse with trailing commas and comments disallowed.
-- [ ] Map confirmed parser errors to plain messages, offsets, lines, and
+- [x] Test every valid top-level JSON type.
+- [x] Test missing comma, trailing comma, and uncertain follow-on errors.
+- [x] Parse with trailing commas and comments disallowed.
+- [x] Map confirmed parser errors to plain messages, offsets, lines, and
   columns.
-- [ ] Do not present possible follow-on diagnostics as confirmed errors.
-- [ ] Implement ephemeral result-text validation without replacing the stored
+- [x] Do not present possible follow-on diagnostics as confirmed errors.
+- [x] Implement ephemeral result-text validation without replacing the stored
   protected source document.
 
 ### Task 03.3: Implement Input Size, Upload, and Clear
 
-- [ ] Reject selected files larger than 10 MB using `file.size` before reading.
-- [ ] Reject pasted or typed input as soon as its encoded size exceeds 10 MB
+- [x] Reject selected files larger than 10 MB using `file.size` before reading.
+- [x] Reject pasted or typed input as soon as its encoded size exceeds 10 MB
   and keep the last accepted document revision.
-- [ ] Show a clear 10 MB limit explanation for upload, paste, and typed input.
-- [ ] Accept `.json` files and send a new document revision immediately.
-- [ ] Expose upload selection and clear-workspace requests for the Input panel;
+- [x] Show a clear 10 MB limit explanation for upload, paste, and typed input.
+- [x] Accept `.json` files and send a new document revision immediately.
+- [x] Expose upload selection and clear-workspace requests for the Input panel;
   Epic 04 owns the shared icon controls and complete state reset.
-- [ ] Verify user content never leaves the browser.
+- [x] Verify user content never leaves the browser.
 
 ### Task 03.4: Implement Automatic Validation and Error Focus
 
-- [ ] Configure the input CodeMirror editor with JSON syntax highlighting, line
+- [x] Configure the input CodeMirror editor with JSON syntax highlighting, line
   numbers, and object/array code folding.
-- [ ] Test syntax highlighting, line numbers, and folding.
-- [ ] Debounce normal typing by 300 milliseconds.
-- [ ] Validate uploaded files immediately.
-- [ ] Decorate confirmed error ranges in CodeMirror.
-- [ ] Focus and scroll to the first confirmed error.
-- [ ] Use a red caret while an error is focused.
-- [ ] Allow each Error Tray item to focus its exact source location.
-- [ ] Confirm stale diagnostics never replace current diagnostics.
+- [x] Test syntax highlighting, line numbers, and folding.
+- [x] Debounce normal typing by 300 milliseconds.
+- [x] Validate uploaded files immediately.
+- [x] Decorate confirmed error ranges in CodeMirror.
+- [x] Focus and scroll to the first confirmed error.
+- [x] Use a red caret while an error is focused.
+- [x] Allow each Error Tray item to focus its exact source location.
+- [x] Confirm stale diagnostics never replace current diagnostics.
 
 ### Task 03.5: Expose Repair Analysis Safely
 
-- [ ] After confirmed invalid diagnostics, call the pure
+- [x] After confirmed invalid diagnostics, call the pure
   `classifyRepairEligibility()` API for the current revision only to return
   supported-rule eligibility metadata.
-- [ ] Eligibility classification must not generate, verify, select, show,
+- [x] Eligibility classification must not generate, verify, select, show,
   preview, or apply a candidate; create a result; or open a dialog.
-- [ ] Generate and verify candidates only after the user clicks Repair JSON.
-- [ ] Route user-triggered repair analysis and candidate application to the
+- [x] Generate and verify candidates only after the user clicks Repair JSON.
+- [x] Route user-triggered repair analysis and candidate application to the
   pure repair API.
-- [ ] Return only the accepted `safe`, `ambiguous`, or `manual` result.
-- [ ] Add a regression test proving worker handlers contain no repair rules.
-- [ ] Obtain Repair Safety Reviewer approval.
+- [x] Return only the accepted `safe`, `ambiguous`, or `manual` result.
+- [x] Add a regression test proving worker handlers contain no repair rules.
+- [x] Obtain Repair Safety Reviewer approval.
 
 ## Verification
 
@@ -172,21 +172,19 @@ ignored, and the worker never bypasses the pure repair engine.
 
 ## Acceptance Checklist
 
-- [ ] One worker owns expensive processing.
-- [ ] Automatic validation has no Validate button.
-- [ ] Files over 10 MB are rejected before reading.
-- [ ] Pasted and typed input over 10 MB is rejected.
-- [ ] Input editor supports highlighting, line numbers, and folding.
-- [ ] Diagnostics include reliable source positions.
-- [ ] First error receives focus and a red caret.
-- [ ] Old responses cannot overwrite current state.
-- [ ] Repair adapter passes Repair Safety review.
-- [ ] Automatic eligibility classification never generates, applies, or shows
+- [x] One worker owns expensive processing.
+- [x] Automatic validation has no Validate button.
+- [x] Files over 10 MB are rejected before reading.
+- [x] Pasted and typed input over 10 MB is rejected.
+- [x] Input editor supports highlighting, line numbers, and folding.
+- [x] Diagnostics include reliable source positions.
+- [x] First error receives focus and a red caret.
+- [x] Old responses cannot overwrite current state.
+- [x] Repair adapter passes Repair Safety review.
+- [x] Automatic eligibility classification never generates, applies, or shows
   a repair candidate.
-- [ ] Code Reviewer approves worker and diagnostics tasks.
-- [ ] UI Reviewer approves editor, Error Tray, and error-focus behavior.
-
-## Handoff to Later Epics
+- [x] Code Reviewer approves worker and diagnostics tasks.
+- [x] UI Reviewer approves editor, Error Tray, and error-focus behavior.
 
 Provide the accepted worker-client API, validation state shape, diagnostic
 focus contract, size-limit behavior, and repair-analysis responses. Epic 04

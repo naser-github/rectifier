@@ -129,7 +129,7 @@ The first release uses a light design only.
 
 The approved UI prototype is:
 
-`ui/rectifier-light-v1.html`
+`doc/ui/rectifier-light-v1.html`
 
 The prototype is a visual and interaction reference. Prototype-only controls,
 such as the **TEST STATE** selector and **interactive prototype** label, must
