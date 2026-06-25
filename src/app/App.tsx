@@ -11,9 +11,13 @@ import {
 } from "../hooks/useWorkerClient";
 import { InputPanel } from "../components/editor/InputPanel";
 import type { InputEditorHandle } from "../components/editor/InputEditor";
+import { Button } from "../components/ui/Button";
+import { Dialog } from "../components/ui/Dialog";
+import { DisabledReason } from "../components/ui/DisabledReason";
 import { Panel } from "../components/ui/Panel";
 import { TooltipProvider } from "../components/ui/Tooltip";
 import { readJsonFile } from "../lib/files";
+import { getActionEligibility, type ActionId } from "../state/actionEligibility";
 import { cn } from "../lib/cn";
 
 export interface AppProps {
@@ -50,10 +54,18 @@ function ProductionRectifierApp() {
   );
 }
 
+const ACTIONS: { readonly id: ActionId; readonly label: string }[] = [
+  { id: "beautify", label: "Beautify" },
+  { id: "minify", label: "Minify" },
+  { id: "convert", label: "Convert" },
+  { id: "repair-json", label: "Repair JSON" },
+];
+
 function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient }) {
   const controller = useWorkspaceController(workerClient);
   const editorRef = useRef<InputEditorHandle>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [storagePopoverOpen, setStoragePopoverOpen] = useState(false);
 
   const confirmedDiagnostics = controller.state.diagnostics.filter(
     (d) => d.reliability === "confirmed",
@@ -84,6 +96,12 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
     fileInputRef.current?.click();
   }, []);
 
+  const handleClearSaved = useCallback((): void => {
+    void controller.clearSaved().then(() => {
+      setStoragePopoverOpen(false);
+    });
+  }, [controller]);
+
   return (
     <div className="min-h-screen bg-neutral-800 p-4 text-black sm:p-6">
       <div className="mx-auto max-w-[1500px] rounded-[8px] bg-black p-3">
@@ -95,10 +113,35 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
               </span>
               <span className="text-lg font-extrabold">Rectifier</span>
             </div>
-            <p className="text-xs font-semibold text-muted">
+            <button
+              type="button"
+              onClick={() => {
+                setStoragePopoverOpen(true);
+              }}
+              className="text-xs font-semibold text-muted hover:text-black focus-visible:outline-2 focus-visible:outline-red-accent focus-visible:outline-offset-2"
+            >
               Your JSON stays in this browser
-            </p>
+            </button>
           </header>
+
+          <Dialog
+            open={storagePopoverOpen}
+            onClose={() => {
+              setStoragePopoverOpen(false);
+            }}
+            title="Browser storage"
+            actions={
+              <Button variant="danger" onClick={handleClearSaved}>
+                Clear saved workspace
+              </Button>
+            }
+          >
+            <p className="text-sm leading-relaxed text-muted">
+              Rectifier saves only your latest workspace locally in this browser. No
+              data is sent to a server. Clearing saved data removes persisted work
+              without clearing your currently open workspace.
+            </p>
+          </Dialog>
 
           <main className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_142px_minmax(0,1fr)]">
             <InputPanel
@@ -135,19 +178,31 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
                 </p>
               </div>
               <div className="flex flex-col gap-2 p-3">
-                {["Beautify", "Minify", "Convert", "Repair JSON"].map((label) => (
-                  <button
-                    className={cn(
-                      "min-h-11 rounded-[6px] border border-line bg-white px-3 text-left text-xs font-extrabold",
-                      label === "Repair JSON" &&
-                        "mt-2 border-red-accent bg-red-accent text-white",
-                    )}
-                    key={label}
-                    type="button"
-                  >
-                    {label}
-                  </button>
-                ))}
+                {ACTIONS.map(({ id, label }) => {
+                  const { enabled, reason } = getActionEligibility(
+                    controller.state,
+                    id,
+                  );
+
+                  return (
+                    <DisabledReason key={id} reason={reason}>
+                      <button
+                        type="button"
+                        disabled={!enabled}
+                        className={cn(
+                          "min-h-11 w-full rounded-[6px] border px-3 text-left text-xs font-extrabold transition-colors",
+                          enabled && id === "repair-json"
+                            ? "border-red-accent bg-red-accent text-white hover:brightness-110"
+                            : enabled
+                              ? "border-line bg-white hover:bg-paper"
+                              : "pointer-events-none border-line bg-white opacity-40",
+                        )}
+                      >
+                        {label}
+                      </button>
+                    </DisabledReason>
+                  );
+                })}
               </div>
             </section>
 

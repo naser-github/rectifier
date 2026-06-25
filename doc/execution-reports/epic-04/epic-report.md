@@ -58,7 +58,7 @@ unchanged; Tier A maps to `claude-opus-4-8` and Tier B maps to
 - API-equivalent cost: Unavailable: per-run token usage not exposed
 - Billed cost: Included in subscription
 - Difference from estimated budget: Unavailable
-- Budget status: In Progress
+- Budget status: Complete
 - Shared epic overhead: Unavailable
 
 ## Missing Evidence
