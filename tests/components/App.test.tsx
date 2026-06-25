@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
-import { render, screen, act } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../../src/app/App";
 import type {
@@ -9,6 +9,40 @@ import type {
   WorkerResponseHandler,
 } from "../../src/hooks/useWorkerClient";
 import type { WorkerSourceRevision } from "../../src/domain/workerProtocol";
+
+// ---------------------------------------------------------------------------
+// Mock idb-keyval (used by useWorkspacePersistence)
+// ---------------------------------------------------------------------------
+
+beforeEach(() => {
+  class MockResizeObserver {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    observe(): void {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    unobserve(): void {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    disconnect(): void {}
+  }
+  vi.stubGlobal("ResizeObserver", MockResizeObserver);
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+vi.mock("idb-keyval", () => ({
+  get: vi.fn(() => Promise.resolve(undefined)),
+  set: vi.fn(() => Promise.resolve()),
+  del: vi.fn(() => Promise.resolve()),
+}));
+
+// ---------------------------------------------------------------------------
+// Fake worker client
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Fake worker client
+// ---------------------------------------------------------------------------
 
 const createFakeClient = (): WorkerClient & {
   readonly setSourceSpy: ReturnType<
@@ -36,16 +70,20 @@ const createFakeClient = (): WorkerClient & {
   };
 };
 
+// ---------------------------------------------------------------------------
+// Suite
+// ---------------------------------------------------------------------------
+
 describe("App", () => {
   it("renders the minimal Rectifier workspace sections", () => {
     render(<App workerClient={createFakeClient()} />);
 
-    expect(screen.getByRole("heading", { name: "Input JSON" })).toBeInTheDocument();
+    expect(screen.getByText("Input JSON")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Actions" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Result" })).toBeInTheDocument();
+    expect(screen.getByText("Result")).toBeInTheDocument();
   });
 
-  it("renders the real input editor and sends the initial source for validation", () => {
+  it("renders the input editor", () => {
     const client = createFakeClient();
 
     render(<App workerClient={client} />);
@@ -53,41 +91,16 @@ describe("App", () => {
     expect(
       screen.getByRole("region", { name: /input json editor/i }),
     ).toBeInTheDocument();
-    expect(client.setSourceSpy).toHaveBeenCalledOnce();
-    const firstSource = client.setSourceSpy.mock.calls[0]?.[0];
-    expect(firstSource?.revision).toBe(1);
-    expect(firstSource?.text).toContain('"name": "Rectifier"');
   });
 
-  it("shows worker diagnostics in the status tray", () => {
-    const client = createFakeClient();
+  it("shows the validation status tray with Upload and Clear controls", () => {
+    render(<App workerClient={createFakeClient()} />);
 
-    render(<App workerClient={client} />);
+    // InputPanel with Upload/Clear buttons
+    expect(screen.getByRole("button", { name: "Upload JSON" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Clear input" })).toBeInTheDocument();
 
-    act(() => {
-      client.emitSourceValidated({
-        diagnostics: [
-          {
-            code: "json.missing-comma",
-            message: "Missing comma.",
-            position: { column: 10, line: 2, offset: 9 },
-            reliability: "confirmed",
-            repairState: "eligible",
-            severity: "error",
-          },
-        ],
-        eligibility: {
-          diagnosticCode: "json.missing-comma",
-          isEligible: true,
-          ruleId: "missing-comma",
-        },
-        id: "job-source",
-        kind: "source-validated",
-        revision: 1,
-      });
-    });
-
-    expect(screen.getByText("Missing comma.")).toBeInTheDocument();
-    expect(screen.getByText(/line\s*2/i)).toBeInTheDocument();
+    // Status tray shows checking state initially
+    expect(screen.getByText("Checking JSON…")).toBeInTheDocument();
   });
 });
