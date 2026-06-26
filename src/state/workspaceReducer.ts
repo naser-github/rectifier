@@ -69,6 +69,10 @@ export function workspaceReducer(
       return { ...state, result: null, resultError: null };
     }
 
+    case "SET_RESULT_ERROR": {
+      return { ...state, resultError: action.error };
+    }
+
     case "SET_REPAIR_ANALYSIS": {
       if (action.revision !== state.revision) {
         return state;
@@ -81,7 +85,20 @@ export function workspaceReducer(
     }
 
     case "CLEAR_REPAIR": {
-      return { ...state, repairState: "idle", repairAnalysis: null };
+      return {
+        ...state,
+        repairState: "idle",
+        repairAnalysis: null,
+        repairValidation: null,
+      };
+    }
+
+    case "SET_ANALYZING": {
+      return { ...state, repairState: "analyzing", repairAnalysis: null };
+    }
+
+    case "SET_REPAIR_ACCEPTED": {
+      return { ...state, repairState: "accepted" };
     }
 
     case "SET_SCHEMA_TEXT": {
@@ -102,6 +119,10 @@ export function workspaceReducer(
 
     case "SET_EXAMPLE": {
       return { ...state, isExample: true };
+    }
+
+    case "SET_REPAIR_VALIDATION": {
+      return { ...state, repairValidation: { valid: action.valid, id: action.id } };
     }
 
     case "CLEAR_WORKSPACE": {

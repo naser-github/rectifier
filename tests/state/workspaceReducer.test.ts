@@ -408,6 +408,39 @@ describe("workspaceReducer — SET_REPAIR_ANALYSIS / CLEAR_REPAIR", () => {
 });
 
 // ---------------------------------------------------------------------------
+// SET_RESULT_ERROR
+// ---------------------------------------------------------------------------
+
+describe("workspaceReducer — SET_RESULT_ERROR", () => {
+  it("sets the result error message", () => {
+    const state = workspaceReducer(INITIAL_WORKSPACE_STATE, {
+      type: "SET_RESULT_ERROR",
+      error: "Something went wrong.",
+    });
+
+    expect(state.resultError).toBe("Something went wrong.");
+  });
+
+  it("CLEAR_RESULT clears the error", () => {
+    const state = workspaceReducer(
+      { ...INITIAL_WORKSPACE_STATE, resultError: "Old error" },
+      { type: "CLEAR_RESULT" },
+    );
+
+    expect(state.resultError).toBeNull();
+  });
+
+  it("SET_INPUT clears the error", () => {
+    const state = workspaceReducer(
+      { ...INITIAL_WORKSPACE_STATE, resultError: "Stale error" },
+      { type: "SET_INPUT", text: '{"a":1}', isUpload: true },
+    );
+
+    expect(state.resultError).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // SET_SCHEMA_TEXT / SET_SCHEMA_DIAGNOSTICS
 // ---------------------------------------------------------------------------
 
@@ -471,6 +504,7 @@ describe("workspaceReducer — CLEAR_WORKSPACE", () => {
       resultError: null,
       repairState: "ready",
       repairAnalysis: aRepairAnalysis(),
+      repairValidation: null,
       schemaText: '{"type":"object"}',
       schemaDiagnostics: [aDiagnostic({ code: "schema-error" })],
       mobilePanel: "schema",

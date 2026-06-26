@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import type { ResultDocument } from "../domain/result";
 import type {
   WorkerRequest,
   WorkerResponse,
@@ -23,6 +24,11 @@ export interface WorkerClient {
   dispose(): void;
   setResponseHandler(handler: WorkerResponseHandler): void;
   setSource(source: WorkerSourceRevision): string;
+  /**
+   * Validates a result document without modifying the worker's stored source.
+   * The worker parses the result text and returns `{ kind: "result-validation-complete", valid, result }`.
+   */
+  validateResult(result: ResultDocument): string;
 }
 
 /**
@@ -71,6 +77,11 @@ export const createWorkerClient = (
     analyzeRepair(source: WorkerSourceRevision): string {
       const id = allocateJobId();
       worker.post({ id, kind: "analyze-repair", source });
+      return id;
+    },
+    validateResult(result: ResultDocument): string {
+      const id = allocateJobId();
+      worker.post({ id, kind: "validate-result", result });
       return id;
     },
     setResponseHandler(handler: WorkerResponseHandler): void {

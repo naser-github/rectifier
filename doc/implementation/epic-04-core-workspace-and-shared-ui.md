@@ -109,62 +109,62 @@ each task starts.
 
 ### Task 04.1: Define the Workspace State Machine
 
-- [ ] Write failing reducer tests for input revisions, validation state,
+- [x] Write failing reducer tests for input revisions, validation state,
   diagnostics, repair analysis, results, schema state, and mobile panel.
-- [ ] Define explicit actions for input change, clear, validation response,
+- [x] Define explicit actions for input change, clear, validation response,
   result creation, result edit, repair state, schema result, and panel change.
-- [ ] Prevent stale worker responses from updating workspace state.
-- [ ] Clear dependent state when input changes.
-- [ ] Keep original input separate from generated result.
+- [x] Prevent stale worker responses from updating workspace state.
+- [x] Clear dependent state when input changes.
+- [x] Keep original input separate from generated result.
 
 ### Task 04.2: Build Shared Interface Primitives
 
-- [ ] Test button, icon-button, dialog, panel, tooltip, and toast behavior.
-- [ ] Use composition instead of large configuration objects.
-- [ ] Apply small sharp radiuses, thin borders, and accessible focus styles.
-- [ ] Give icon-only controls accessible labels and tooltips.
-- [ ] Keep feature-specific behavior outside `components/ui/`.
+- [x] Test button, icon-button, dialog, panel, tooltip, and toast behavior.
+- [x] Use composition instead of large configuration objects.
+- [x] Apply small sharp radiuses, thin borders, and accessible focus styles.
+- [x] Give icon-only controls accessible labels and tooltips.
+- [x] Keep feature-specific behavior outside `components/ui/`.
 
 ### Task 04.3: Implement Disabled Reasons
 
-- [ ] Test explanations on pointer hover and keyboard focus.
-- [ ] Use a focusable wrapper because native disabled buttons do not receive
+- [x] Test explanations on pointer hover and keyboard focus.
+- [x] Use a focusable wrapper because native disabled buttons do not receive
   reliable focus or hover events.
-- [ ] Connect the visible reason to the control through accessible description.
-- [ ] Centralize action eligibility and reason text from workspace state.
-- [ ] Enable Repair JSON only for invalid input whose eligibility metadata says
+- [x] Connect the visible reason to the control through accessible description.
+- [x] Centralize action eligibility and reason text from workspace state.
+- [x] Enable Repair JSON only for invalid input whose eligibility metadata says
   a supported repair rule may apply.
-- [ ] Disable Repair JSON for valid input and unsupported invalid input with
+- [x] Disable Repair JSON for valid input and unsupported invalid input with
   the exact reason.
 
 ### Task 04.4: Implement First-Visit Sample and Persistence
 
-- [ ] Load the PRD nested sample only when no saved workspace exists.
-- [ ] Label the initial sample as Example JSON.
-- [ ] Remove example state after edit, upload, or clear.
-- [ ] Never restore the sample over saved or user-provided input.
-- [ ] Save input, result text, result format, and schema text when used.
-- [ ] Save only the latest workspace after an idle delay.
-- [ ] Replace old saved work and continue normally when IndexedDB is
+- [x] Load the PRD nested sample only when no saved workspace exists.
+- [x] Label the initial sample as Example JSON.
+- [x] Remove example state after edit, upload, or clear.
+- [x] Never restore the sample over saved or user-provided input.
+- [x] Save input, result text, result format, and schema text when used.
+- [x] Save only the latest workspace after an idle delay.
+- [x] Replace old saved work and continue normally when IndexedDB is
   unavailable.
-- [ ] Provide a Clear saved workspace action that removes persisted work
+- [x] Provide a Clear saved workspace action that removes persisted work
   without reloading the first-visit sample into the active workspace.
-- [ ] Test save, replace, restore, storage failure, first-visit sample, active
+- [x] Test save, replace, restore, storage failure, first-visit sample, active
   clear, and Clear saved workspace behavior.
 
 ### Task 04.5: Perform Base Integration
 
-- [ ] Build InputPanel using the accepted InputEditor, upload behavior, and
+- [x] Build InputPanel using the accepted InputEditor, upload behavior, and
   shared icon controls with tooltips.
-- [ ] Test Upload and Clear controls, tooltips, clear-workspace request, and
+- [x] Test Upload and Clear controls, tooltips, clear-workspace request, and
   complete reducer reset through InputPanel.
-- [ ] Connect Clear to one reducer transition that resets input, diagnostics,
+- [x] Connect Clear to one reducer transition that resets input, diagnostics,
   repair state, and result without reloading the first-visit sample.
-- [ ] Connect worker validation responses to the reducer through
+- [x] Connect worker validation responses to the reducer through
   `useWorkspaceController.ts`.
-- [ ] Connect shared disabled reasons to current validation state.
-- [ ] Verify clear resets all dependent workspace state.
-- [ ] Record the stable workspace and shared-primitive APIs for Epics 05-08.
+- [x] Connect shared disabled reasons to current validation state.
+- [x] Verify clear resets all dependent workspace state.
+- [x] Record the stable workspace and shared-primitive APIs for Epics 05-08.
 
 ## Verification
 
@@ -181,16 +181,16 @@ accessible, and storage failure does not break the app.
 
 ## Acceptance Checklist
 
-- [ ] One reducer owns workspace transitions.
-- [ ] Original input and generated result remain separate.
-- [ ] Shared UI primitives are reusable and accessible.
-- [ ] Every disabled action can expose a reason.
-- [ ] First-visit sample follows PRD rules.
-- [ ] Only the latest workspace is persisted.
-- [ ] Users can clear saved workspace data.
-- [ ] Code Reviewer approves state and persistence tasks.
-- [ ] Repair Safety Reviewer approves repair-state and eligibility tasks.
-- [ ] UI Reviewer approves shared controls, disabled reasons, and InputPanel.
+- [x] One reducer owns workspace transitions.
+- [x] Original input and generated result remain separate.
+- [x] Shared UI primitives are reusable and accessible.
+- [x] Every disabled action can expose a reason.
+- [x] First-visit sample follows PRD rules.
+- [x] Only the latest workspace is persisted.
+- [x] Users can clear saved workspace data.
+- [x] Code Reviewer approves state and persistence tasks.
+- [x] Repair Safety Reviewer approves repair-state and eligibility tasks.
+- [x] UI Reviewer approves shared controls, disabled reasons, and InputPanel.
 
 ## Handoff to Later Epics
 

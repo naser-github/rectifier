@@ -89,49 +89,49 @@ each task starts.
 
 ### Task 05.1: Implement Safe Repair Preview
 
-- [ ] Write a failing test that requires before, after, explanation, syntax
+- [x] Write a failing test that requires before, after, explanation, syntax
   change highlights, Accept, and Reject.
-- [ ] Open the preview only for one verified safe candidate.
-- [ ] After Accept, apply the candidate through the worker against the same
+- [x] Open the preview only for one verified safe candidate.
+- [x] After Accept, apply the candidate through the worker against the same
   source revision, validate the complete repaired JSON again, and create a
   result only after validation succeeds.
-- [ ] Reject acceptance when the source revision became stale.
-- [ ] Close without creating a result after Reject.
-- [ ] Confirm both paths preserve original input.
+- [x] Reject acceptance when the source revision became stale.
+- [x] Close without creating a result after Reject.
+- [x] Confirm both paths preserve original input.
 
 ### Task 05.2: Implement Ambiguous Repair Choices
 
-- [ ] Write tests requiring two or more separate candidate cards.
-- [ ] State clearly that Rectifier cannot choose the intended meaning.
-- [ ] Show structure and syntax-change preview for each candidate.
-- [ ] Require the user to select one card before Apply selected fix is enabled.
-- [ ] Do not choose a default candidate.
-- [ ] Apply the confirmed candidate through the worker against the same source
+- [x] Write tests requiring two or more separate candidate cards.
+- [x] State clearly that Rectifier cannot choose the intended meaning.
+- [x] Show structure and syntax-change preview for each candidate.
+- [x] Require the user to select one card before Apply selected fix is enabled.
+- [x] Do not choose a default candidate.
+- [x] Apply the confirmed candidate through the worker against the same source
   revision, validate the complete repaired JSON again, and create only a result
   after validation succeeds.
-- [ ] Reject confirmation when the source revision became stale.
+- [x] Reject confirmation when the source revision became stale.
 
 ### Task 05.3: Implement Manual Guidance
 
-- [ ] Keep Repair JSON disabled for unsupported input and show its manual-edit
+- [x] Keep Repair JSON disabled for unsupported input and show its manual-edit
   reason through DisabledReason.
-- [ ] Show Edit manually inside an ambiguous choice flow.
-- [ ] Show manual guidance when user-triggered full analysis finds no verified
+- [x] Show Edit manually inside an ambiguous choice flow.
+- [x] Show manual guidance when user-triggered full analysis finds no verified
   candidate even though eligibility classification allowed the click.
-- [ ] Close any open repair dialog and clear its state immediately when the
+- [x] Close any open repair dialog and clear its state immediately when the
   input revision changes.
-- [ ] Close the dialog and focus the relevant input error when manual editing is
+- [x] Close the dialog and focus the relevant input error when manual editing is
   selected.
-- [ ] Keep unsupported input and all user data unchanged.
+- [x] Keep unsupported input and all user data unchanged.
 
 ### Task 05.4: Perform Repair UX Safety Audit
 
-- [ ] Test safe, ambiguous, manual, reject, and cancel flows.
-- [ ] Test complete post-confirmation validation and stale-revision refusal for
+- [x] Test safe, ambiguous, manual, reject, and cancel flows.
+- [x] Test complete post-confirmation validation and stale-revision refusal for
   safe and ambiguous acceptance.
-- [ ] Test keyboard navigation and focus return for both dialogs.
-- [ ] Add a regression test for every Repair Safety finding.
-- [ ] Obtain explicit Repair Safety Reviewer approval.
+- [x] Test keyboard navigation and focus return for both dialogs.
+- [x] Add a regression test for every Repair Safety finding.
+- [x] Obtain explicit Repair Safety Reviewer approval.
 
 ## Verification
 
@@ -145,14 +145,14 @@ continue until the user explicitly selects a verified choice.
 
 ## Acceptance Checklist
 
-- [ ] Safe repair always shows a preview.
-- [ ] Safe repair requires Accept.
-- [ ] Ambiguous repair never has a default choice.
-- [ ] Manual guidance returns focus to input.
-- [ ] Cancel and Reject preserve all existing state correctly.
-- [ ] Dialogs are keyboard accessible.
-- [ ] Repair Safety Reviewer approves.
-- [ ] UI Reviewer approves repair dialogs and focus behavior.
+- [x] Safe repair always shows a preview.
+- [x] Safe repair requires Accept.
+- [x] Ambiguous repair never has a default choice.
+- [x] Manual guidance returns focus to input.
+- [x] Cancel and Reject preserve all existing state correctly.
+- [x] Dialogs are keyboard accessible.
+- [x] Repair Safety Reviewer approves.
+- [x] UI Reviewer approves repair dialogs and focus behavior.
 
 ## Handoff to Later Epics
 

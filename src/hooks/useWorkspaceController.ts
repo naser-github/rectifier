@@ -64,13 +64,29 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
   // -----------------------------------------------------------------------
   useEffect(() => {
     client.setResponseHandler((response) => {
-      if (response.kind === "source-validated") {
-        dispatch({
-          type: "SET_VALIDATION",
-          diagnostics: response.diagnostics,
-          eligibility: response.eligibility,
-          revision: response.revision,
-        });
+      switch (response.kind) {
+        case "source-validated":
+          dispatch({
+            type: "SET_VALIDATION",
+            diagnostics: response.diagnostics,
+            eligibility: response.eligibility,
+            revision: response.revision,
+          });
+          break;
+        case "repair-analysis-complete":
+          dispatch({
+            type: "SET_REPAIR_ANALYSIS",
+            analysis: response.analysis,
+            revision: response.revision,
+          });
+          break;
+        case "result-validation-complete":
+          dispatch({
+            type: "SET_REPAIR_VALIDATION",
+            valid: response.valid,
+            id: response.id,
+          });
+          break;
       }
     });
   }, [client]);

@@ -3,6 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { SourcePosition } from "../domain/diagnostics";
 import type { WorkerRequest, WorkerResponse } from "../domain/workerProtocol";
 import { ErrorTray } from "../components/errors/ErrorTray";
+import { RepairChoiceDialog } from "../components/errors/RepairChoiceDialog";
+import { RepairManualGuidance } from "../components/errors/RepairManualGuidance";
+import { RepairPreviewDialog } from "../components/errors/RepairPreviewDialog";
+import { useRepairFlow } from "../hooks/useRepairFlow";
 import { useWorkspaceController } from "../hooks/useWorkspaceController";
 import {
   createWorkerClient,
@@ -64,6 +68,22 @@ const ACTIONS: { readonly id: ActionId; readonly label: string }[] = [
 function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient }) {
   const controller = useWorkspaceController(workerClient);
   const editorRef = useRef<InputEditorHandle>(null);
+
+  const handleEditManually = useCallback((): void => {
+    const firstError = controller.state.diagnostics.find(
+      (d) => d.reliability === "confirmed",
+    );
+    if (firstError && editorRef.current) {
+      editorRef.current.focusLocation(firstError.position);
+    }
+  }, [controller.state.diagnostics]);
+
+  const repairFlow = useRepairFlow(
+    controller.state,
+    workerClient,
+    controller.dispatch,
+    handleEditManually,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [storagePopoverOpen, setStoragePopoverOpen] = useState(false);
 
@@ -189,6 +209,11 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
                       <button
                         type="button"
                         disabled={!enabled}
+                        onClick={
+                          id === "repair-json"
+                            ? repairFlow.startRepairAnalysis
+                            : undefined
+                        }
                         className={cn(
                           "min-h-11 w-full rounded-[6px] border px-3 text-left text-xs font-extrabold transition-colors",
                           enabled && id === "repair-json"
@@ -217,6 +242,35 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
               </div>
             </Panel>
           </main>
+
+          {repairFlow.showSafePreview && repairFlow.safeCandidate && (
+            <RepairPreviewDialog
+              candidate={repairFlow.safeCandidate}
+              open={true}
+              onAccept={repairFlow.acceptRepair}
+              onReject={repairFlow.rejectRepair}
+            />
+          )}
+
+          {repairFlow.showAmbiguousChoices && (
+            <RepairChoiceDialog
+              choices={repairFlow.ambiguousChoices}
+              manualGuidance=""
+              open={true}
+              onApply={repairFlow.applyAmbiguousChoice}
+              onEditManually={repairFlow.editManually}
+              onClose={repairFlow.rejectRepair}
+            />
+          )}
+
+          {repairFlow.showManualGuidance && repairFlow.manualGuidance && (
+            <RepairManualGuidance
+              open={true}
+              guidance={repairFlow.manualGuidance}
+              onEditManually={repairFlow.editManually}
+              onClose={repairFlow.rejectRepair}
+            />
+          )}
 
           <section
             aria-label="Validation status"

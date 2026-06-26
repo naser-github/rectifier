@@ -60,6 +60,7 @@ const createFakeClient = (): WorkerClient & {
     setResponseHandler(nextHandler): void {
       handler = nextHandler;
     },
+    validateResult: vi.fn(() => "job-validation"),
     setSource(source: WorkerSourceRevision): string {
       setSourceSpy(source);
       return "job-source";

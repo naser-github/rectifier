@@ -22,6 +22,7 @@ export interface WorkspaceState {
 
   readonly repairState: RepairState;
   readonly repairAnalysis: RepairAnalysisResult | null;
+  readonly repairValidation: { readonly valid: boolean; readonly id: string } | null;
 
   readonly schemaText: string;
   readonly schemaDiagnostics: readonly Diagnostic[];
@@ -42,6 +43,7 @@ export type WorkspaceAction =
   | { readonly type: "SET_RESULT"; readonly result: ResultDocument }
   | { readonly type: "SET_RESULT_TEXT"; readonly text: string }
   | { readonly type: "CLEAR_RESULT" }
+  | { readonly type: "SET_RESULT_ERROR"; readonly error: string }
   | {
       readonly type: "SET_REPAIR_ANALYSIS";
       readonly analysis: RepairAnalysisResult;
@@ -56,6 +58,13 @@ export type WorkspaceAction =
   | { readonly type: "SET_MOBILE_PANEL"; readonly panel: MobilePanel }
   | { readonly type: "SET_LOADED_STATE"; readonly state: WorkspaceState }
   | { readonly type: "SET_EXAMPLE" }
+  | {
+      readonly type: "SET_REPAIR_VALIDATION";
+      readonly valid: boolean;
+      readonly id: string;
+    }
+  | { readonly type: "SET_ANALYZING" }
+  | { readonly type: "SET_REPAIR_ACCEPTED" }
   | { readonly type: "CLEAR_WORKSPACE" };
 
 export const MAX_INPUT_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -78,6 +87,7 @@ export const INITIAL_WORKSPACE_STATE: WorkspaceState = {
 
   repairState: "idle",
   repairAnalysis: null,
+  repairValidation: null,
 
   schemaText: "",
   schemaDiagnostics: [],
