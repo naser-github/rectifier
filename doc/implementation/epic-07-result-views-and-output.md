@@ -91,40 +91,40 @@ each task starts.
 
 ### Task 07.1: Implement Editable Code Result View
 
-- [ ] Test JSON and converted result display.
-- [ ] Use CodeMirror with JSON folding for JSON results.
-- [ ] Use a matching language mode when available for converted output.
-- [ ] Send edited JSON results through the ephemeral worker validation request
+- [x] Test JSON and converted result display.
+- [x] Use CodeMirror with JSON folding for JSON results.
+- [x] Use a matching language mode when available for converted output.
+- [x] Send edited JSON results through the ephemeral worker validation request
   without replacing the protected source-document revision.
-- [ ] Update Tree and Object only after edited JSON becomes valid.
-- [ ] Explain why structured views are unavailable for invalid JSON or
+- [x] Update Tree and Object only after edited JSON becomes valid.
+- [x] Explain why structured views are unavailable for invalid JSON or
   converted formats.
 
 ### Task 07.2: Implement Collapsible Virtualized Tree View
 
-- [ ] Convert valid JSON to stable visible-row records.
-- [ ] Flatten only expanded nodes.
-- [ ] Keep collapsed-node IDs outside rendered row components.
-- [ ] Show `{…}` and `[…]` markers for collapsed structures.
-- [ ] Use `@tanstack/react-virtual` so large arrays do not render every item.
-- [ ] Test collapse, expand, keyboard activation, and stable row identity.
+- [x] Convert valid JSON to stable visible-row records.
+- [x] Flatten only expanded nodes.
+- [x] Keep collapsed-node IDs outside rendered row components.
+- [x] Show `{…}` and `[…]` markers for collapsed structures.
+- [x] Use `@tanstack/react-virtual` so large arrays do not render every item.
+- [x] Test collapse, expand, keyboard activation, and stable row identity.
 
 ### Task 07.3: Implement Collapsible Object View
 
-- [ ] Present object-oriented nested structures separately from Tree view.
-- [ ] Share row-generation logic without duplicating view-specific markup.
-- [ ] Support collapse and expand for objects and arrays.
-- [ ] Virtualize visible rows.
-- [ ] Test deeply nested objects and large arrays.
+- [x] Present object-oriented nested structures separately from Tree view.
+- [x] Share row-generation logic without duplicating view-specific markup.
+- [x] Support collapse and expand for objects and arrays.
+- [x] Virtualize visible rows.
+- [x] Test deeply nested objects and large arrays.
 
 ### Task 07.4: Implement Exact Copy and Download
 
-- [ ] Keep actions disabled until a result exists.
-- [ ] Copy exact current result text.
-- [ ] Download exact current result text.
-- [ ] Use `.json`, `.yaml`, `.xml`, or `.csv` based on result format.
-- [ ] Create and revoke local object URLs.
-- [ ] Show brief success feedback without exposing document content.
+- [x] Keep actions disabled until a result exists.
+- [x] Copy exact current result text.
+- [x] Download exact current result text.
+- [x] Use `.json`, `.yaml`, `.xml`, or `.csv` based on result format.
+- [x] Create and revoke local object URLs.
+- [x] Show brief success feedback without exposing document content.
 
 ## Verification
 
@@ -141,13 +141,13 @@ correctly, and large data is virtualized.
 
 ## Acceptance Checklist
 
-- [ ] Code view is editable and foldable.
-- [ ] Tree and Object views require valid JSON.
-- [ ] Converted results remain in Code view.
-- [ ] Nested objects and arrays are collapsible.
-- [ ] Large views render only visible rows.
-- [ ] Copy and Download use exact current result.
-- [ ] UI Reviewer approves Code, Tree, Object, Copy, and Download behavior.
+- [x] Code view is editable and foldable.
+- [x] Tree and Object views require valid JSON.
+- [x] Converted results remain in Code view.
+- [x] Nested objects and arrays are collapsible.
+- [x] Large views render only visible rows.
+- [x] Copy and Download use exact current result.
+- [x] UI Reviewer approves Code, Tree, Object, Copy, and Download behavior.
 
 ## Handoff to Later Epics
 

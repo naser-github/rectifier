@@ -4,6 +4,7 @@ import {
   type WorkspaceAction,
   type WorkspaceState,
 } from "../domain/workspace";
+import type { ResultDocument } from "../domain/result";
 import { workspaceReducer } from "../state/workspaceReducer";
 import type { WorkerClient } from "./useWorkerClient";
 import type { LoadResult } from "./useWorkspacePersistence";
@@ -17,6 +18,7 @@ export interface WorkspaceController {
   readonly dispatch: React.Dispatch<WorkspaceAction>;
   readonly handleInputChange: (text: string) => void;
   readonly handleUpload: (text: string) => void;
+  readonly handleResultEdit: (result: ResultDocument) => void;
   readonly handleClear: () => void;
   readonly clearSaved: () => Promise<void>;
   readonly loadResult: LoadResult | null;
@@ -37,6 +39,7 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
 
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadedRef = useRef(false);
+  const pendingEditedResultValidationIdRef = useRef<string | null>(null);
 
   // -----------------------------------------------------------------------
   // Apply persisted state when load completes
@@ -81,11 +84,24 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
           });
           break;
         case "result-validation-complete":
-          dispatch({
-            type: "SET_REPAIR_VALIDATION",
-            valid: response.valid,
-            id: response.id,
-          });
+          if (response.id === pendingEditedResultValidationIdRef.current) {
+            pendingEditedResultValidationIdRef.current = null;
+            if (response.valid) {
+              dispatch({ type: "SET_RESULT", result: response.result });
+            } else {
+              dispatch({
+                type: "SET_RESULT_ERROR",
+                error:
+                  "Edited result is invalid JSON. Tree and Object views still show the last valid result.",
+              });
+            }
+          } else {
+            dispatch({
+              type: "SET_REPAIR_VALIDATION",
+              valid: response.valid,
+              id: response.id,
+            });
+          }
           break;
         case "format-complete":
           dispatch({
@@ -183,6 +199,13 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
     dispatch({ type: "CLEAR_INPUT" });
   }, []);
 
+  const handleResultEdit = useCallback(
+    (result: ResultDocument): void => {
+      pendingEditedResultValidationIdRef.current = client.validateResult(result);
+    },
+    [client],
+  );
+
   // -----------------------------------------------------------------------
   // Save state on changes (debounced via persistence hook)
   // -----------------------------------------------------------------------
@@ -208,6 +231,7 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
     dispatch,
     handleInputChange,
     handleUpload,
+    handleResultEdit,
     handleClear,
     clearSaved,
     loadResult,

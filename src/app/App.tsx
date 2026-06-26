@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { SourcePosition } from "../domain/diagnostics";
 import type { WorkerRequest, WorkerResponse } from "../domain/workerProtocol";
+import { ResultPanel } from "../components/result/ResultPanel";
 import { SchemaDrawer } from "../components/schema/SchemaDrawer";
 import { ErrorTray } from "../components/errors/ErrorTray";
 import { RepairChoiceDialog } from "../components/errors/RepairChoiceDialog";
@@ -20,7 +21,6 @@ import type { InputEditorHandle } from "../components/editor/InputEditor";
 import { Button } from "../components/ui/Button";
 import { Dialog } from "../components/ui/Dialog";
 import { DisabledReason } from "../components/ui/DisabledReason";
-import { Panel } from "../components/ui/Panel";
 import { TooltipProvider } from "../components/ui/Tooltip";
 import { readJsonFile } from "../lib/files";
 import { getActionEligibility, type ActionId } from "../state/actionEligibility";
@@ -282,16 +282,11 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
             </section>
 
             <div className="relative">
-              <Panel title="Result">
-                <div className="grid min-h-[320px] place-items-center bg-white/50 p-6 text-center">
-                  <div>
-                    <p className="text-sm font-extrabold">No result yet</p>
-                    <p className="mt-2 max-w-64 text-xs leading-5 text-muted">
-                      Use an action to create formatted or repaired JSON.
-                    </p>
-                  </div>
-                </div>
-              </Panel>
+              <ResultPanel
+                result={controller.state.result}
+                resultError={controller.state.resultError}
+                onJsonResultEdit={controller.handleResultEdit}
+              />
 
               <SchemaDrawer
                 open={schemaOpen}
