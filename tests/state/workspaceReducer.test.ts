@@ -464,6 +464,26 @@ describe("workspaceReducer — schema actions", () => {
 
     expect(state.schemaDiagnostics).toEqual([diagnostic]);
   });
+
+  it("SET_SCHEMA_DIAGNOSTICS preserves current input and result", () => {
+    const result = aResult({ text: '{"formatted":true}' });
+    const state = workspaceReducer(
+      {
+        ...INITIAL_WORKSPACE_STATE,
+        input: '{"name":"John"}',
+        revision: 3,
+        result,
+      },
+      {
+        type: "SET_SCHEMA_DIAGNOSTICS",
+        diagnostics: [aDiagnostic({ code: "schema.type" })],
+      },
+    );
+
+    expect(state.input).toBe('{"name":"John"}');
+    expect(state.revision).toBe(3);
+    expect(state.result).toBe(result);
+  });
 });
 
 // ---------------------------------------------------------------------------

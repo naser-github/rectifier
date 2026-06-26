@@ -21,7 +21,7 @@ export type WorkerRequest =
       readonly id: string;
       readonly kind: "format";
       readonly operation: FormatOperation;
-      readonly source: WorkerSourceRevision;
+      readonly revision: number;
     }
   | {
       readonly id: string;
@@ -32,13 +32,13 @@ export type WorkerRequest =
       readonly id: string;
       readonly kind: "convert";
       readonly format: ConversionFormat;
-      readonly source: WorkerSourceRevision;
+      readonly revision: number;
     }
   | {
       readonly id: string;
       readonly kind: "validate-schema";
+      readonly revision: number;
       readonly schemaText: string;
-      readonly source: WorkerSourceRevision;
     }
   | {
       readonly id: string;

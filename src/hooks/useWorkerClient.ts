@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import type { ResultDocument } from "../domain/result";
 import type {
+  ConversionFormat,
+  FormatOperation,
   WorkerRequest,
   WorkerResponse,
   WorkerSourceRevision,
@@ -21,14 +23,13 @@ export type WorkerResponseHandler = (response: WorkerResponse) => void;
 
 export interface WorkerClient {
   analyzeRepair(source: WorkerSourceRevision): string;
+  convert(revision: number, format: ConversionFormat): string;
   dispose(): void;
+  format(revision: number, operation: FormatOperation): string;
   setResponseHandler(handler: WorkerResponseHandler): void;
   setSource(source: WorkerSourceRevision): string;
-  /**
-   * Validates a result document without modifying the worker's stored source.
-   * The worker parses the result text and returns `{ kind: "result-validation-complete", valid, result }`.
-   */
   validateResult(result: ResultDocument): string;
+  validateSchema(revision: number, schemaText: string): string;
 }
 
 /**
@@ -82,6 +83,21 @@ export const createWorkerClient = (
     validateResult(result: ResultDocument): string {
       const id = allocateJobId();
       worker.post({ id, kind: "validate-result", result });
+      return id;
+    },
+    format(revision: number, operation: FormatOperation): string {
+      const id = allocateJobId();
+      worker.post({ id, kind: "format", operation, revision });
+      return id;
+    },
+    convert(revision: number, conversionFormat: ConversionFormat): string {
+      const id = allocateJobId();
+      worker.post({ id, kind: "convert", format: conversionFormat, revision });
+      return id;
+    },
+    validateSchema(revision: number, schemaText: string): string {
+      const id = allocateJobId();
+      worker.post({ id, kind: "validate-schema", revision, schemaText });
       return id;
     },
     setResponseHandler(handler: WorkerResponseHandler): void {

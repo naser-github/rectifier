@@ -87,6 +87,24 @@ export function useWorkspaceController(client: WorkerClient): WorkspaceControlle
             id: response.id,
           });
           break;
+        case "format-complete":
+          dispatch({
+            type: "SET_RESULT",
+            result: response.result,
+          });
+          break;
+        case "conversion-complete":
+          dispatch({
+            type: "SET_RESULT",
+            result: response.result,
+          });
+          break;
+        case "schema-validation-complete":
+          dispatch({
+            type: "SET_SCHEMA_DIAGNOSTICS",
+            diagnostics: response.diagnostics,
+          });
+          break;
       }
     });
   }, [client]);

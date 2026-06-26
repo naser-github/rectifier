@@ -2,10 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { SourcePosition } from "../domain/diagnostics";
 import type { WorkerRequest, WorkerResponse } from "../domain/workerProtocol";
+import { SchemaDrawer } from "../components/schema/SchemaDrawer";
 import { ErrorTray } from "../components/errors/ErrorTray";
 import { RepairChoiceDialog } from "../components/errors/RepairChoiceDialog";
 import { RepairManualGuidance } from "../components/errors/RepairManualGuidance";
 import { RepairPreviewDialog } from "../components/errors/RepairPreviewDialog";
+import { useProcessingActions } from "../hooks/useProcessingActions";
 import { useRepairFlow } from "../hooks/useRepairFlow";
 import { useWorkspaceController } from "../hooks/useWorkspaceController";
 import {
@@ -84,8 +86,14 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
     controller.dispatch,
     handleEditManually,
   );
+
+  const processing = useProcessingActions(workerClient, controller.state.revision);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [storagePopoverOpen, setStoragePopoverOpen] = useState(false);
+  const [schemaOpen, setSchemaOpen] = useState(false);
+  const [schemaText, setSchemaText] = useState("");
+  const [convertOpen, setConvertOpen] = useState(false);
 
   const confirmedDiagnostics = controller.state.diagnostics.filter(
     (d) => d.reliability === "confirmed",
@@ -210,9 +218,17 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
                         type="button"
                         disabled={!enabled}
                         onClick={
-                          id === "repair-json"
-                            ? repairFlow.startRepairAnalysis
-                            : undefined
+                          id === "beautify"
+                            ? processing.beautify
+                            : id === "minify"
+                              ? processing.minify
+                              : id === "convert"
+                                ? () => {
+                                    setConvertOpen(true);
+                                  }
+                                : id === "repair-json"
+                                  ? repairFlow.startRepairAnalysis
+                                  : undefined
                         }
                         className={cn(
                           "min-h-11 w-full rounded-[6px] border px-3 text-left text-xs font-extrabold transition-colors",
@@ -229,18 +245,76 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
                   );
                 })}
               </div>
+
+              {convertOpen && (
+                <div className="border-t border-line p-3">
+                  <div className="mb-2 text-[11px] font-semibold text-muted">
+                    Convert to:
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {(["yaml", "xml", "csv"] as const).map((fmt) => (
+                      <button
+                        key={fmt}
+                        type="button"
+                        onClick={() => {
+                          if (fmt === "yaml") processing.convertToYaml();
+                          else if (fmt === "xml") processing.convertToXml();
+                          else processing.convertToCsv();
+                          setConvertOpen(false);
+                        }}
+                        className="w-full rounded-sm border border-line bg-white px-3 py-1.5 text-left text-xs font-extrabold hover:bg-paper"
+                      >
+                        Convert to {fmt.toUpperCase()}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConvertOpen(false);
+                      }}
+                      className="w-full rounded-sm border border-line bg-white px-3 py-1.5 text-left text-xs text-muted hover:bg-paper"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </section>
 
-            <Panel title="Result">
-              <div className="grid min-h-[320px] place-items-center bg-white/50 p-6 text-center">
-                <div>
-                  <p className="text-sm font-extrabold">No result yet</p>
-                  <p className="mt-2 max-w-64 text-xs leading-5 text-muted">
-                    Use an action to create formatted or repaired JSON.
-                  </p>
+            <div className="relative">
+              <Panel title="Result">
+                <div className="grid min-h-[320px] place-items-center bg-white/50 p-6 text-center">
+                  <div>
+                    <p className="text-sm font-extrabold">No result yet</p>
+                    <p className="mt-2 max-w-64 text-xs leading-5 text-muted">
+                      Use an action to create formatted or repaired JSON.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Panel>
+              </Panel>
+
+              <SchemaDrawer
+                open={schemaOpen}
+                schemaText={schemaText}
+                schemaDiagnostics={controller.state.schemaDiagnostics}
+                eligible={
+                  getActionEligibility(controller.state, "schema-check").enabled
+                }
+                eligibilityReason={
+                  getActionEligibility(controller.state, "schema-check").reason
+                }
+                onToggle={() => {
+                  setSchemaOpen(!schemaOpen);
+                }}
+                onSchemaTextChange={setSchemaText}
+                onCheckSchema={() => {
+                  processing.validateSchema(schemaText);
+                }}
+                onClear={() => {
+                  setSchemaText("");
+                }}
+              />
+            </div>
           </main>
 
           {repairFlow.showSafePreview && repairFlow.safeCandidate && (

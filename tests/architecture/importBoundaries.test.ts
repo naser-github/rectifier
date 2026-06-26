@@ -50,14 +50,14 @@ describe("architecture import boundaries", () => {
 
     const requests = [
       { id: "set-source", kind: "set-source", source },
-      { id: "format", kind: "format", operation: "beautify", source },
+      { id: "format", kind: "format", operation: "beautify", revision: 1 },
       { id: "analyze-repair", kind: "analyze-repair", source },
-      { format: "yaml", id: "convert", kind: "convert", source },
+      { format: "yaml", id: "convert", kind: "convert", revision: 1 },
       {
         id: "validate-schema",
         kind: "validate-schema",
+        revision: 1,
         schemaText: '{"type":"object"}',
-        source,
       },
       { id: "validate-result", kind: "validate-result", result },
     ] satisfies readonly WorkerRequest[];

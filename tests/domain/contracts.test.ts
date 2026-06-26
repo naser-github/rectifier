@@ -114,7 +114,7 @@ describe("domain contracts", () => {
       id: "job-1",
       kind: "format",
       operation: "beautify",
-      source: sourceRevision,
+      revision: sourceRevision.revision,
     } satisfies WorkerRequest;
 
     const validationRequest = {
@@ -130,7 +130,7 @@ describe("domain contracts", () => {
       revision: 2,
     } satisfies WorkerResponse;
 
-    expect(request.source.revision).toBe(2);
+    expect(request.revision).toBe(2);
     expect(validationRequest.kind).toBe("validate-result");
     expect(response.result.format).toBe("json");
   });

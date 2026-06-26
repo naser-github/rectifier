@@ -273,6 +273,245 @@ describe("createWorkerClient stale handling", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Processing action helpers
+// ---------------------------------------------------------------------------
+
+const formatRequest = (
+  id: string,
+  revision: number,
+  operation: "beautify" | "minify",
+): WorkerRequest => ({ id, kind: "format", operation, revision });
+
+const convertRequest = (
+  id: string,
+  revision: number,
+  format: "yaml" | "xml" | "csv",
+): WorkerRequest => ({ id, kind: "convert", format, revision });
+
+const schemaRequest = (
+  id: string,
+  revision: number,
+  schemaText: string,
+): WorkerRequest => ({ id, kind: "validate-schema", schemaText, revision });
+
+describe("handleWorkerRequest format", () => {
+  it("beautifies stored JSON", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"a":1,"b":2}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      formatRequest("job-format", 1, "beautify"),
+    );
+
+    expect(response.kind).toBe("format-complete");
+    if (response.kind !== "format-complete") return;
+    expect(response.result.text).toContain('"a": 1');
+    expect(response.result.action).toBe("beautify");
+    expect(response.result.format).toBe("json");
+  });
+
+  it("refuses formatting before any source is stored", () => {
+    const { response } = handleWorkerRequest(
+      createInitialWorkerState(),
+      formatRequest("job-nosrc", 1, "beautify"),
+    );
+
+    expect(response.kind).toBe("failed");
+  });
+
+  it("refuses formatting with stale revision", () => {
+    const stored = handleWorkerRequest(createInitialWorkerState(), setSource(5, "{}"));
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      formatRequest("job-stale", 3, "minify"),
+    );
+
+    expect(response.kind).toBe("failed");
+    if (response.kind !== "failed") return;
+    expect(response.message.toLowerCase()).toContain("stale");
+  });
+
+  it("uses stored source text without accepting request text", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(3, '{"a":1,"b":2}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      formatRequest("job-no-text", 3, "beautify"),
+    );
+
+    expect(response.kind).toBe("format-complete");
+    if (response.kind !== "format-complete") return;
+    expect(response.result.text).toContain('"a"');
+    expect(response.result.text).not.toContain("x");
+  });
+});
+
+describe("handleWorkerRequest convert", () => {
+  it("converts to YAML", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"a":1}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      convertRequest("job-yaml", 1, "yaml"),
+    );
+
+    expect(response.kind).toBe("conversion-complete");
+    if (response.kind !== "conversion-complete") return;
+    expect(response.result.action).toBe("convert-yaml");
+    expect(response.result.format).toBe("yaml");
+  });
+
+  it("converts to XML", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"a":1}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      convertRequest("job-xml", 1, "xml"),
+    );
+
+    expect(response.kind).toBe("conversion-complete");
+    if (response.kind !== "conversion-complete") return;
+    expect(response.result.format).toBe("xml");
+  });
+
+  it("refuses conversion before source is stored", () => {
+    const { response } = handleWorkerRequest(
+      createInitialWorkerState(),
+      convertRequest("job-nosrc", 1, "yaml"),
+    );
+
+    expect(response.kind).toBe("failed");
+  });
+
+  it("uses stored source text without accepting request text", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(3, '{"a":1,"b":2}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      convertRequest("job-no-text", 3, "yaml"),
+    );
+
+    expect(response.kind).toBe("conversion-complete");
+    if (response.kind !== "conversion-complete") return;
+    expect(response.result.text).toContain("a");
+    expect(response.result.text).not.toContain("x");
+  });
+});
+
+describe("handleWorkerRequest validate-schema", () => {
+  it("validates against a schema", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"name":"John"}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      schemaRequest(
+        "job-schema",
+        1,
+        '{"type":"object","properties":{"name":{"type":"string"}}}',
+      ),
+    );
+
+    expect(response.kind).toBe("schema-validation-complete");
+    if (response.kind !== "schema-validation-complete") return;
+    expect(response.diagnostics).toHaveLength(0);
+  });
+
+  it("reports schema errors", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"name":42}'),
+    );
+
+    const { response } = handleWorkerRequest(
+      stored.state,
+      schemaRequest(
+        "job-schema-err",
+        1,
+        '{"type":"object","properties":{"name":{"type":"string"}}}',
+      ),
+    );
+
+    expect(response.kind).toBe("schema-validation-complete");
+    if (response.kind !== "schema-validation-complete") return;
+    expect(response.diagnostics.length).toBeGreaterThan(0);
+  });
+
+  it("does not modify the stored source or produce a result", () => {
+    const stored = handleWorkerRequest(
+      createInitialWorkerState(),
+      setSource(1, '{"name":"John"}'),
+    );
+
+    const { state, response } = handleWorkerRequest(
+      stored.state,
+      schemaRequest("job-schema-nr", 1, '{"type":"object"}'),
+    );
+
+    // Response is schema diagnostics, not a format/conversion result
+    expect(response.kind).toBe("schema-validation-complete");
+    // Stored source is unchanged
+    expect(state.source).toEqual(stored.state.source);
+  });
+});
+
+describe("createWorkerClient processing actions", () => {
+  it("posts format request to the worker", () => {
+    const worker = new FakeWorker();
+    const client = createWorkerClient(worker, () => undefined);
+
+    client.format(1, "beautify");
+
+    expect(worker.posted).toHaveLength(1);
+    expect(worker.posted[0]?.kind).toBe("format");
+    expect(worker.posted[0]).not.toHaveProperty("source");
+    expect(worker.posted[0]).toHaveProperty("revision", 1);
+  });
+
+  it("posts convert request to the worker", () => {
+    const worker = new FakeWorker();
+    const client = createWorkerClient(worker, () => undefined);
+
+    client.convert(1, "yaml");
+
+    expect(worker.posted).toHaveLength(1);
+    expect(worker.posted[0]?.kind).toBe("convert");
+    expect(worker.posted[0]).not.toHaveProperty("source");
+    expect(worker.posted[0]).toHaveProperty("revision", 1);
+  });
+
+  it("posts validate-schema request to the worker", () => {
+    const worker = new FakeWorker();
+    const client = createWorkerClient(worker, () => undefined);
+
+    client.validateSchema(1, "{}");
+
+    expect(worker.posted).toHaveLength(1);
+    expect(worker.posted[0]?.kind).toBe("validate-schema");
+    expect(worker.posted[0]).not.toHaveProperty("source");
+    expect(worker.posted[0]).toHaveProperty("revision", 1);
+  });
+});
+
 describe("createWorkerClient lifecycle", () => {
   it("terminates the injected worker on dispose", () => {
     const worker = new FakeWorker();

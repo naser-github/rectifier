@@ -1,5 +1,6 @@
 import type { Diagnostic } from "../domain/diagnostics";
 import type { RepairEligibility } from "../domain/repair";
+import type { ResultDocument } from "../domain/result";
 import type {
   WorkerRequest,
   WorkerResponse,
@@ -9,7 +10,9 @@ import {
   analyzeJsonRepair,
   classifyRepairEligibility,
 } from "../engine/repair/analyzeJson";
+import { convertToCsv, convertToXml, convertToYaml, formatJson } from "./converters";
 import { parseDiagnostics } from "./diagnostics";
+import { validateJsonSchema } from "./schema";
 
 export interface WorkerState {
   readonly source: WorkerSourceRevision | null;
@@ -36,14 +39,20 @@ export const handleWorkerRequest = (
       return handleSetSource(request);
     case "analyze-repair":
       return handleAnalyzeRepair(state, request);
+    case "format":
+      return handleFormat(state, request);
+    case "convert":
+      return handleConvert(state, request);
+    case "validate-schema":
+      return handleValidateSchema(state, request);
     case "validate-result":
       return handleValidateResult(state, request);
     default:
       return {
         response: {
-          id: request.id,
+          id: (request as WorkerRequest).id,
           kind: "failed",
-          message: `Unsupported worker request kind: ${request.kind}.`,
+          message: `Unsupported worker request kind.`,
         },
         state,
       };
@@ -104,6 +113,171 @@ const handleAnalyzeRepair = (
       analysis: analyzeJsonRepair(stored.text),
       id: request.id,
       kind: "repair-analysis-complete",
+      revision: stored.revision,
+    },
+    state,
+  };
+};
+
+const handleFormat = (
+  state: WorkerState,
+  request: Extract<WorkerRequest, { kind: "format" }>,
+): WorkerStep => {
+  const stored = state.source;
+
+  if (stored === null) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message:
+          "No source revision is stored. Send the document with set-source before formatting.",
+      },
+      state,
+    };
+  }
+
+  if (request.revision !== stored.revision) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: `Stale revision ${String(request.revision)} ignored; the stored revision is ${String(stored.revision)}.`,
+        revision: stored.revision,
+      },
+      state,
+    };
+  }
+
+  const result = formatJson(stored.text, request.operation, stored.revision);
+
+  if (result === null) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: "Cannot format invalid JSON.",
+        revision: stored.revision,
+      },
+      state,
+    };
+  }
+
+  return {
+    response: {
+      id: request.id,
+      kind: "format-complete",
+      result,
+      revision: stored.revision,
+    },
+    state,
+  };
+};
+
+const handleConvert = (
+  state: WorkerState,
+  request: Extract<WorkerRequest, { kind: "convert" }>,
+): WorkerStep => {
+  const stored = state.source;
+
+  if (stored === null) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: "No source revision is stored.",
+      },
+      state,
+    };
+  }
+
+  if (request.revision !== stored.revision) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: `Stale revision ${String(request.revision)} ignored.`,
+        revision: stored.revision,
+      },
+      state,
+    };
+  }
+
+  let result: ResultDocument | null = null;
+  switch (request.format) {
+    case "yaml":
+      result = convertToYaml(stored.text, stored.revision);
+      break;
+    case "xml":
+      result = convertToXml(stored.text, stored.revision);
+      break;
+    case "csv":
+      result = convertToCsv(stored.text, stored.revision);
+      break;
+  }
+
+  if (result === null) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message:
+          request.format === "csv"
+            ? "CSV requires an object or a non-empty array of objects."
+            : `Cannot convert invalid JSON to ${request.format}.`,
+        revision: stored.revision,
+      },
+      state,
+    };
+  }
+
+  return {
+    response: {
+      id: request.id,
+      kind: "conversion-complete",
+      result,
+      revision: stored.revision,
+    },
+    state,
+  };
+};
+
+const handleValidateSchema = (
+  state: WorkerState,
+  request: Extract<WorkerRequest, { kind: "validate-schema" }>,
+): WorkerStep => {
+  const stored = state.source;
+
+  if (stored === null) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: "No source revision is stored.",
+      },
+      state,
+    };
+  }
+
+  if (request.revision !== stored.revision) {
+    return {
+      response: {
+        id: request.id,
+        kind: "failed",
+        message: `Stale revision ${String(request.revision)} ignored.`,
+        revision: stored.revision,
+      },
+      state,
+    };
+  }
+
+  const { diagnostics } = validateJsonSchema(stored.text, request.schemaText);
+
+  return {
+    response: {
+      diagnostics,
+      id: request.id,
+      kind: "schema-validation-complete",
       revision: stored.revision,
     },
     state,

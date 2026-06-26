@@ -100,52 +100,52 @@ each task starts.
 
 ### Task 06.1: Implement Beautify and Minify
 
-- [ ] Test valid objects, arrays, primitives, and invalid input.
-- [ ] Use `JSON.stringify(value, null, 2)` for Beautify.
-- [ ] Use `JSON.stringify(value)` for Minify.
-- [ ] Return a JSON `ResultDocument` without changing source input.
+- [x] Test valid objects, arrays, primitives, and invalid input.
+- [x] Use `JSON.stringify(value, null, 2)` for Beautify.
+- [x] Use `JSON.stringify(value)` for Minify.
+- [x] Return a JSON `ResultDocument` without changing source input.
 
 ### Task 06.2: Implement YAML and XML Conversion
 
-- [ ] Test objects, arrays, primitives, escaping, and invalid input.
-- [ ] Use `js-yaml` for YAML.
-- [ ] Use `fast-xml-parser` XMLBuilder for XML.
-- [ ] Wrap top-level arrays or primitives in one XML `<root>` element.
-- [ ] Return the exact converted result and format.
+- [x] Test objects, arrays, primitives, escaping, and invalid input.
+- [x] Use `js-yaml` for YAML.
+- [x] Use `fast-xml-parser` XMLBuilder for XML.
+- [x] Wrap top-level arrays or primitives in one XML `<root>` element.
+- [x] Return the exact converted result and format.
 
 ### Task 06.3: Implement Automatic Flattened CSV
 
-- [ ] Accept one top-level object or a non-empty array of objects.
-- [ ] Flatten nested objects using an iterative walker and escaped dot paths.
-- [ ] Escape existing `\` and `.` characters in keys.
-- [ ] Keep headers in first-seen order.
-- [ ] Keep nested arrays as compact JSON in one cell.
-- [ ] Use empty cells for missing fields and text `null` for JSON null.
-- [ ] Refuse primitives, empty arrays, arrays with non-object rows, and paths
+- [x] Accept one top-level object or a non-empty array of objects.
+- [x] Flatten nested objects using an iterative walker and escaped dot paths.
+- [x] Escape existing `\` and `.` characters in keys.
+- [x] Keep headers in first-seen order.
+- [x] Keep nested arrays as compact JSON in one cell.
+- [x] Use empty cells for missing fields and text `null` for JSON null.
+- [x] Refuse primitives, empty arrays, arrays with non-object rows, and paths
   that cannot remain unique.
-- [ ] Pass flattened rows to Papa Parse for correct CSV escaping.
+- [x] Pass flattened rows to Papa Parse for correct CSV escaping.
 
 ### Task 06.4: Implement Schema Check
 
-- [ ] Test valid schemas, invalid schemas, valid instances, invalid instances,
+- [x] Test valid schemas, invalid schemas, valid instances, invalid instances,
   and invalid input JSON.
-- [ ] Support pasting, editing, and uploading a `.json` schema.
-- [ ] Support opening, closing, and clearing the separate Schema Drawer.
-- [ ] Compile schemas with Ajv and `ajv-formats`.
-- [ ] Map Ajv errors to plain messages and data paths.
-- [ ] Keep schema text in the browser.
-- [ ] Keep the Schema Drawer separate from the Action Dock.
-- [ ] Prove Schema Check never changes the current input or existing result.
+- [x] Support pasting, editing, and uploading a `.json` schema.
+- [x] Support opening, closing, and clearing the separate Schema Drawer.
+- [x] Compile schemas with Ajv and `ajv-formats`.
+- [x] Map Ajv errors to plain messages and data paths.
+- [x] Keep schema text in the browser.
+- [x] Keep the Schema Drawer separate from the Action Dock.
+- [x] Prove Schema Check never changes the current input or existing result.
 
 ### Task 06.5: Integrate Processing Actions into the Single Worker
 
-- [ ] Implement the accepted Beautify, Minify, Convert, and Schema Check worker
+- [x] Implement the accepted Beautify, Minify, Convert, and Schema Check worker
   protocol variants defined in Epic 01.
-- [ ] Route all processing actions through `json.worker.ts` and
+- [x] Route all processing actions through `json.worker.ts` and
   `useWorkerClient.ts`.
-- [ ] Keep one source document per accepted revision and never resend it for
+- [x] Keep one source document per accepted revision and never resend it for
   later processing actions.
-- [ ] Add protocol tests for processing responses, stale revisions, and schema
+- [x] Add protocol tests for processing responses, stale revisions, and schema
   results that do not replace the current result.
 
 ## Verification
@@ -164,16 +164,16 @@ unsupported CSV or schema state provides a clear reason.
 
 ## Acceptance Checklist
 
-- [ ] Beautify and Minify accept every valid JSON top-level type.
-- [ ] YAML and XML output are deterministic.
-- [ ] CSV automatically flattens nested objects.
-- [ ] Literal and nested path names never silently merge.
-- [ ] Nested arrays remain one CSV cell.
-- [ ] Schema errors use plain messages and data paths.
-- [ ] Schema Drawer opens, closes, clears, and never changes the result.
-- [ ] All processing actions use the single revision-based worker.
-- [ ] Code Reviewer approves worker processing tasks.
-- [ ] UI Reviewer approves the Schema Drawer behavior.
+- [x] Beautify and Minify accept every valid JSON top-level type.
+- [x] YAML and XML output are deterministic.
+- [x] CSV automatically flattens nested objects.
+- [x] Literal and nested path names never silently merge.
+- [x] Nested arrays remain one CSV cell.
+- [x] Schema errors use plain messages and data paths.
+- [x] Schema Drawer opens, closes, clears, and never changes the result.
+- [x] All processing actions use the single revision-based worker.
+- [x] Code Reviewer approves worker processing tasks.
+- [x] UI Reviewer approves the Schema Drawer behavior.
 
 ## Handoff to Later Epics
 

@@ -61,6 +61,9 @@ const createFakeClient = (): WorkerClient & {
       handler = nextHandler;
     },
     validateResult: vi.fn(() => "job-validation"),
+    format: vi.fn(() => "job-format"),
+    convert: vi.fn(() => "job-convert"),
+    validateSchema: vi.fn(() => "job-schema"),
     setSource(source: WorkerSourceRevision): string {
       setSourceSpy(source);
       return "job-source";

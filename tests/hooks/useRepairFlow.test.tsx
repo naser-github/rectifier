@@ -53,6 +53,9 @@ const createFakeClient = () => {
       () => "job-analysis",
     ),
     validateResult: vi.fn<(result: ResultDocument) => string>(() => "job-validation"),
+    format: vi.fn(() => "job-format"),
+    convert: vi.fn(() => "job-convert"),
+    validateSchema: vi.fn(() => "job-schema"),
     setSource: vi.fn(() => "job-source"),
     dispose: vi.fn(),
     setResponseHandler: vi.fn((nextHandler: WorkerResponseHandler): void => {
