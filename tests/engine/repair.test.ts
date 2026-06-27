@@ -332,6 +332,20 @@ describe("repair candidate generation, verification, and classification", () => 
       reason: "valid-json",
     });
   });
+
+  it("repairs a large missing-comma object", () => {
+    const entries = Array.from(
+      { length: 12_000 },
+      (_, index) => `"key_${String(index)}":"${"x".repeat(80)}"`,
+    );
+    const valid = `{${entries.join(",")}}`;
+    const commaOffset = valid.indexOf(',"key_');
+    const input = valid.slice(0, commaOffset) + valid.slice(commaOffset + 1);
+
+    const result = analyzeJsonRepair(input);
+
+    expect(result.kind).toBe("safe");
+  }, 20_000);
 });
 
 describe("repair eligibility classification", () => {

@@ -74,6 +74,22 @@ describe("parseDiagnostics — missing comma", () => {
     expect(first.position.line).toBeGreaterThanOrEqual(1);
     expect(first.position.column).toBeGreaterThanOrEqual(1);
   });
+
+  it("reports one confirmed missing-comma diagnostic for 10 MB supported input", () => {
+    const entries = Array.from(
+      { length: 110_000 },
+      (_, index) => `"key_${String(index)}":"${"x".repeat(80)}"`,
+    );
+    const valid = `{${entries.join(",")}}`;
+    const commaOffset = valid.lastIndexOf(',"key_');
+    const text = valid.slice(0, commaOffset) + valid.slice(commaOffset + 1);
+
+    const diagnostics = parseDiagnostics(text);
+    const confirmed = diagnostics.filter((d) => d.reliability === "confirmed");
+
+    expect(confirmed).toHaveLength(1);
+    expect(confirmed[0]?.code).toBe("json.missing-comma");
+  }, 20_000);
 });
 
 describe("parseDiagnostics — trailing comma", () => {

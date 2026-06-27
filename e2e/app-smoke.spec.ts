@@ -3,9 +3,9 @@ import { expect, test } from "@playwright/test";
 test("loads the Epic 03 validation workspace", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Input JSON" })).toBeVisible();
+  await expect(page.getByText("Input JSON")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Actions" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Result" })).toBeVisible();
+  await expect(page.getByText("No result yet")).toBeVisible();
   await expect(page.getByRole("region", { name: /input json editor/i })).toBeVisible();
 });
 

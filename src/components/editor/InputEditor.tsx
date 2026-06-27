@@ -21,7 +21,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
-import { StateEffect, StateField } from "@codemirror/state";
+import { Compartment, StateEffect, StateField } from "@codemirror/state";
 import {
   Decoration,
   EditorView,
@@ -59,6 +59,7 @@ const ERROR_SELECTION_BACKGROUND = `color-mix(in srgb, ${RED_ACCENT_VAR} 28%, tr
 
 // CSS class applied to the .cm-editor element when the editor has errors.
 const ERROR_FOCUSED_CLASS = "cm-error-focused";
+const LARGE_INPUT_PREVIEW_LIMIT = 20_000;
 
 // ---------------------------------------------------------------------------
 // CodeMirror theme extension
@@ -139,6 +140,10 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
   function InputEditor({ value, onChange, diagnostics }, ref) {
     const containerRef = useRef<HTMLDivElement>(null);
     const viewRef = useRef<EditorView | null>(null);
+    const suppressChangeRef = useRef(false);
+    const readOnlyCompartmentRef = useRef(new Compartment());
+    const isLargeInput = value.length > LARGE_INPUT_PREVIEW_LIMIT;
+    const displayValue = getDisplayValue(value);
 
     // Track whether the editor currently has confirmed errors.
     const [hasConfirmedError, setHasConfirmedError] = useState(false);
@@ -158,7 +163,7 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
 
       const view = new EditorView({
         state: EditorState.create({
-          doc: value,
+          doc: displayValue,
           extensions: [
             lineNumbers(),
             foldGutter(),
@@ -167,7 +172,14 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
             syntaxHighlighting(defaultHighlightStyle),
             errorDecorationsField,
             errorFocusTheme,
+            readOnlyCompartmentRef.current.of([
+              EditorState.readOnly.of(isLargeInput),
+              EditorView.editable.of(!isLargeInput),
+            ]),
             makeOnChangePlugin((text) => {
+              if (suppressChangeRef.current) {
+                return;
+              }
               onChangeRef.current(text);
             }),
             EditorView.lineWrapping,
@@ -193,12 +205,29 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
       if (view === null) return;
 
       const current = view.state.doc.toString();
-      if (current === value) return;
+      if (current === displayValue) return;
+
+      suppressChangeRef.current = true;
+      try {
+        view.dispatch({
+          changes: { from: 0, to: view.state.doc.length, insert: displayValue },
+        });
+      } finally {
+        suppressChangeRef.current = false;
+      }
+    }, [displayValue]);
+
+    useEffect(() => {
+      const view = viewRef.current;
+      if (view === null) return;
 
       view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: value },
+        effects: readOnlyCompartmentRef.current.reconfigure([
+          EditorState.readOnly.of(isLargeInput),
+          EditorView.editable.of(!isLargeInput),
+        ]),
       });
-    }, [value]);
+    }, [isLargeInput]);
 
     // -----------------------------------------------------------------------
     // Sync diagnostics → decorations + error-focused state.
@@ -221,7 +250,7 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
         // shown — not just a caret (PRD §7.3) — and scroll it into view.
         const { from, to } = errorTokenRange(
           view.state.doc.toString(),
-          first.position.offset,
+          Math.min(first.position.offset, view.state.doc.length),
         );
         view.dispatch({
           selection: { anchor: from, head: to },
@@ -246,7 +275,7 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
           // visible red highlight, consistent with the auto-focus path (PRD §7.3).
           const { from, to } = errorTokenRange(
             view.state.doc.toString(),
-            position.offset,
+            Math.min(position.offset, view.state.doc.length),
           );
           view.dispatch({
             selection: { anchor: from, head: to },
@@ -268,8 +297,21 @@ export const InputEditor = forwardRef<InputEditorHandle, InputEditorProps>(
         data-has-error={hasConfirmedError ? "" : undefined}
         className="h-full w-full overflow-hidden"
       >
+        {isLargeInput && (
+          <div className="border-b border-line bg-paper px-3 py-2 text-xs text-muted">
+            Large input preview only. Actions use the full input.
+          </div>
+        )}
         <div ref={containerRef} className="h-full w-full font-mono text-sm" />
       </div>
     );
   },
 );
+
+function getDisplayValue(value: string): string {
+  if (value.length <= LARGE_INPUT_PREVIEW_LIMIT) {
+    return value;
+  }
+
+  return `${value.slice(0, LARGE_INPUT_PREVIEW_LIMIT)}\n\nLarge input preview only. Actions use the full input.`;
+}

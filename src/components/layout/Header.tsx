@@ -83,9 +83,9 @@ export function Header({ onClearSaved }: HeaderProps): ReactNode {
           </p>
         ) : (
           <p className="text-sm leading-relaxed text-muted">
-            Rectifier saves only your latest workspace locally in this browser. No data
-            is sent to a server. Clearing saved data removes persisted work without
-            clearing your currently open workspace.
+            Rectifier saves the latest small workspace locally in this browser. Large
+            inputs are not auto-saved. No data is sent to a server. Clearing saved data
+            removes persisted work without clearing your currently open workspace.
           </p>
         )}
       </Dialog>

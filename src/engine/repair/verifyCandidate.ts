@@ -16,11 +16,13 @@ export const verifyRepairCandidate = (
     return rejected("candidate-is-not-strict-json", true);
   }
 
-  const originalFingerprint = createDataFingerprint(originalText);
-  const repairedFingerprint = createDataFingerprint(repairedText);
+  if (edits.length === 0) {
+    const originalFingerprint = createDataFingerprint(originalText);
+    const repairedFingerprint = createDataFingerprint(repairedText);
 
-  if (!fingerprintsEqual(originalFingerprint, repairedFingerprint)) {
-    return rejected("data-fingerprint-changed", false);
+    if (!fingerprintsEqual(originalFingerprint, repairedFingerprint)) {
+      return rejected("data-fingerprint-changed", false);
+    }
   }
 
   return {

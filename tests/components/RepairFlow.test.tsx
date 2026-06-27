@@ -86,6 +86,25 @@ describe("RepairPreviewDialog", () => {
     expect(screen.getByText('{"name":"John","active":true}')).toBeInTheDocument();
   });
 
+  it("truncates very large repaired JSON in the preview only", () => {
+    const largeCandidate: RepairCandidate = {
+      ...safeCandidate,
+      repairedText: "x".repeat(25_000),
+    };
+
+    render(
+      <RepairPreviewDialog
+        candidate={largeCandidate}
+        open={true}
+        onAccept={vi.fn()}
+        onReject={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText(/Preview truncated/i)).toBeInTheDocument();
+    expect(screen.queryByText("x".repeat(25_000))).not.toBeInTheDocument();
+  });
+
   it("renders syntax edit descriptions", () => {
     render(
       <RepairPreviewDialog

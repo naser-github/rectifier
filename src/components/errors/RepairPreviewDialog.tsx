@@ -3,6 +3,8 @@ import type { RepairCandidate } from "../../domain/repair";
 import { Button } from "../ui/Button";
 import { Dialog } from "../ui/Dialog";
 
+const REPAIR_PREVIEW_CHARACTER_LIMIT = 20_000;
+
 interface RepairPreviewDialogProps {
   readonly candidate: RepairCandidate;
   readonly open: boolean;
@@ -20,6 +22,12 @@ export function RepairPreviewDialog({
   onAccept,
   onReject,
 }: RepairPreviewDialogProps): ReactNode {
+  const isPreviewTruncated =
+    candidate.repairedText.length > REPAIR_PREVIEW_CHARACTER_LIMIT;
+  const repairedPreview = isPreviewTruncated
+    ? `${candidate.repairedText.slice(0, REPAIR_PREVIEW_CHARACTER_LIMIT)}\n\nPreview truncated. Accept applies the full repaired JSON.`
+    : candidate.repairedText;
+
   return (
     <Dialog
       open={open}
@@ -40,7 +48,7 @@ export function RepairPreviewDialog({
 
       <div className="mb-2 text-xs font-semibold text-muted">Repaired JSON:</div>
       <pre className="max-h-60 overflow-auto rounded-sm border border-line bg-paper p-3 font-code text-xs leading-relaxed">
-        {candidate.repairedText}
+        {repairedPreview}
       </pre>
 
       {candidate.edits.length > 0 && (

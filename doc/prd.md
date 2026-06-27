@@ -181,8 +181,8 @@ The following prototype behaviors must not be copied:
   **Your JSON stays in this browser** with a privacy lock icon on the right.
 - The privacy message is an accessible button that opens a small Browser
   storage popover.
-- The Browser storage popover explains that only the latest workspace is saved
-  locally and contains **Clear saved workspace**.
+- The Browser storage popover explains that only the latest small workspace is
+  saved locally and contains **Clear saved workspace**.
 - Clearing the saved workspace requires confirmation and removes persisted
   work without clearing the currently open workspace.
 - The header does not contain light/dark theme controls.
@@ -595,9 +595,11 @@ users.
 
 ## 14. Browser Storage Requirements
 
-- Rectifier saves only the latest workspace in the browser.
+- Rectifier saves only the latest small workspace in the browser.
+- Large inputs over 1 MB are not auto-saved so 10 MB processing stays
+  responsive.
 - The saved workspace includes input, result, result format, and schema when
-  used.
+  used, unless the input is over the auto-save limit.
 - New saved work replaces the previous saved workspace.
 - Rectifier does not provide workspace history.
 - Rectifier continues to work when browser storage is unavailable.

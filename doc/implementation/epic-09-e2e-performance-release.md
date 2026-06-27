@@ -113,73 +113,73 @@ each task starts.
 
 ### Task 09.1: Build Full User-Flow Browser Tests
 
-- [ ] Paste valid JSON and Beautify.
-- [ ] Upload invalid JSON and focus the first error with red caret.
-- [ ] Preview and accept one safe repair.
-- [ ] Select one ambiguous repair choice.
-- [ ] Refuse unsupported repair and return to manual editing.
-- [ ] Convert nested object data to automatically flattened CSV.
-- [ ] Run Schema Check separately from the Action Dock.
-- [ ] Collapse result objects and arrays.
-- [ ] Copy and download exact results.
-- [ ] Verify disabled reasons with pointer and keyboard.
-- [ ] Restore only the latest workspace.
+- [x] Paste valid JSON and Beautify.
+- [x] Upload invalid JSON and focus the first error with red caret.
+- [x] Preview and accept one safe repair.
+- [x] Select one ambiguous repair choice.
+- [x] Refuse unsupported repair and return to manual editing.
+- [x] Convert nested object data to automatically flattened CSV.
+- [x] Run Schema Check separately from the Action Dock.
+- [x] Collapse result objects and arrays.
+- [x] Copy and download exact results.
+- [x] Verify disabled reasons with pointer and keyboard.
+- [x] Restore only the latest workspace.
 
 ### Task 09.2: Build Large-File and Responsiveness Tests
 
-- [ ] Generate deterministic valid and supported-invalid 1 MB, 5 MB, and 10 MB
+- [x] Generate deterministic valid and supported-invalid 1 MB, 5 MB, and 10 MB
   fixtures.
-- [ ] Reject files over 10 MB before reading.
-- [ ] Complete validation for a 10 MB valid file.
-- [ ] Complete repair analysis for a 10 MB supported-invalid file.
-- [ ] Confirm the page remains interactive during worker processing.
-- [ ] Confirm stale validation cannot replace current results.
-- [ ] Confirm large Tree/Object views do not render every row.
+- [x] Reject files over 10 MB before reading.
+- [x] Complete validation for a 10 MB valid file.
+- [x] Complete repair analysis for a 10 MB supported-invalid file.
+- [x] Confirm the page remains interactive during worker processing.
+- [x] Confirm stale validation cannot replace current results.
+- [x] Confirm large Tree/Object views do not render every row.
 
 ### Task 09.3: Build Adversarial Safety and Stability Tests
 
-- [ ] Test deep nesting without validator or repair-analyzer crash.
-- [ ] Test large arrays.
-- [ ] Test heavily broken JSON returning reliable errors or manual guidance.
-- [ ] Test broken Unicode, invalid escapes, and unterminated strings.
-- [ ] Confirm no unsafe repair candidate is produced.
-- [ ] Re-run all repair safety fixtures in release verification.
+- [x] Test deep nesting without validator or repair-analyzer crash.
+- [x] Test large arrays.
+- [x] Test heavily broken JSON returning reliable errors or manual guidance.
+- [x] Test broken Unicode, invalid escapes, and unterminated strings.
+- [x] Confirm no unsafe repair candidate is produced.
+- [x] Re-run all repair safety fixtures in release verification.
 
 ### Task 09.4: Record Performance Evidence
 
-- [ ] Use these release budgets on the recorded reference machine:
+- [x] Use these release budgets on the recorded reference machine:
   - 10 MB valid JSON validation completes within 5 seconds.
   - 10 MB supported-invalid repair analysis completes within 10 seconds.
   - While either job runs, an enabled UI control responds within 250
     milliseconds.
   - No main-thread long task caused by Rectifier processing exceeds 500
     milliseconds.
-- [ ] Record validation time for 1 MB, 5 MB, and 10 MB valid fixtures.
-- [ ] Record repair-analysis time for supported invalid fixtures.
-- [ ] Record available peak JavaScript heap measurement.
-- [ ] Record typing, button, and error-navigation responsiveness.
-- [ ] Compare evidence with the agreed budgets and document any accepted limit.
-- [ ] Write environment, budgets, measurements, and pass/fail results to
+- [x] Record validation time for 1 MB, 5 MB, and 10 MB valid fixtures.
+- [x] Record repair-analysis time for supported invalid fixtures.
+- [x] Record available peak JavaScript heap measurement.
+- [x] Record typing, button, and error-navigation responsiveness.
+- [x] Compare evidence with the agreed budgets and document any accepted limit.
+- [x] Write environment, budgets, measurements, and pass/fail results to
   `doc/performance.md`.
 
 ### Task 09.5: Create and Verify the Run Guide
 
-- [ ] Document install, development, typecheck, unit test, build, and Playwright
+- [x] Document install, development, typecheck, unit test, build, and Playwright
   commands in `doc/RUN.md`.
-- [ ] Document Docker Compose startup using the single app service from Epic 00.
-- [ ] State clearly that no backend, database, sidecar, or AI service is
+- [x] Document Docker Compose startup using the single app service from Epic 00.
+- [x] State clearly that no backend, database, sidecar, or AI service is
   required.
-- [ ] Run every documented command exactly as written.
-- [ ] Update `README.md` to link the run guide only after it is verified.
+- [x] Run every documented command exactly as written.
+- [x] Update `README.md` to link the run guide only after it is verified.
 
 ### Task 09.6: Perform Final Release Audit
 
-- [ ] Complete `doc/implementation/traceability.md` by mapping every BRD
+- [x] Complete `doc/implementation/traceability.md` by mapping every BRD
   requirement, BRD business rule, detailed PRD requirement, and PRD acceptance
   criterion to its accepted epic task and passing test or reviewed evidence.
-- [ ] Run final Requirements, UI, Repair Safety, Code, and Release reviews.
-- [ ] Confirm no unresolved Blocking or Important finding remains.
-- [ ] Confirm Epics 01-08 already show Accepted and provide the evidence needed
+- [x] Run final Requirements, UI, Repair Safety, Code, and Release reviews.
+- [x] Confirm no unresolved Blocking or Important finding remains.
+- [x] Confirm Epics 01-08 already show Accepted and provide the evidence needed
   for the Orchestrator to mark Epic 09 Accepted after its exit gate.
 
 ## Verification
@@ -197,17 +197,17 @@ and recorded performance supports the 10 MB product promise.
 
 ## Acceptance Checklist
 
-- [ ] Complete user flows pass in a real browser.
-- [ ] 10 MB validation and supported repair analysis complete.
-- [ ] Over-limit files are rejected before reading.
-- [ ] Large and adversarial input does not produce unsafe repair.
-- [ ] Responsiveness and performance evidence are recorded.
-- [ ] Every objective release performance budget passes or a product decision
+- [x] Complete user flows pass in a real browser.
+- [x] 10 MB validation and supported repair analysis complete.
+- [x] Over-limit files are rejected before reading.
+- [x] Large and adversarial input does not produce unsafe repair.
+- [x] Responsiveness and performance evidence are recorded.
+- [x] Every objective release performance budget passes or a product decision
   explicitly changed the budget before Epic 09 execution began.
-- [ ] Run guide commands are verified.
-- [ ] Release Reviewer approves.
-- [ ] UI and Repair Safety Reviewers approve the final release audit.
-- [ ] Project Orchestrator approves the release candidate.
+- [x] Run guide commands are verified.
+- [x] Release Reviewer approves.
+- [x] UI and Repair Safety Reviewers approve the final release audit.
+- [x] Project Orchestrator approves the release candidate.
 
 ## Final Handoff
 

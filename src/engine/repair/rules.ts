@@ -26,18 +26,19 @@ const RULE_SUMMARIES = {
 
 export const createSyntaxRepairCandidates = (
   input: string,
+  tokens: readonly RepairToken[] = tokenizeRepairInput(input),
 ): readonly SyntaxRepairCandidate[] => [
-  ...findMissingCommaCandidates(input),
+  ...findMissingCommaCandidates(input, tokens),
   ...findTrailingCommaCandidates(input),
-  ...findMissingColonCandidates(input),
+  ...findMissingColonCandidates(input, tokens),
   ...findMissingClosingDelimiterCandidates(input),
-  ...findSingleQuoteDelimiterCandidates(input),
+  ...findSingleQuoteDelimiterCandidates(input, tokens),
 ];
 
 const findMissingCommaCandidates = (
   input: string,
+  tokens: readonly RepairToken[],
 ): readonly SyntaxRepairCandidate[] => {
-  const tokens = tokenizeRepairInput(input);
   const dataTokens = tokens.filter(isDataToken);
   const candidates: SyntaxRepairCandidate[] = [];
 
@@ -49,14 +50,14 @@ const findMissingCommaCandidates = (
       continue;
     }
 
-    const currentEnd = getCompleteDataEndOffset(tokens, current);
-    const nextStart = getCompleteDataStartOffset(tokens, next);
+    const currentEnd = getCompleteDataEndOffset(input, current);
+    const nextStart = getCompleteDataStartOffset(input, next);
 
     if (
       currentEnd === null ||
       nextStart === null ||
       !isOnlyWhitespace(input, currentEnd, nextStart) ||
-      !hasPreviousColon(input, tokens, current)
+      !hasPreviousColon(input, current)
     ) {
       continue;
     }
@@ -94,8 +95,8 @@ const findTrailingCommaCandidates = (
 
 const findMissingColonCandidates = (
   input: string,
+  tokens: readonly RepairToken[],
 ): readonly SyntaxRepairCandidate[] => {
-  const tokens = tokenizeRepairInput(input);
   const dataTokens = tokens.filter(isDataToken);
   const candidates: SyntaxRepairCandidate[] = [];
 
@@ -107,13 +108,13 @@ const findMissingColonCandidates = (
       current === undefined ||
       next === undefined ||
       current.kind !== "string" ||
-      !isObjectKeyContext(input, tokens, current)
+      !isObjectKeyContext(input, current)
     ) {
       continue;
     }
 
-    const currentEnd = getCompleteDataEndOffset(tokens, current);
-    const nextStart = getCompleteDataStartOffset(tokens, next);
+    const currentEnd = getCompleteDataEndOffset(input, current);
+    const nextStart = getCompleteDataStartOffset(input, next);
 
     if (
       currentEnd === null ||
@@ -147,8 +148,8 @@ const findMissingClosingDelimiterCandidates = (
 
 const findSingleQuoteDelimiterCandidates = (
   input: string,
+  tokens: readonly RepairToken[],
 ): readonly SyntaxRepairCandidate[] => {
-  const tokens = tokenizeRepairInput(input);
   const edits = tokens
     .filter(
       (token): token is RepairToken => token.kind === "syntax" && token.source === "'",
@@ -206,58 +207,43 @@ const isDataToken = (token: RepairToken): token is RepairDataToken =>
   token.kind !== "syntax";
 
 const getCompleteDataStartOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.startOffset;
   }
 
-  const openingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.endOffset === token.startOffset,
-  );
+  const openingOffset = token.startOffset - 1;
+  const openingDelimiter = input[openingOffset];
 
-  return openingDelimiter?.startOffset ?? null;
+  return openingDelimiter === "'" || openingDelimiter === '"' ? openingOffset : null;
 };
 
 const getCompleteDataEndOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.endOffset;
   }
 
-  const closingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.startOffset === token.endOffset,
-  );
+  const closingDelimiter = input[token.endOffset];
 
-  return closingDelimiter?.endOffset ?? null;
+  return closingDelimiter === "'" || closingDelimiter === '"'
+    ? token.endOffset + 1
+    : null;
 };
 
-const hasPreviousColon = (
-  input: string,
-  tokens: readonly RepairToken[],
-  token: RepairDataToken,
-): boolean => {
-  const startOffset = getCompleteDataStartOffset(tokens, token) ?? token.startOffset;
+const hasPreviousColon = (input: string, token: RepairDataToken): boolean => {
+  const startOffset = getCompleteDataStartOffset(input, token) ?? token.startOffset;
   const previousOffset = findPreviousMeaningfulOffset(input, startOffset - 1);
 
   return previousOffset !== null && input[previousOffset] === ":";
 };
 
-const isObjectKeyContext = (
-  input: string,
-  tokens: readonly RepairToken[],
-  token: RepairDataToken,
-): boolean => {
-  const startOffset = getCompleteDataStartOffset(tokens, token) ?? token.startOffset;
+const isObjectKeyContext = (input: string, token: RepairDataToken): boolean => {
+  const startOffset = getCompleteDataStartOffset(input, token) ?? token.startOffset;
   const previousOffset = findPreviousMeaningfulOffset(input, startOffset - 1);
 
   return (

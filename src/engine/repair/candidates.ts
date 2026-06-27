@@ -14,13 +14,14 @@ interface CandidateDraft {
 export const generateVerifiedRepairCandidates = (
   input: string,
 ): readonly RepairCandidate[] => {
+  const tokens = tokenizeRepairInput(input);
   const drafts: readonly CandidateDraft[] = [
-    ...createSyntaxRepairCandidates(input).map((candidate) => ({
+    ...createSyntaxRepairCandidates(input, tokens).map((candidate) => ({
       edits: candidate.edits,
       id: candidate.ruleId,
       summary: candidate.summary,
     })),
-    ...createAmbiguousAdjacentValueDrafts(input),
+    ...createAmbiguousAdjacentValueDrafts(input, tokens),
   ];
   const candidates: RepairCandidate[] = [];
   const seenRepairedText = new Set<string>();
@@ -53,8 +54,8 @@ export const generateVerifiedRepairCandidates = (
 
 const createAmbiguousAdjacentValueDrafts = (
   input: string,
+  tokens: readonly RepairToken[],
 ): readonly CandidateDraft[] => {
-  const tokens = tokenizeRepairInput(input);
   const dataTokens = tokens.filter(isDataToken);
 
   for (let index = 0; index < dataTokens.length - 1; index += 1) {
@@ -64,15 +65,15 @@ const createAmbiguousAdjacentValueDrafts = (
     if (
       current === undefined ||
       next === undefined ||
-      !hasPreviousColon(input, tokens, current)
+      !hasPreviousColon(input, current)
     ) {
       continue;
     }
 
-    const currentStart = getCompleteDataStartOffset(tokens, current);
-    const currentEnd = getCompleteDataEndOffset(tokens, current);
-    const nextEnd = getCompleteDataEndOffset(tokens, next);
-    const nextStart = getCompleteDataStartOffset(tokens, next);
+    const currentStart = getCompleteDataStartOffset(input, current);
+    const currentEnd = getCompleteDataEndOffset(input, current);
+    const nextEnd = getCompleteDataEndOffset(input, next);
+    const nextStart = getCompleteDataStartOffset(input, next);
     const finalObjectEnd = findFinalObjectEnd(input);
 
     if (
@@ -133,47 +134,36 @@ const replaceEdit = (
 });
 
 const getCompleteDataStartOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.startOffset;
   }
 
-  const openingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.endOffset === token.startOffset,
-  );
+  const openingOffset = token.startOffset - 1;
+  const openingDelimiter = input[openingOffset];
 
-  return openingDelimiter?.startOffset ?? null;
+  return openingDelimiter === "'" || openingDelimiter === '"' ? openingOffset : null;
 };
 
 const getCompleteDataEndOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.endOffset;
   }
 
-  const closingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.startOffset === token.endOffset,
-  );
+  const closingDelimiter = input[token.endOffset];
 
-  return closingDelimiter?.endOffset ?? null;
+  return closingDelimiter === "'" || closingDelimiter === '"'
+    ? token.endOffset + 1
+    : null;
 };
 
-const hasPreviousColon = (
-  input: string,
-  tokens: readonly RepairToken[],
-  token: RepairDataToken,
-): boolean => {
-  const startOffset = getCompleteDataStartOffset(tokens, token) ?? token.startOffset;
+const hasPreviousColon = (input: string, token: RepairDataToken): boolean => {
+  const startOffset = getCompleteDataStartOffset(input, token) ?? token.startOffset;
   const previousOffset = findPreviousMeaningfulOffset(input, startOffset - 1);
 
   return previousOffset !== null && input[previousOffset] === ":";

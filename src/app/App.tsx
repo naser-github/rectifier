@@ -1,31 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
-import type { SourcePosition } from "../domain/diagnostics";
-import type { WorkerRequest, WorkerResponse } from "../domain/workerProtocol";
-import { ActionDock } from "../components/actions/ActionDock";
-import { ErrorTray } from "../components/errors/ErrorTray";
-import { RepairChoiceDialog } from "../components/errors/RepairChoiceDialog";
-import { RepairManualGuidance } from "../components/errors/RepairManualGuidance";
-import { RepairPreviewDialog } from "../components/errors/RepairPreviewDialog";
-import { Header } from "../components/layout/Header";
-import { MobileWorkspaceTabs } from "../components/layout/MobileWorkspaceTabs";
-import type { MobileTab } from "../components/layout/MobileWorkspaceTabs";
-import { Workspace } from "../components/layout/Workspace";
-import { ResultPanel } from "../components/result/ResultPanel";
-import { SchemaDrawer } from "../components/schema/SchemaDrawer";
-import { readJsonFile } from "../lib/files";
-import { InputPanel } from "../components/editor/InputPanel";
-import type { InputEditorHandle } from "../components/editor/InputEditor";
-import { TooltipProvider } from "../components/ui/Tooltip";
-import { useProcessingActions } from "../hooks/useProcessingActions";
-import { useRepairFlow } from "../hooks/useRepairFlow";
-import { useWorkspaceController } from "../hooks/useWorkspaceController";
-import {
-  createWorkerClient,
-  type WorkerClient,
-  type WorkerLike,
-} from "../hooks/useWorkerClient";
-import { getActionEligibility } from "../state/actionEligibility";
+import type {SourcePosition} from "../domain/diagnostics";
+import type {WorkerRequest, WorkerResponse} from "../domain/workerProtocol";
+import {ActionDock} from "../components/actions/ActionDock";
+import {ErrorTray} from "../components/errors/ErrorTray";
+import {RepairChoiceDialog} from "../components/errors/RepairChoiceDialog";
+import {RepairManualGuidance} from "../components/errors/RepairManualGuidance";
+import {RepairPreviewDialog} from "../components/errors/RepairPreviewDialog";
+import {Header} from "../components/layout/Header";
+import type {MobileTab} from "../components/layout/MobileWorkspaceTabs";
+import {MobileWorkspaceTabs} from "../components/layout/MobileWorkspaceTabs";
+import {Workspace} from "../components/layout/Workspace";
+import {ResultPanel} from "../components/result/ResultPanel";
+import {SchemaDrawer} from "../components/schema/SchemaDrawer";
+import {readJsonFile} from "../lib/files";
+import {InputPanel} from "../components/editor/InputPanel";
+import type {InputEditorHandle} from "../components/editor/InputEditor";
+import {TooltipProvider} from "../components/ui/Tooltip";
+import {useProcessingActions} from "../hooks/useProcessingActions";
+import {useRepairFlow} from "../hooks/useRepairFlow";
+import {useWorkspaceController} from "../hooks/useWorkspaceController";
+import {createWorkerClient, type WorkerClient, type WorkerLike,} from "../hooks/useWorkerClient";
+import {getActionEligibility} from "../state/actionEligibility";
 
 export interface AppProps {
   readonly workerClient?: WorkerClient;
@@ -66,11 +62,11 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
   const editorRef = useRef<InputEditorHandle>(null);
 
   const handleEditManually = useCallback((): void => {
-    const firstError = controller.state.diagnostics.find(
-      (d) => d.reliability === "confirmed",
+    const err = controller.state.diagnostics.find(
+        (d) => d.reliability === "confirmed",
     );
-    if (firstError && editorRef.current) {
-      editorRef.current.focusLocation(firstError.position);
+    if (err && editorRef.current) {
+      editorRef.current.focusLocation(err.position);
     }
   }, [controller.state.diagnostics]);
 

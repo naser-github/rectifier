@@ -209,6 +209,40 @@ describe("useWorkspacePersistence", () => {
     expect(mockSet).toHaveBeenCalledWith("rectifier-workspace", secondState);
   });
 
+  it("does not persist large input and clears an old saved workspace", async () => {
+    mockStore = {
+      "rectifier-workspace": {
+        ...INITIAL_WORKSPACE_STATE,
+        input: '{"old":true}',
+        revision: 1,
+      },
+    };
+    const { result } = renderHook(() => useWorkspacePersistence());
+
+    await waitFor(() => {
+      expect(result.current.loadResult).not.toBeNull();
+    });
+
+    vi.useFakeTimers();
+
+    const state = {
+      ...INITIAL_WORKSPACE_STATE,
+      input: "x".repeat(1024 * 1024 + 1),
+      revision: 2,
+      inputSize: 1024 * 1024 + 1,
+    };
+
+    act(() => {
+      result.current.save(state);
+    });
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+
+    expect(mockSet).not.toHaveBeenCalled();
+    expect(mockDel).toHaveBeenCalledWith("rectifier-workspace");
+  });
+
   // -----------------------------------------------------------------------
   // Clear saved
   // -----------------------------------------------------------------------

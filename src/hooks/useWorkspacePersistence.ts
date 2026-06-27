@@ -2,10 +2,12 @@ import { get, set, del } from "idb-keyval";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { INITIAL_WORKSPACE_STATE, type WorkspaceState } from "../domain/workspace";
 import { SAMPLE_JSON } from "../lib/sampleJson";
+import { getEncodedByteSize } from "../lib/size";
 
 const STORAGE_KEY = "rectifier-workspace";
 
 const IDLE_SAVE_DELAY_MS = 1_500;
+const MAX_PERSISTED_INPUT_BYTES = 1024 * 1024;
 
 export type LoadResult =
   | {
@@ -87,6 +89,13 @@ export function useWorkspacePersistence(): PersistenceAPI {
   const save = useCallback((state: WorkspaceState): void => {
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
+    }
+
+    if (getEncodedByteSize(state.input) > MAX_PERSISTED_INPUT_BYTES) {
+      del(STORAGE_KEY).catch(() => {
+        // Storage failure must never break core behaviour
+      });
+      return;
     }
 
     saveTimerRef.current = setTimeout(() => {

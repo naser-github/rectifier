@@ -124,8 +124,8 @@ const hasAdjacentDataTokens = (
       continue;
     }
 
-    const currentEnd = getCompleteDataEndOffset(tokens, current);
-    const nextStart = getCompleteDataStartOffset(tokens, next);
+    const currentEnd = getCompleteDataEndOffset(input, current);
+    const nextStart = getCompleteDataStartOffset(input, next);
 
     if (
       currentEnd === null ||
@@ -136,7 +136,7 @@ const hasAdjacentDataTokens = (
     }
 
     const currentStart =
-      getCompleteDataStartOffset(tokens, current) ?? current.startOffset;
+      getCompleteDataStartOffset(input, current) ?? current.startOffset;
     const previousOffset = findPreviousMeaningfulOffset(input, currentStart - 1);
 
     if (
@@ -164,39 +164,32 @@ const isDataToken = (token: RepairToken): token is RepairDataToken =>
   token.kind !== "syntax";
 
 const getCompleteDataStartOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.startOffset;
   }
 
-  const openingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.endOffset === token.startOffset,
-  );
+  const openingOffset = token.startOffset - 1;
+  const openingDelimiter = input[openingOffset];
 
-  return openingDelimiter?.startOffset ?? null;
+  return openingDelimiter === "'" || openingDelimiter === '"' ? openingOffset : null;
 };
 
 const getCompleteDataEndOffset = (
-  tokens: readonly RepairToken[],
+  input: string,
   token: RepairDataToken,
 ): number | null => {
   if (token.kind !== "string") {
     return token.endOffset;
   }
 
-  const closingDelimiter = tokens.find(
-    (candidate) =>
-      candidate.kind === "syntax" &&
-      (candidate.source === "'" || candidate.source === '"') &&
-      candidate.startOffset === token.endOffset,
-  );
+  const closingDelimiter = input[token.endOffset];
 
-  return closingDelimiter?.endOffset ?? null;
+  return closingDelimiter === "'" || closingDelimiter === '"'
+    ? token.endOffset + 1
+    : null;
 };
 
 const findPreviousMeaningfulOffset = (
