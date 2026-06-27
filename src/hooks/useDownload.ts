@@ -1,4 +1,4 @@
-import {useCallback} from "react";
+import { useCallback } from "react";
 
 const EXTENSIONS: Record<string, string> = {
   json: ".json",
@@ -14,7 +14,7 @@ const EXTENSIONS: Record<string, string> = {
 export function useDownload(): (text: string, format: string) => void {
   return useCallback((text: string, format: string): void => {
     const ext = EXTENSIONS[format] ?? ".txt";
-    const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

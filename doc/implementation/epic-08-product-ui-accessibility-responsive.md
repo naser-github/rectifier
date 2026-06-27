@@ -96,54 +96,54 @@ each task starts.
 
 ### Task 08.1: Assemble the Desktop Workspace
 
-- [ ] Add Rectifier branding, red `{ }` logo, lock icon, and privacy message.
-- [ ] Implement the PRD Browser storage popover from the privacy message,
+- [x] Add Rectifier branding, red `{ }` logo, lock icon, and privacy message.
+- [x] Implement the PRD Browser storage popover from the privacy message,
   including confirmed Clear saved workspace; keep it outside the main Action
   Dock.
-- [ ] Place Input, central Action Dock, and Result in the desktop workspace.
-- [ ] Place Upload and Clear inside the Input panel.
-- [ ] Place Code, Tree, Object, Copy, and Download inside Result controls.
-- [ ] Attach the Schema tab to the right edge, separate from actions.
-- [ ] Place the Status and Error tray below the workspace.
-- [ ] Show empty result guidance before a result exists.
+- [x] Place Input, central Action Dock, and Result in the desktop workspace.
+- [x] Place Upload and Clear inside the Input panel.
+- [x] Place Code, Tree, Object, Copy, and Download inside Result controls.
+- [x] Attach the Schema tab to the right edge, separate from actions.
+- [x] Place the Status and Error tray below the workspace.
+- [x] Show empty result guidance before a result exists.
 
 ### Task 08.2: Assemble Actions and Feedback
 
-- [ ] Order central actions as Beautify, Minify, Convert, Repair JSON.
-- [ ] Keep Repair JSON at the end.
-- [ ] Connect every disabled action to its exact reason.
-- [ ] Add brief success feedback for Copy, Download, and completed actions.
-- [ ] Confirm actions never alter protected input.
+- [x] Order central actions as Beautify, Minify, Convert, Repair JSON.
+- [x] Keep Repair JSON at the end.
+- [x] Connect every disabled action to its exact reason.
+- [x] Add brief success feedback for Copy, Download, and completed actions.
+- [x] Confirm actions never alter protected input.
 
 ### Task 08.3: Apply the Approved Light Visual System
 
-- [ ] Use Prompt for interface text and monospace for all code-like content.
-- [ ] Use `#000000`, `#EA4242`, `#F6F4F1`, and `#FFFFFF` as core colors.
-- [ ] Apply paper texture, thin black/gray borders, small sharp radiuses, and
+- [x] Use Prompt for interface text and monospace for all code-like content.
+- [x] Use `#000000`, `#EA4242`, `#F6F4F1`, and `#FFFFFF` as core colors.
+- [x] Apply paper texture, thin black/gray borders, small sharp radiuses, and
   motion no longer than 200 milliseconds for hover, press, drawer, and dialog
   transitions.
-- [ ] Use red only for error, repair, and intentional emphasis.
-- [ ] Preserve clear focus, hover, active, disabled, and loading states.
+- [x] Use red only for error, repair, and intentional emphasis.
+- [x] Preserve clear focus, hover, active, disabled, and loading states.
 
 ### Task 08.4: Implement Mobile and Responsive Behavior
 
-- [ ] Switch between Input and Result on mobile.
-- [ ] Keep all actions reachable without horizontal page scrolling.
-- [ ] Keep Schema Check reachable on small screens.
-- [ ] Preserve error focus and dialog focus behavior on mobile.
-- [ ] Test at least 390x844 mobile, 768x1024 tablet, and 1440x900 desktop
+- [x] Switch between Input and Result on mobile.
+- [x] Keep all actions reachable without horizontal page scrolling.
+- [x] Keep Schema Check reachable on small screens.
+- [x] Preserve error focus and dialog focus behavior on mobile.
+- [x] Test at least 390x844 mobile, 768x1024 tablet, and 1440x900 desktop
   viewports.
 
 ### Task 08.5: Complete Accessibility and Security Review
 
-- [ ] Verify keyboard access to every action, tab, view, collapse control, and
+- [x] Verify keyboard access to every action, tab, view, collapse control, and
   dialog.
-- [ ] Verify accessible names and descriptions for icon-only and disabled
+- [x] Verify accessible names and descriptions for icon-only and disabled
   controls.
-- [ ] Verify visible focus and usable contrast.
-- [ ] Render JSON, schema, and converted output only as text.
-- [ ] Confirm downloads use local object URLs and revoke them.
-- [ ] Confirm no analytics or network request captures editor content.
+- [x] Verify visible focus and usable contrast.
+- [x] Render JSON, schema, and converted output only as text.
+- [x] Confirm downloads use local object URLs and revoke them.
+- [x] Confirm no analytics or network request captures editor content.
 
 ## Verification
 
@@ -159,13 +159,13 @@ approved light design, and passes accessibility checks.
 
 ## Acceptance Checklist
 
-- [ ] Desktop and mobile workspace follow PRD behavior.
-- [ ] Approved prototype direction and prototype exceptions are followed.
-- [ ] Schema Check is separate and Repair JSON is the last action.
-- [ ] Upload, Clear, Copy, and Download are icon controls with tooltips.
-- [ ] Disabled controls explain why.
-- [ ] No user content is rendered as executable HTML.
-- [ ] Final UI Reviewer approves.
+- [x] Desktop and mobile workspace follow PRD behavior.
+- [x] Approved prototype direction and prototype exceptions are followed.
+- [x] Schema Check is separate and Repair JSON is the last action.
+- [x] Upload, Clear, Copy, and Download are icon controls with tooltips.
+- [x] Disabled controls explain why.
+- [x] No user content is rendered as executable HTML.
+- [x] Final UI Reviewer approves.
 
 ## Handoff to Later Epics
 

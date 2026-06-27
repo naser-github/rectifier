@@ -84,7 +84,7 @@ describe("App", () => {
 
     expect(screen.getByText("Input JSON")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Actions" })).toBeInTheDocument();
-    expect(screen.getByText("Result")).toBeInTheDocument();
+    expect(screen.getAllByText("Result").length).toBeGreaterThanOrEqual(2);
   });
 
   it("renders the input editor", () => {
