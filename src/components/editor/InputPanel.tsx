@@ -43,6 +43,7 @@ export function InputPanel({
     <Panel
       title="Input JSON"
       status={statusText}
+      className="h-full min-h-0"
       actions={
         <>
           <IconButton
@@ -60,7 +61,7 @@ export function InputPanel({
         </>
       }
     >
-      <div className="relative min-h-[420px] flex-1 bg-white/50">
+      <div className="relative min-h-0 flex-1 bg-white/50">
         <DisabledReason reason={sizeError ?? ""} className="absolute inset-0 z-10">
           <InputEditor
             ref={editorRef}

@@ -1,27 +1,31 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import type {SourcePosition} from "../domain/diagnostics";
-import type {WorkerRequest, WorkerResponse} from "../domain/workerProtocol";
-import {ActionDock} from "../components/actions/ActionDock";
-import {ErrorTray} from "../components/errors/ErrorTray";
-import {RepairChoiceDialog} from "../components/errors/RepairChoiceDialog";
-import {RepairManualGuidance} from "../components/errors/RepairManualGuidance";
-import {RepairPreviewDialog} from "../components/errors/RepairPreviewDialog";
-import {Header} from "../components/layout/Header";
-import type {MobileTab} from "../components/layout/MobileWorkspaceTabs";
-import {MobileWorkspaceTabs} from "../components/layout/MobileWorkspaceTabs";
-import {Workspace} from "../components/layout/Workspace";
-import {ResultPanel} from "../components/result/ResultPanel";
-import {SchemaDrawer} from "../components/schema/SchemaDrawer";
-import {readJsonFile} from "../lib/files";
-import {InputPanel} from "../components/editor/InputPanel";
-import type {InputEditorHandle} from "../components/editor/InputEditor";
-import {TooltipProvider} from "../components/ui/Tooltip";
-import {useProcessingActions} from "../hooks/useProcessingActions";
-import {useRepairFlow} from "../hooks/useRepairFlow";
-import {useWorkspaceController} from "../hooks/useWorkspaceController";
-import {createWorkerClient, type WorkerClient, type WorkerLike,} from "../hooks/useWorkerClient";
-import {getActionEligibility} from "../state/actionEligibility";
+import type { SourcePosition } from "../domain/diagnostics";
+import type { WorkerRequest, WorkerResponse } from "../domain/workerProtocol";
+import { ActionDock } from "../components/actions/ActionDock";
+import { ErrorTray } from "../components/errors/ErrorTray";
+import { RepairChoiceDialog } from "../components/errors/RepairChoiceDialog";
+import { RepairManualGuidance } from "../components/errors/RepairManualGuidance";
+import { RepairPreviewDialog } from "../components/errors/RepairPreviewDialog";
+import { Header } from "../components/layout/Header";
+import type { MobileTab } from "../components/layout/MobileWorkspaceTabs";
+import { MobileWorkspaceTabs } from "../components/layout/MobileWorkspaceTabs";
+import { Workspace } from "../components/layout/Workspace";
+import { ResultPanel } from "../components/result/ResultPanel";
+import { SchemaDrawer } from "../components/schema/SchemaDrawer";
+import { readJsonFile } from "../lib/files";
+import { InputPanel } from "../components/editor/InputPanel";
+import type { InputEditorHandle } from "../components/editor/InputEditor";
+import { TooltipProvider } from "../components/ui/Tooltip";
+import { useProcessingActions } from "../hooks/useProcessingActions";
+import { useRepairFlow } from "../hooks/useRepairFlow";
+import { useWorkspaceController } from "../hooks/useWorkspaceController";
+import {
+  createWorkerClient,
+  type WorkerClient,
+  type WorkerLike,
+} from "../hooks/useWorkerClient";
+import { getActionEligibility } from "../state/actionEligibility";
 
 export interface AppProps {
   readonly workerClient?: WorkerClient;
@@ -62,9 +66,7 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
   const editorRef = useRef<InputEditorHandle>(null);
 
   const handleEditManually = useCallback((): void => {
-    const err = controller.state.diagnostics.find(
-        (d) => d.reliability === "confirmed",
-    );
+    const err = controller.state.diagnostics.find((d) => d.reliability === "confirmed");
     if (err && editorRef.current) {
       editorRef.current.focusLocation(err.position);
     }
@@ -117,139 +119,141 @@ function RectifierApp({ workerClient }: { readonly workerClient: WorkerClient })
   }, [controller]);
 
   return (
-    <div className="min-h-screen bg-neutral-800 p-4 text-black sm:p-6">
-      <div className="mx-auto max-w-[1500px] rounded-[8px] bg-black p-3">
-        <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden rounded-[7px] border border-black bg-paper bg-paper-texture">
-          <Header onClearSaved={handleClearSaved} />
+    <div className="h-screen overflow-hidden bg-paper bg-paper-texture text-black">
+      <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+        <Header onClearSaved={handleClearSaved} />
 
-          <MobileWorkspaceTabs
-            activeTab={mobileTab}
-            onTabChange={setMobileTab}
-            hasResult={controller.state.result !== null}
-          />
+        <MobileWorkspaceTabs
+          activeTab={mobileTab}
+          onTabChange={setMobileTab}
+          hasResult={controller.state.result !== null}
+        />
 
-          <Workspace
-            input={
-              <div className={`${mobileTab === "input" ? "block" : "hidden"} lg:block`}>
-                <InputPanel
-                  input={controller.state.input}
-                  diagnostics={controller.state.diagnostics}
-                  validationState={controller.state.validationState}
-                  isExample={controller.state.isExample}
-                  sizeError={controller.state.sizeError}
-                  editorRef={editorRef}
-                  onInputChange={controller.handleInputChange}
-                  onUpload={handleUploadClick}
-                  onClear={controller.handleClear}
-                  onFocusLocation={handleFocusLocation}
-                />
-              </div>
-            }
-            actions={
-              <div className={`${mobileTab === "input" ? "block" : "hidden"} lg:block`}>
-                <ActionDock
-                  state={controller.state}
-                  onBeautify={processing.beautify}
-                  onMinify={processing.minify}
-                  onConvertToYaml={processing.convertToYaml}
-                  onConvertToXml={processing.convertToXml}
-                  onConvertToCsv={processing.convertToCsv}
-                  onRepair={repairFlow.startRepairAnalysis}
-                />
-              </div>
-            }
-            result={
-              <div
-                className={`${mobileTab === "result" ? "block" : "hidden"} lg:block`}
-              >
-                <ResultPanel
-                  result={controller.state.result}
-                  resultError={controller.state.resultError}
-                  onJsonResultEdit={controller.handleResultEdit}
-                />
-              </div>
-            }
-          />
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            className="hidden"
-            onChange={handleFileSelected}
-          />
-
-          {repairFlow.showSafePreview && repairFlow.safeCandidate && (
-            <RepairPreviewDialog
-              candidate={repairFlow.safeCandidate}
-              open={true}
-              onAccept={repairFlow.acceptRepair}
-              onReject={repairFlow.rejectRepair}
-            />
-          )}
-
-          {repairFlow.showAmbiguousChoices && (
-            <RepairChoiceDialog
-              choices={repairFlow.ambiguousChoices}
-              manualGuidance=""
-              open={true}
-              onApply={repairFlow.applyAmbiguousChoice}
-              onEditManually={repairFlow.editManually}
-              onClose={repairFlow.rejectRepair}
-            />
-          )}
-
-          {repairFlow.showManualGuidance && repairFlow.manualGuidance && (
-            <RepairManualGuidance
-              open={true}
-              guidance={repairFlow.manualGuidance}
-              onEditManually={repairFlow.editManually}
-              onClose={repairFlow.rejectRepair}
-            />
-          )}
-
-          <section
-            aria-label="Validation status"
-            className="border-t border-line bg-white/45 px-5 py-3"
-          >
-            {controller.state.sizeError !== null ? (
-              <p className="text-sm font-semibold text-red-accent">
-                {controller.state.sizeError}
-              </p>
-            ) : confirmedDiagnostics.length > 0 ? (
-              <ErrorTray
-                diagnostics={confirmedDiagnostics}
+        <Workspace
+          input={
+            <div
+              className={`${mobileTab === "input" ? "block" : "hidden"} h-full min-h-0 lg:block`}
+            >
+              <InputPanel
+                input={controller.state.input}
+                diagnostics={controller.state.diagnostics}
+                validationState={controller.state.validationState}
+                isExample={controller.state.isExample}
+                sizeError={controller.state.sizeError}
+                editorRef={editorRef}
+                onInputChange={controller.handleInputChange}
+                onUpload={handleUploadClick}
+                onClear={controller.handleClear}
                 onFocusLocation={handleFocusLocation}
               />
-            ) : (
-              <p className="text-sm font-semibold text-muted">
-                {controller.state.eligibility === null
-                  ? "Checking JSON\u2026"
-                  : "JSON is valid. Validation runs automatically."}
-              </p>
-            )}
-          </section>
+            </div>
+          }
+          actions={
+            <div
+              className={`${mobileTab === "input" ? "block" : "hidden"} h-full min-h-0 lg:block`}
+            >
+              <ActionDock
+                state={controller.state}
+                onBeautify={processing.beautify}
+                onMinify={processing.minify}
+                onConvertToYaml={processing.convertToYaml}
+                onConvertToXml={processing.convertToXml}
+                onConvertToCsv={processing.convertToCsv}
+                onRepair={repairFlow.startRepairAnalysis}
+              />
+            </div>
+          }
+          result={
+            <div
+              className={`${mobileTab === "result" ? "block" : "hidden"} h-full min-h-0 lg:block`}
+            >
+              <ResultPanel
+                result={controller.state.result}
+                resultError={controller.state.resultError}
+                onJsonResultEdit={controller.handleResultEdit}
+              />
+            </div>
+          }
+        />
 
-          <SchemaDrawer
-            open={schemaOpen}
-            schemaText={schemaText}
-            schemaDiagnostics={controller.state.schemaDiagnostics}
-            eligible={getActionEligibility(controller.state, "schema-check").enabled}
-            eligibilityReason={
-              getActionEligibility(controller.state, "schema-check").reason
-            }
-            onToggle={() => {
-              setSchemaOpen(!schemaOpen);
-            }}
-            onSchemaTextChange={setSchemaText}
-            onCheckSchema={() => {
-              processing.validateSchema(schemaText);
-            }}
-            onClear={() => {
-              setSchemaText("");
-            }}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+
+        {repairFlow.showSafePreview && repairFlow.safeCandidate && (
+          <RepairPreviewDialog
+            candidate={repairFlow.safeCandidate}
+            open={true}
+            onAccept={repairFlow.acceptRepair}
+            onReject={repairFlow.rejectRepair}
           />
-        </div>
+        )}
+
+        {repairFlow.showAmbiguousChoices && (
+          <RepairChoiceDialog
+            choices={repairFlow.ambiguousChoices}
+            manualGuidance=""
+            open={true}
+            onApply={repairFlow.applyAmbiguousChoice}
+            onEditManually={repairFlow.editManually}
+            onClose={repairFlow.rejectRepair}
+          />
+        )}
+
+        {repairFlow.showManualGuidance && repairFlow.manualGuidance && (
+          <RepairManualGuidance
+            open={true}
+            guidance={repairFlow.manualGuidance}
+            onEditManually={repairFlow.editManually}
+            onClose={repairFlow.rejectRepair}
+          />
+        )}
+
+        <section
+          aria-label="Validation status"
+          className="border-t border-line bg-white/45 px-5 py-3"
+        >
+          {controller.state.sizeError !== null ? (
+            <p className="text-sm font-semibold text-red-accent">
+              {controller.state.sizeError}
+            </p>
+          ) : confirmedDiagnostics.length > 0 ? (
+            <ErrorTray
+              diagnostics={confirmedDiagnostics}
+              onFocusLocation={handleFocusLocation}
+            />
+          ) : (
+            <p className="text-sm font-semibold text-muted">
+              {controller.state.eligibility === null
+                ? "Checking JSON\u2026"
+                : "JSON is valid. Validation runs automatically."}
+            </p>
+          )}
+        </section>
+
+        <SchemaDrawer
+          open={schemaOpen}
+          schemaText={schemaText}
+          schemaDiagnostics={controller.state.schemaDiagnostics}
+          eligible={getActionEligibility(controller.state, "schema-check").enabled}
+          eligibilityReason={
+            getActionEligibility(controller.state, "schema-check").reason
+          }
+          onToggle={() => {
+            setSchemaOpen(!schemaOpen);
+          }}
+          onSchemaTextChange={setSchemaText}
+          onCheckSchema={() => {
+            processing.validateSchema(schemaText);
+          }}
+          onClear={() => {
+            setSchemaText("");
+          }}
+        />
       </div>
     </div>
   );

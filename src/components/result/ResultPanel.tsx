@@ -32,8 +32,8 @@ export function ResultPanel({
 
   if (!result) {
     return (
-      <Panel title="Result">
-        <div className="grid min-h-[320px] place-items-center bg-white/50 p-6 text-center">
+      <Panel title="Result" className="h-full min-h-0">
+        <div className="grid min-h-0 flex-1 place-items-center bg-white/50 p-6 text-center">
           <div>
             <p className="text-sm font-extrabold">No result yet</p>
             <p className="mt-2 max-w-64 text-xs leading-5 text-muted">
@@ -68,6 +68,7 @@ export function ResultPanel({
     <Panel
       title="Result"
       status={result.action}
+      className="h-full min-h-0"
       actions={
         <>
           {(["code", "tree", "object"] as const).map((mode) => (

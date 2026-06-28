@@ -39,7 +39,7 @@ export function ActionDock({
   return (
     <section
       aria-labelledby="actions-title"
-      className="flex flex-col rounded-[8px] border border-line bg-white/45"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-[8px] border border-line bg-white/45"
     >
       <div className="border-b border-line px-3 py-3 text-center">
         <h2 id="actions-title" className="text-sm font-extrabold">
@@ -49,7 +49,7 @@ export function ActionDock({
           Validation runs automatically
         </p>
       </div>
-      <div className="flex flex-col gap-2 p-3">
+      <div className="flex min-h-0 flex-col gap-2 overflow-auto p-3">
         {TOP_ACTIONS.map(({ id, label, Icon }) => {
           const { enabled, reason } = getActionEligibility(state, id);
 

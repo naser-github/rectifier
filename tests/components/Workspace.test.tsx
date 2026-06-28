@@ -27,4 +27,18 @@ describe("Workspace", () => {
 
     expect(container.querySelector("main")).toBeInTheDocument();
   });
+
+  it("owns the fixed viewport workspace area without becoming the page scroll container", () => {
+    const { container } = render(
+      <Workspace
+        input={<div>Input content</div>}
+        actions={<div>Action dock</div>}
+        result={<div>Result panel</div>}
+      />,
+    );
+
+    const main = container.querySelector("main");
+
+    expect(main).toHaveClass("min-h-0", "flex-1", "overflow-hidden");
+  });
 });

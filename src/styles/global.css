@@ -18,10 +18,16 @@
   box-sizing: border-box;
 }
 
+html,
+#root {
+  height: 100%;
+}
+
 body {
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 button {
@@ -44,6 +50,14 @@ button:focus-visible {
   background-size:
     5px 5px,
     7px 7px;
+}
+
+.cm-editor {
+  height: 100%;
+}
+
+.cm-scroller {
+  overflow: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {

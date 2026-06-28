@@ -15,7 +15,7 @@ export function CodeResultView({
   onChange,
 }: CodeResultViewProps): ReactNode {
   return (
-    <div className="h-full min-h-[320px] w-full bg-white/50">
+    <div className="h-full min-h-0 w-full bg-white/50">
       <ResultEditor
         value={text}
         language={format === "json" ? "json" : "text"}
